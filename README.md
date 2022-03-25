@@ -24,6 +24,8 @@ git checkout -b yourname
 
 - Commit code at local _(be sure at `yourname` branch)_
 
+  \*Note: `message` is formatted by "YourName - Action file.js" (ex: Vinh - Update index.js, Add server.js)
+
 ```
 git add .
 git commit -m "message"
