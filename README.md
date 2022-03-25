@@ -1,5 +1,15 @@
 # Backend Team
 
+## The Graph demonstrate Git branchs
+
+```mermaid
+graph TD;
+    gitLocal-->backend;
+    backend-->development;
+    frontend-->development;
+    development-->main;
+```
+
 ## First time
 
 - Clone repository
@@ -24,11 +34,11 @@ git checkout -b yourname
 
 - Commit code at local _(be sure at `yourname` branch)_
 
-  \*Note: `message` is formatted by "YourName - Action file.js" (ex: Vinh - Update index.js, Add server.js)
+  \*Note: `message` is formatted by "YourName - Action file.js" (e.g., "Vinh - Update index.js, Add server.js")
 
 ```
 git add .
-git commit -m "message"
+git commit -m "YourName - Action file.js"
 ```
 
 - Switch to `backend` branch
@@ -37,7 +47,7 @@ git commit -m "message"
 git checkout backend
 ```
 
-- Merge your code at `yourname` branch to `backend` branch
+- Merge your code at `yourname` branch into `backend` branch
 
 ```
 git merge yourname
