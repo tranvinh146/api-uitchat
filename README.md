@@ -12,19 +12,22 @@ graph TD;
 
 ## First time
 
-- Clone repository
+1. Clone repository
 
 ```
 git clone https://github.com/tranvinh146/project-IE213
 ```
+<br>
 
-- Switch to `backend` branch
+2. Switch to `backend` branch
 
 ```
 git checkout backend
 ```
 
-- Create your branch at git local
+<br>
+
+3. Create your branch at git local
 
 ```
 git checkout -b yourname
@@ -32,40 +35,45 @@ git checkout -b yourname
 
 ## In later times, to submit code
 
-- Commit code at local _(be sure at `yourname` branch)_
+1. Commit your code at local _(be sure at `yourname` branch)_
 
-  \*Note: `message` is formatted by "YourName - Action file.js" (e.g., "Vinh - Update index.js, Add server.js")
+    \* Note: `message` is formatted by "YourName - Action file.js" (e.g., "Vinh - Update index.js, Add server.js")
 
 ```
 git add .
 git commit -m "YourName - Action file.js"
 ```
+<br>
 
-- Switch to `backend` branch
+2. Switch to `backend` branch
 
 ```
 git checkout backend
 ```
+<br>
 
-- Merge your code at `yourname` branch into `backend` branch
+3. Merge your code at `yourname` branch into `backend` branch
 
 ```
 git merge yourname
 ```
+<br>
 
-- Pull code from `backend` branch
+4. Pull code from `backend` branch
 
 ```
 git pull origin backend
 ```
+<br>
 
-- Push your code to `backend` branch
+5. Push your code to `backend` branch
 
 ```
 git push origin backend
 ```
+<br>
 
-- Finally, change to `yourname` branch
+6. Finally, back to `yourname` branch
 
 ```
 git checkout yourname
