@@ -36,23 +36,7 @@ git checkout -b yourname
 
 ## In later times, to submit code
 
-1. Switch to `backend` branch
-
-```
-git checkout backend
-```
-
-<br>
-
-2. Pull code from `backend` branch
-
-```
-git pull origin backend
-```
-
-<br>
-
-3. Commit your code at local _(be sure at `yourname` branch)_
+1. Commit your code at local _(be sure at `yourname` branch)_
 
    \* Note: `message` is formatted by "YourName - Action file.js" (e.g., "Vinh - Update index.js, Add server.js")
 
@@ -63,10 +47,26 @@ git commit -m "YourName - Action file.js"
 
 <br>
 
-4. Merge your code at `yourname` branch into `backend` branch
+2. Switch to `backend` branch
+
+```
+git checkout backend
+```
+
+<br>
+
+3. Merge your code at `yourname` branch into `backend` branch
 
 ```
 git merge yourname
+```
+
+<br>
+
+4. Pull code from `backend` branch
+
+```
+git pull origin backend
 ```
 
 <br>
