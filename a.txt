@@ -1,6 +1,2 @@
 file a
-<<<<<<< HEAD
 tran
-=======
-test
->>>>>>> 66acdccca03fc536f470e682b51d24ee667b230a
