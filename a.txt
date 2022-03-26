@@ -1,6 +1,1 @@
-<<<<<<< HEAD
-adsfas
-sdfafsa
-=======
 git local
->>>>>>> vinh
