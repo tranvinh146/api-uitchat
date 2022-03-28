@@ -20,15 +20,22 @@ git clone https://github.com/tranvinh146/project-IE213
 
 <br>
 
-2. Switch to `backend` branch
+2. Create and switch to `backend` branch
 
 ```
-git checkout backend
+git checkout -b backend
 ```
 
 <br>
 
-3. Create your branch at git local
+3. Pull code from `backend` branch
+
+```
+git pull origin backend
+```
+<br>
+
+4. Create your branch at git local
 
 ```
 git checkout -b yourname
