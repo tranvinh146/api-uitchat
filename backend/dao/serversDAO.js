@@ -9,7 +9,7 @@ export default class ServerDAO {
     }
 
     try {
-      movies = await conn.db(process.env.MOVIEREVIEWS_NS).collection("servers");
+      movies = await conn.db(process.env.UITCHAT_NS).collection("servers");
     } catch (e) {
       console.error(`unable to connect in ServersDAO: ${e}`);
     }
@@ -24,7 +24,7 @@ export default class ServerDAO {
       const serversList = await cursor.toArray();
       return serversList;
     } catch (err) {
-      console.error(`Unable to find command, ${err}`);
+      console.error(`unable to find command, ${err}`);
       return [];
     }
   }

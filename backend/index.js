@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 async function main() {
   dotenv.config();
 
-  const client = new mongodb.MongoClient(process.env.DISCORD_DB_URI);
+  const client = new mongodb.MongoClient(process.env.UITCHAT_DB_URI);
 
   const port = process.env.PORT || 8000;
 
