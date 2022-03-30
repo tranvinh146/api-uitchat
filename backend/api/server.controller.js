@@ -25,20 +25,71 @@ export default class ServersController {
 
   static async apiPostServer(req, res, next) {
     try {
-      const serverId = req.body.server_id;
-      const channel = req.body.channel;
       const userId = req.body.user_id;
+      const name = req.body.name;
+      const role = "";
       const date = new Date();
-      const ServerResponse = await ServersDAO.addServer(server);
-    } catch (error) {}
+      const ServerResponse = await ServersDAO.addServer(
+        userId,
+        name,
+        role,
+        date
+      );
+      let { error } = ServerResponse;
+      if (error) {
+        return res.json({ error });
+      }
+      res.json({ status: "success" });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
   }
 
-  static async apiUpdateServer(req, res, next) {}
+  static async apiUpdateServer(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const userId = req.body.user_id;
+      const name = req.body.name;
+      const role = req.body.role;
+      const date = new Date();
+      const ServerResponse = await ServersDAO.updateServer(
+        serverId,
+        userId,
+        role,
+        name,
+        date
+      );
+      let { error } = ServerResponse;
+      if (error) {
+        res.json({ error });
+      }
+      if (ServerResponse.modifiedCount === 0) {
+        throw new Error("unable to update server. User may not have permisson");
+      }
+      res.json({ status: "success" });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
 
-  static async apiDeleteServer(req, res, next) {}
+  static async apiDeleteServer(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const userId = req.body.user_id;
+      const ServerResponse = await ServersDAO.deleteSever(serverId, userId);
+      let { error } = ServerResponse;
+      if (error) {
+        res, json({ error });
+      }
+      if (ServerResponse.deletedCount === 0) {
+        throw new Error(
+          "unable to delete server. User may not have permission."
+        );
+      }
+      res.json({ status: "success" });
+      // const role = req.body.role;
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
 }
-
-const role = {
-  admin: [123, 123123, 123123],
-  normal: [456, 456456],
-};
