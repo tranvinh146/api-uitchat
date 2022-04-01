@@ -2,11 +2,9 @@ import ServersDAO from "../dao/serversDAO.js";
 
 export default class ServersController {
   static async apiGetServers(req, res, next) {
-    const userId = "";
+    const userId = req.body.user_id;
     const serversList = await ServersDAO.getServers(userId);
-    let response = { serversList };
-
-    res.json(response);
+    res.json(serversList);
   }
 
   static async apiGetServerById(req, res, next) {

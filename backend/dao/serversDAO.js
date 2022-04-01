@@ -17,11 +17,8 @@ export default class ServersDAO {
   }
 
   static async getServers(userId) {
-    let query = { $id: new ObjectId(userId) };
-
-    let cursor;
     try {
-      cursor = await servers.find(query);
+      const cursor = await servers.find({ admin: userId });
       const serversList = await cursor.toArray();
       return { serversList };
     } catch (err) {
