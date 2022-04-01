@@ -1,11 +1,10 @@
 import express from "express";
 import UsersController from './user.controller.js';
+import server from "./server.route.js";
 
 const router = express.Router();
 
-router.route("/").get((req, res) => {
-  res.send("Hello World");
-});
+router.use("/server", server);
 
 router
   .route("/users")
