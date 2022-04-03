@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import UsersDAO from './dao/usersDAO.js';
 import ServersDAO from "./dao/serversDAO.js";
 import ChannelsDAO from './dao/channelDAO.js';
+import MessagesDAO from "./dao/messagesDAO.js";
 
 async function main() {
     dotenv.config();
@@ -17,7 +18,7 @@ async function main() {
         await UsersDAO.injectDB(client);
         await ServersDAO.injectDB(client);
         await ChannelsDAO.injectDB(client);
-
+        await MessagesDAO.injectDB(client);
         app.listen(port, () => {
             console.log("Server is running on port", port);
         });
