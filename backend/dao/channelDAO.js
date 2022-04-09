@@ -8,7 +8,7 @@ export default class channelDAO {
             return;
         }
         try {
-            channel = await
+            channels = await
                 conn.db(process.env.UITCHAT_NS).collection('channels');
         } catch (e) {
             console.error(`unable to connect in channelDAO: ${e}`);

@@ -3,9 +3,12 @@ import UsersController from './user.controller.js';
 import MessagesController from './message.controller.js';
 import server from "./server.route.js";
 import ChannelsController from "./channel.controller.js";
+import auth from './auth.route.js';
+import verifyToken from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
+router.use("/auth", auth);
 router.use("/server", server);
 
 router.route("/messages/:id")
@@ -18,10 +21,13 @@ router.route("/messages")
 
 router
     .route("/users")
-    .get(UsersController.apiGetUsers)
+    .get(verifyToken, UsersController.apiGetUsers)
     .post(UsersController.apiPostUser)
     .patch(UsersController.apiPatchUser)
     .delete(UsersController.apiDeleteUser);
+router
+    .route("/users/:id")
+    .get(verifyToken, UsersController.getById);
 
 router
     .route('/server/:id')
@@ -32,5 +38,6 @@ router
     .put(ChannelsController.apiUpdateChannel)
     .delete(ChannelsController.apiDeleteChannel)
     .post(ChannelsController.apiPostChannel);
+
 
 export default router;
