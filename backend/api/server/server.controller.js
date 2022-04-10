@@ -1,4 +1,4 @@
-import ServersDAO from "../dao/serversDAO.js";
+import ServersDAO from "../../dao/serversDAO.js";
 
 export default class ServersController {
   static async apiGetServers(req, res, next) {

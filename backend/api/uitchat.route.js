@@ -1,36 +1,17 @@
 import express from "express";
-import UsersController from './user.controller.js';
-import MessagesController from './message.controller.js';
-import server from "./server.route.js";
-import ChannelsController from "./channel.controller.js";
+import servers from "./server.route.js";
+import channels from "./channel.route.js";
+import users from "./user.route.js";
+import messages from "./message.route.js";
 
 const router = express.Router();
 
-router.use("/server", server);
+router.use("/servers", servers);
 
-router.route("/messages/:id")
-  .get(MessagesController.apiGetMessages)
-  
-router.route("/messages")
-  .post(MessagesController.apiPostMessage)
-  .put(MessagesController.apiPutMessage)
-  .delete(MessagesController.apiDeleteMessage)
+router.use("/channels", channels);
 
-router
-    .route("/users")
-    .get(UsersController.apiGetUsers)
-    .post(UsersController.apiPostUser)
-    .patch(UsersController.apiPatchUser)
-    .delete(UsersController.apiDeleteUser);
+router.use("/users", users);
 
-router
-    .route('/server/:id')
-    .get(ChannelsController.apiGetChannelsByServerId);
-
-router
-    .route('/channels')
-    .put(ChannelsController.apiUpdateChannel)
-    .delete(ChannelsController.apiDeleteChannel)
-    .post(ChannelsController.apiPostChannel);
+router.use("/messages", messages);
 
 export default router;
