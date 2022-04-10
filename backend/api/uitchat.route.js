@@ -1,30 +1,19 @@
 import express from "express";
-import UsersController from "./user.controller.js";
-import MessagesController from "./message.controller.js";
 import server from "./server.route.js";
-import ChannelsController from "./channel.controller.js";
-import auth from "./auth.route.js";
-import {
-  verifyToken,
-  verifyUserAuthorization,
-  verifyAdmin,
-} from "../middleware/verifyToken.js";
+import channel from "./channel/channel.route.js";
+import auth from "./auth/auth.route.js";
+import user from "./user/user.route.js";
+import message from "./message/message.route.js";
 
 const router = express.Router();
 
-router.use("/auth", auth);
 router.use("/server", server);
 
-router.use("/channels", channels);
+router.use("/channels", channel);
 
-router
-  .route("/users")
-  .get(verifyToken, UsersController.apiGetUsers)
-  .post(UsersController.apiPostUser)
-  .patch(verifyToken, verifyUserAuthorization, UsersController.apiPatchUser)
-  .delete(verifyToken, verifyAdmin, UsersController.apiDeleteUser);
-router.route("/users/:id").get(verifyToken, UsersController.getById);
+router.use("/auth", auth);
+router.use("/users", user);
 
-router.use("/messages", messages);
+router.use("/messages", message);
 
 export default router;
