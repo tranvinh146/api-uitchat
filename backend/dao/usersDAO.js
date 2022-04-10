@@ -27,6 +27,26 @@ export default class UsersDAO {
         }
     }
 
+    static async getUserById(id) {
+        try {
+            const user = await users.findOne({ _id: ObjectId(id) });
+            return user;
+        } catch (e) {
+            console.error(`Unable to issue find command, ${e}`);
+            return {};
+        }
+    }
+
+    static async getUserByUsername(username) {
+        try {
+            const user = await users.findOne({ username: username });
+            return user;
+        } catch (e) {
+            console.error(`Unable to issue find command, ${e}`);
+            return {};
+        }
+    }
+
     static async addUser(user) {
         try {
             return await users.insertOne(user);
@@ -36,7 +56,7 @@ export default class UsersDAO {
         }
     }
 
-    static async updateUser({ userId, ...newValues } = {}) {
+    static async updateUser(userId, newValues) {
         try {
             const query = { _id: ObjectId(userId) };
             return await users.updateOne(query, { $set: newValues });
