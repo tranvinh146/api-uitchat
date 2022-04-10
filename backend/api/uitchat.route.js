@@ -1,5 +1,5 @@
 import express from "express";
-import server from "./server.route.js";
+import server from "./server/server.route.js";
 import channel from "./channel/channel.route.js";
 import auth from "./auth/auth.route.js";
 import user from "./user/user.route.js";
