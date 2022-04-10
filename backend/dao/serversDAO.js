@@ -91,4 +91,50 @@ export default class ServersDAO {
       return { error: error.message };
     }
   }
+
+  static async getChannels(serverId) {
+    try {
+      return await servers
+        .aggregate([
+          {
+            $match: { _id: new Object(serverId) },
+          },
+          {
+            $lookup: {
+              from: "channels",
+              localField: "_id",
+              foreignField: "server_id",
+              as: "channels",
+            },
+          },
+        ])
+        .next();
+    } catch (e) {
+      console.error(`unable to get channels in server: ${error}`);
+      return { error: e.message };
+    }
+  }
+
+  static async getUsers(serverId) {
+    try {
+      return await servers
+        .aggregate([
+          {
+            $match: { _id: new Object(serverId) },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "_id",
+              foreignField: "server_id",
+              as: "users",
+            },
+          },
+        ])
+        .next();
+    } catch (e) {
+      console.error(`unable to get users in server: ${error}`);
+      return { error: e.message };
+    }
+  }
 }

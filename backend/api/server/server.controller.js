@@ -77,7 +77,7 @@ export default class ServersController {
       const ServerResponse = await ServersDAO.deleteSever(serverId, userId);
       let { error } = ServerResponse;
       if (error) {
-        res, json({ error });
+        res.json({ error });
       }
       if (ServerResponse.deletedCount === 0) {
         throw new Error(
@@ -86,6 +86,34 @@ export default class ServersController {
       }
       res.json({ status: "success" });
       // const role = req.body.role;
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiGetChannelsByServerId(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const ServerResponse = await ServersDAO.getChannels(serverId);
+      let { error } = ServerResponse;
+      if (error) {
+        res.status(400).json({ error });
+      }
+      res.status(200).json({ status: "success", channel_list: ServerResponse });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiGetUsersByServerId(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const ServerResponse = await ServersDAO.getUsers(serverId);
+      let { error } = ServerResponse;
+      if (error) {
+        res.status(400).json({ error });
+      }
+      res.status(200).json({ status: "success", user_list: ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

@@ -12,4 +12,8 @@ router
   .put(ServersController.apiUpdateServer)
   .delete(ServersController.apiDeleteServer);
 
+router.route("/channels").get(ServersController.apiGetChannelsByServerId);
+
+router.route("/users").get(ServersController.apiGetUsersByServerId);
+
 export default router;
