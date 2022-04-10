@@ -4,7 +4,7 @@ import MessagesController from './message.controller.js';
 import server from "./server.route.js";
 import ChannelsController from "./channel.controller.js";
 import auth from './auth.route.js';
-import verifyToken from '../middleware/verifyToken.js';
+import { verifyToken, verifyUserAuthorization, verifyAdmin } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
@@ -23,8 +23,8 @@ router
     .route("/users")
     .get(verifyToken, UsersController.apiGetUsers)
     .post(UsersController.apiPostUser)
-    .patch(UsersController.apiPatchUser)
-    .delete(UsersController.apiDeleteUser);
+    .patch(verifyToken, verifyUserAuthorization, UsersController.apiPatchUser)
+    .delete(verifyToken, verifyAdmin, UsersController.apiDeleteUser);
 router
     .route("/users/:id")
     .get(verifyToken, UsersController.getById);

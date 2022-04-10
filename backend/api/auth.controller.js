@@ -20,7 +20,7 @@ export default class AuthController {
             }
     
             if (user && validPassword) {
-                const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_KEY, { expiresIn: "7d" });
+                const accessToken = jwt.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.JWT_ACCESS_KEY, { expiresIn: "7d" });
                 res.status(200).json({ "accessToken": accessToken, "userId": user._id });
             }
         }

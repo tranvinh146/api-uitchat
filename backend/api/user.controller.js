@@ -30,6 +30,7 @@ export default class UsersController {
                 username: req.body.username,
                 password: hashedPassword,
                 createdAt: new Date().toLocaleString(),
+                isAdmin: false,
                 status: "online"
             });
             res.json({ status: "success" });
@@ -40,7 +41,8 @@ export default class UsersController {
 
     static async apiPatchUser(req, res, next) {
         try {
-            const result = await UsersDAO.updateUser(req.body);
+            const { userId, ...newValues } = req.body;
+            const result = await UsersDAO.updateUser(userId, newValues);
             res.json({ status: "success" });
         } catch (e) {
             res.status(500).json({ error: e.message });

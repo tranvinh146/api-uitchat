@@ -56,7 +56,7 @@ export default class UsersDAO {
         }
     }
 
-    static async updateUser({ userId, ...newValues } = {}) {
+    static async updateUser(userId, newValues) {
         try {
             const query = { _id: ObjectId(userId) };
             return await users.updateOne(query, { $set: newValues });
