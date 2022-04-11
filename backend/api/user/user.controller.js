@@ -28,6 +28,12 @@ export default class UsersController {
     }
   }
 
+  static async getById(req, res, next) {
+    const { id } = req.params;
+    const response = await UsersDAO.getUserById(id);
+    res.json(response);
+}
+
   static async apiPatchUser(req, res, next) {
     try {
       const result = await UsersDAO.updateUser(req.body);
