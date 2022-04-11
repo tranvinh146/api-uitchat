@@ -1,0 +1,36 @@
+.member {
+    display: flex;
+    background-color: #2F3136;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.member__status {
+    color: #968679;
+    font-weight: 500;
+}
+
+.member__user {
+    display: flex;
+    align-items: center;
+    margin: 4px;
+    width: 200px;
+    padding: 6px;
+}
+
+.member__user > h4 {
+    margin-left: 10px;
+    font-weight: 600;
+}
+.user__on > h4 {
+    color:#2ECC63;
+}
+
+.user__off > h4 {
+    color:#0d692c;
+}
+
+.member__user:hover{
+    background-color: #363A3F;
+    border-radius: 5px;
+}
