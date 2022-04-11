@@ -3,8 +3,9 @@ import MessagesController from "./message.controller.js";
 
 const router = express.Router();
 
-router.route("/:id").get(MessagesController.apiGetMessages);
+router.route("/:channelid/search").get(MessagesController.apiSearchMessages);
 
+router.route("/:channelid").get(MessagesController.apiGetMessages);
 router
   .route("/")
   .post(MessagesController.apiPostMessage)

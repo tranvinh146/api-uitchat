@@ -15,7 +15,7 @@ export default class MessagesDAO {
     }
 
     static async getMessagesByChannelId(channelId) {
-        let cursor;
+        let cursor; 
         try {
             cursor = await messages.find({ channelId: channelId});
             const messagesList = await cursor.toArray();
@@ -64,4 +64,28 @@ export default class MessagesDAO {
             console.error(`unable to delete user: ${e}`);
         }
     }
+
+    static async searchMessages(channelId, userId, searchText) {
+        let cursor;
+        let query;
+        try {
+
+            if (searchText != ""){
+                await messages.createIndex({ content: "text"});
+                query = {channelId: channelId, $text: {$search: searchText}};
+            }
+            else {
+                query = {channelId: channelId, userId: userId};
+            }
+
+            cursor = await messages.find(query).sort({createdAt: -1});
+            const totalNumMessages = await messages.countDocuments({$text: {$search: searchText}});
+            const messagesList = await cursor.toArray();
+            return {totalNumMessages, messagesList};
+          } catch (error) {
+            console.error(`something went wrong in getMessagesByChannelId: ${e}`);
+            return {totalNumMessages: 0, messagesList:[]};
+          }
+    }
+
 }
