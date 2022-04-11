@@ -5,7 +5,7 @@ const ObjectId = mongodb.ObjectId;
 export default class MessagesController {
   static async apiGetMessages(req, res, next) {
     try {
-      let channelId = req.params.id || {};
+      let channelId = req.params.channelid || {};
       const messagesList = await MessagesDAO.getMessagesByChannelId(channelId);
       if (!messagesList) {
         res.status(404).json({ error: "not found" });
@@ -33,8 +33,9 @@ export default class MessagesController {
         createdAt,
         updatedAt
       );
-      res.json({ status: "success" });
+      res.json({ status: "Created success message" });
     } catch (e) {
+      console.log(`Error when Create message`);
       res.status(500).json({ error: e.message });
     }
   }
@@ -60,8 +61,9 @@ export default class MessagesController {
       //     throw new Error("unable to update message. User may not be original poster");
 
       // }
-      res.json({ status: "success " });
+      res.json({ status: "Edited success message" });
     } catch (e) {
+      console.log(`Error when edite message`);
       res.status(500).json({ error: e.message });
     }
   }
@@ -71,9 +73,31 @@ export default class MessagesController {
       const messageId = req.body.messageId;
       const userId = req.body.userId;
       const result = await MessagesDAO.deleteMessage(messageId, userId);
-      res.json({ status: "success" });
+      res.json({ status: "Deleted success message" });
     } catch (e) {
+      console.log(`Error when Delete message`);
       res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiSearchMessages(req, res, next) {
+    try {
+      let channelId = req.params.channelid || {};
+      let searchText = req.query.searchtext || "";
+      let userId = req.query.userid || "";
+      const {totalNumMessages, messagesList} = await MessagesDAO.searchMessages(channelId, userId, searchText);
+      if (!messagesList) {
+        res.status(404).json({ error: "not found" });
+        return;
+      }
+      let response = {
+        total_results: totalNumMessages, 
+        messagesList: messagesList
+      };
+      res.json(response);
+    } catch (e) {
+      console.log(`Error when Search message`);
+      res.status(500).json({ error: e });
     }
   }
 }
