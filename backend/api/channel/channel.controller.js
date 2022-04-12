@@ -33,7 +33,7 @@ export default class ChannelsController {
 
     static async apiDeleteUsersByChannelId(req, res, next) {
         try {
-            const usesrList = req.body.usersList;
+            const usersList = req.body.usersList;
             const channelId = req.body.channelId;
 
             const channelResponse = await ChannelsDAO.deleteUsersByChannelId(
