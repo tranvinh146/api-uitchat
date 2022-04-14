@@ -1,27 +1,21 @@
 import express from "express";
-import UsersController from "./user.controller.js";
+// import UsersController from "./user.controller.js";
+import UserController from '../../controllers/UserController.js'
 import {
   verifyToken,
   verifyUserAuthorization,
   verifyAdmin,
-} from "../../middleware/verifyToken.js";
+} from "../../middleware/jwt.js";
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(UsersController.apiGetUsers)
-  .post(UsersController.apiPostUser)
-  .patch(UsersController.apiPatchUser)
-  .delete(UsersController.apiDeleteUser);
+  .get(verifyToken, UserController.getAll)
+  .post(UserController.add)
+  .patch(verifyToken, verifyUserAuthorization, UserController.update)
+  .delete(verifyToken, verifyAdmin, UserController.delete);
 
-router
-  .route("/users")
-  .get(verifyToken, UsersController.apiGetUsers)
-  .post(UsersController.apiPostUser)
-  .patch(verifyToken, verifyUserAuthorization, UsersController.apiPatchUser)
-  .delete(verifyToken, verifyAdmin, UsersController.apiDeleteUser);
-
-router.route("/users/:id").get(verifyToken, UsersController.getById);
+router.route("/:id").get(verifyToken, UserController.getById);
 
 export default router;

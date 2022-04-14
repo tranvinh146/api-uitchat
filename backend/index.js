@@ -5,27 +5,29 @@ import UsersDAO from "./dao/usersDAO.js";
 import ServersDAO from "./dao/serversDAO.js";
 import ChannelsDAO from "./dao/channelsDAO.js";
 import MessagesDAO from "./dao/messagesDAO.js";
+import mongoose from 'mongoose';
 
 async function main() {
   dotenv.config();
 
-  const client = new mongodb.MongoClient(process.env.UITCHAT_DB_URI);
+  // const client = new mongodb.MongoClient(process.env.UITCHAT_DB_URI);
+  await mongoose.connect(process.env.UITCHAT_DB_URI);
 
   const port = process.env.PORT || 8000;
 
-  try {
-    await client.connect();
-    await UsersDAO.injectDB(client);
-    await ServersDAO.injectDB(client);
-    await ChannelsDAO.injectDB(client);
-    await MessagesDAO.injectDB(client);
+  // try {
+  //   await client.connect();
+  //   await UsersDAO.injectDB(client);
+  //   await ServersDAO.injectDB(client);
+  //   await ChannelsDAO.injectDB(client);
+  //   await MessagesDAO.injectDB(client);
     app.listen(port, () => {
       console.log("Server is running on port", port);
     });
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
+  // } catch (error) {
+  //   console.error(error);
+  //   process.exit(1);
+  // }
 }
 
 main().catch(console.error);
