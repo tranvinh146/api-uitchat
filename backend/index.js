@@ -12,7 +12,7 @@ async function main() {
 
   // const client = new mongodb.MongoClient(process.env.UITCHAT_DB_URI);
 
-  // const port = process.env.PORT || 8000;
+   const port = process.env.PORT || 8000;
 
   // try {
   //   await client.connect();
