@@ -1,6 +1,7 @@
 import app from "./server.js";
 import connectdb from "./config/mongo.js";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 // import mongodb from "mongodb";
 // import UsersDAO from "./dao/usersDAO.js";
 // import ServersDAO from "./dao/serversDAO.js";

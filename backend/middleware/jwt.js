@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
-import UsersDAO from '../dao/usersDAO.js';
 
 export async function verifyToken (req, res, next) {
     try {
         const token = req.headers['authorization'].replace('Bearer ', '');
-        const isVerified = await jwt.verify(token, process.env.JWT_ACCESS_KEY);
-        if (isVerified) {
+        const decoded = await jwt.verify(token, process.env.JWT_ACCESS_KEY);
+        if (decoded) {
+            req.userId = decoded.userId;
             next();
         }
     }
