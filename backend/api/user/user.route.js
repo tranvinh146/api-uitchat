@@ -3,17 +3,17 @@ import express from "express";
 import UserController from "../../controllers/UserController.js";
 import {
   verifyToken,
-  verifyUserAuthorization,
   verifyAdmin,
 } from "../../middleware/jwt.js";
+import User from "../../models/User.js";
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(verifyToken, UserController.getAll)
+  .get(UserController.getAll)
   .post(UserController.add)
-  .patch(verifyToken, verifyUserAuthorization, UserController.update)
+  .patch(verifyToken, UserController.update)
   .delete(verifyToken, verifyAdmin, UserController.delete);
 
 router.route("/:id").get(verifyToken, UserController.getById);

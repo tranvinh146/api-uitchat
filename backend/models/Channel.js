@@ -1,4 +1,4 @@
-import mongoose from "moongoose";
+import mongoose from "mongoose";
 
 const channelSchema = new mongoose.Schema({
     severId: {
@@ -28,8 +28,8 @@ const channelSchema = new mongoose.Schema({
 
 channelSchema.statics.getUsersByChannelId = await function (channelId) {
     try {
-        let cursor = await channels.find({ _id: ObjectId(channelId) });
-        let object = await cursor.toArray();
+        // let cursor = await channels.find({ _id: ObjectId(channelId) });
+        // let object = await cursor.toArray();
         return object[0].usersList;
     } catch (e) {
         console.error(`something went wrong in getUsersByChannelId: ${e}`);
@@ -39,10 +39,10 @@ channelSchema.statics.getUsersByChannelId = await function (channelId) {
 
 channelSchema.statics.deleteUsersByChannelId = await function (channelId, usersList) {
     try {
-        const deleteResponse = await channels.updateOne(
-            { _id: ObjectId(channelId) },
-            { $pull: { usersList: { $in: usersList } } });
-        return deleteResponse;
+        // const deleteResponse = await channels.updateOne(
+        //     { _id: ObjectId(channelId) },
+        //     { $pull: { usersList: { $in: usersList } } });
+        // return deleteResponse;
     } catch (e) {
         console.error(`unable to delete users: ${e}`);
         return { error: e };
@@ -51,11 +51,11 @@ channelSchema.statics.deleteUsersByChannelId = await function (channelId, usersL
 
 channelSchema.statics.addUsersByChannelId = await function (channelId, usersList, updatedAt) {
     try {
-        const updateResponse = await channels.updateOne(
-            { _id: ObjectId(channelId) },
-            { $addToSet: { usersList: { $each: usersList } } },
-            { $set: { updatedAt: updatedAt } }
-        );
+        // const updateResponse = await channels.updateOne(
+        //     { _id: ObjectId(channelId) },
+        //     { $addToSet: { usersList: { $each: usersList } } },
+        //     { $set: { updatedAt: updatedAt } }
+        // );
         return updateResponse;
     } catch (e) {
         console.error(`something went wront in updateUsersByChannelId:${e}`);
@@ -65,10 +65,10 @@ channelSchema.statics.addUsersByChannelId = await function (channelId, usersList
 
 channelSchema.statics.deleteChannel = await function (channelId) {
     try {
-        const deleteResponse = await channels.deleteOne({
-            _id: ObjectId(channelId),
-        });
-        return deleteResponse;
+        // const deleteResponse = await channels.deleteOne({
+        //     _id: ObjectId(channelId),
+        // });
+        // return deleteResponse;
     } catch (e) {
         console.error(`unable to delete channel: ${e}`);
         return { error: e };
@@ -77,14 +77,15 @@ channelSchema.statics.deleteChannel = await function (channelId) {
 
 channelSchema.statics.updateChannel = await function (channelId, channelName, updatedAt) {
     try {
-        const updateResponse = await channels.updateOne(
-            { _id: ObjectId(channelId) },
-            { $set: { channelName: channelName, updatedAt: updatedAt } }
-        );
+        // const updateResponse = await channels.updateOne(
+        //     { _id: ObjectId(channelId) },
+        //     { $set: { channelName: channelName, updatedAt: updatedAt } }
+        // );
         return updateResponse;
     } catch (e) {
         console.error(e.message);
     }
 }
 
-module.exports = mongoose.model("Channel", channelSchema)
+// module.exports = mongoose.model("Channel", channelSchema)
+export default mongoose.model("Channel", channelSchema)

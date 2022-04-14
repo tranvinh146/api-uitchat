@@ -16,7 +16,7 @@ export default class UserController {
             });
         }
     }
-
+    
     // [GET] /users/:id
     static async getById(req, res, next) {
         try {
@@ -58,8 +58,9 @@ export default class UserController {
     // [PATCH] /users
     static async update(req, res, next) {
         try {
-            const { userId, ...newValues } = req.body;
-            const response = await User.updateOne({ _id: userId }, newValues);
+            const userId = req.user_id;
+            const newValues = req.body;
+            const response = await User.updateOne({ _id: user_id }, newValues);
             res.status(200).json({ status: "success" });
         } catch (err) {
             console.error(`Unable to update user, ${err}`);
@@ -70,8 +71,8 @@ export default class UserController {
     // [DELETE] /users
     static async delete(req, res, next) {
         try {
-            const { userId } = req.body;
-            const response = await User.deleteOne({ _id: userId });
+            const { user_id } = req.body;
+            const response = await User.findByIdAndDelete(user_id);
             res.status(200).json({ status: "success" });
         } catch (err) {
             console.error(`Unable to update user, ${err}`);

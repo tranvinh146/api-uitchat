@@ -1,13 +1,14 @@
 import UsersDAO from "../../dao/usersDAO.js";
+import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 export default class AuthController {
   static async login(req, res, next) {
     try {
       const { username, password } = req.body;
 
-      const user = await UsersDAO.getUserByUsername(username);
+      const user = await User.findByCredential(username);
       if (!user) {
         res.status(404).json("Incorrect username");
         return;
@@ -25,7 +26,7 @@ export default class AuthController {
           process.env.JWT_ACCESS_KEY,
           { expiresIn: "7d" }
         );
-        res.status(200).json({ accessToken: accessToken, userId: user._id });
+        res.status(200).json({ access_token: accessToken, user_id: user._id });
       }
     } catch (err) {
       res.status(500).json(err);

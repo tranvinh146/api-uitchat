@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import ChannelsDAO from "../../dao/channelsDAO.js";
-import Channel from "../../models/Channel";
+import Channel from "../../models/Channel.js";
 
 import mongoose from "mongoose";
 
