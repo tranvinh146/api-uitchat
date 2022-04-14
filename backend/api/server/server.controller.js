@@ -1,10 +1,20 @@
 import ServersDAO from "../../dao/serversDAO.js";
+import ServerModel from "../../models/serverModel.js";
 
 export default class ServersController {
-  static async apiGetServers(req, res, next) {
-    const userId = req.body.user_id;
-    const serversList = await ServersDAO.getServers(userId);
-    res.json(serversList);
+  static async apiGetServersByUserId(req, res, next) {
+    try {
+      const userId = req.query.userid;
+      const serversPerPage = req.query.serverPerPage
+        ? parseInt(req.query.serverPerPage)
+        : 5;
+      const page = req.query.page ? parseInt(req.query.page) : 0;
+      const serversList = await ServerModel.getServersByUserId(userId);
+      console.log("pass");
+      res.status(200).json(serversList);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
 
   static async apiGetServerById(req, res, next) {
@@ -25,19 +35,17 @@ export default class ServersController {
     try {
       const userId = req.body.user_id;
       const name = req.body.name;
-      const role = "";
-      const date = new Date();
-      const ServerResponse = await ServersDAO.addServer(
-        userId,
+      const avatar = req.body.avatar;
+      const ServerResponse = await ServerModel.createServer(
         name,
-        role,
-        date
+        avatar,
+        userId
       );
       let { error } = ServerResponse;
       if (error) {
         return res.json({ error });
       }
-      res.json({ status: "success" });
+      res.json({ status: "success", new_server: ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

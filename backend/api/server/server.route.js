@@ -7,7 +7,7 @@ router.route("/:id").get(ServersController.apiGetServerById);
 
 router
   .route("/")
-  .get(ServersController.apiGetServers)
+  .get(ServersController.apiGetServersByUserId)
   .post(ServersController.apiPostServer)
   .put(ServersController.apiUpdateServer)
   .delete(ServersController.apiDeleteServer);
