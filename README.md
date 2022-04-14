@@ -1,25 +1,59 @@
-## API Reference
 
-#### Get all items
+# API Reference
+
+A brief description of what this project does and who it's for
+
+
+## USER
+
+#### Get all users
 
 ```http
-  GET /api/items
+  GET /api/v1/uitchat/users
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-
-#### Get item
+#### Get user by id
 
 ```http
-  GET /api/items/${id}
+  GET /api/v1/uitchat/users/:id
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
+| `id`      | `string` | **Required** |
 
-#### add(num1, num2)
+#### Add a user
 
-Takes two numbers and returns the sum.
+```http
+  POST /api/v1/uitchat/users
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `username` | `string` | **Required** |
+| `password` | `string` | **Required** |
+| `name` | `string` | **Required** |
+
+#### Update a user
+
+```http
+  PATCH /api/v1/uitchat/users
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `userId` | `string` | **Required** |
+| `username` | `string` | Optional |
+| `password` | `string` | Optional |
+| `name` | `string` | Optional |
+
+#### Delete a user
+
+```http
+  DELETE /api/v1/uitchat/users
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `userId` | `string` | **Required** |
+
