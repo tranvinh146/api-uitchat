@@ -1,5 +1,8 @@
 import { ObjectId } from "mongodb";
 import ChannelsDAO from "../../dao/channelsDAO.js";
+import Channel from "../../models/Channel";
+
+import mongoose from "mongoose";
 
 export default class ChannelsController {
     // static async apiGetChannelsByServerId(req, res, next) {
