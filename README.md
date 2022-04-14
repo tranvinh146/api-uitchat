@@ -20,7 +20,7 @@ A brief description of what this project does and who it's for
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required** |
+| `id`      | `string` | Required |
 
 #### Add a user
 
@@ -30,9 +30,9 @@ A brief description of what this project does and who it's for
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `username` | `string` | **Required** |
-| `password` | `string` | **Required** |
-| `name` | `string` | **Required** |
+| `username` | `string` | Required |
+| `password` | `string` | Required |
+| `name` | `string` | Required |
 
 #### Update a user
 
@@ -42,7 +42,7 @@ A brief description of what this project does and who it's for
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `userId` | `string` | **Required** |
+| `userId` | `string` | Required |
 | `username` | `string` | Optional |
 | `password` | `string` | Optional |
 | `name` | `string` | Optional |
@@ -55,5 +55,5 @@ A brief description of what this project does and who it's for
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `userId` | `string` | **Required** |
+| `userId` | `string` | Required |
 
