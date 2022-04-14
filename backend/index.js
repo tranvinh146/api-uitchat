@@ -1,4 +1,5 @@
 import app from "./server.js";
+import connectdb from "./config/mongo.js";
 import dotenv from "dotenv";
 // import mongodb from "mongodb";
 // import UsersDAO from "./dao/usersDAO.js";
@@ -11,7 +12,7 @@ async function main() {
 
   // const client = new mongodb.MongoClient(process.env.UITCHAT_DB_URI);
 
-  // const port = process.env.PORT || 8000;
+  const port = process.env.PORT || 8000;
 
   // try {
   //   await client.connect();
@@ -26,7 +27,8 @@ async function main() {
   //   console.error(error);
   //   process.exit(1);
   // }
-  await mongoose.connect(process.env.UITCHAT_DB_URI);
+
+  connectdb();
 
   app.listen(port, () => {
     console.log("Server is running on port", port);
