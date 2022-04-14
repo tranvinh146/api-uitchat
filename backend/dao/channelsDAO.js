@@ -38,19 +38,18 @@ export default class channelDAO {
         try {
             let cursor = await channels.find({ _id: ObjectId(channelId) });
             let object = await cursor.toArray();
-            let userList = object[0].userList;
-            return userList;
+            return object[0].usersList;
         } catch (e) {
             console.error(`something went wrong in getUsersByChannelId: ${e}`);
             throw e;
         }
     }
 
-    static async deleteUsersByChannelId(channelId, userList) {
+    static async deleteUsersByChannelId(channelId, usersList) {
         try {
-            const deleteResponse = await channels.update(
+            const deleteResponse = await channels.updateOne(
                 { _id: ObjectId(channelId) },
-                { $pull: { 'userList': { $in: userList } } });
+                { $pull: { usersList: { $in: usersList } } });
             return deleteResponse;
         } catch (e) {
             console.error(`unable to delete users: ${e}`);
@@ -58,11 +57,11 @@ export default class channelDAO {
         }
     }
 
-    static async addUsersByChannelId(channelId, userList, updatedAt) {
+    static async addUsersByChannelId(channelId, usersList, updatedAt) {
         try {
             const updateResponse = await channels.updateOne(
                 { _id: ObjectId(channelId) },
-                { $push: { userList: userList } },
+                { $addToSet: { usersList: { $each: usersList } } },
                 { $set: { updatedAt: updatedAt } }
             );
             return updateResponse;
@@ -72,30 +71,30 @@ export default class channelDAO {
         }
     }
 
-    static async getMessagesByChannelId(channelId) {
-        try {
-            let cursor = await channels.aggregate([
-                {
-                    $match: { _id: new ObjectId(channelId) }
-                },
-                {
-                    $lookup: { from: 'messages', localField: '_id', foreignField: 'channelId', as: 'messages' }
-                }
-            ]).next();
-            // let object = cursor.toArray();
-            return cursor;
+    // static async getMessagesByChannelId(channelId) {
+    //     try {
+    //         let cursor = await channels.aggregate([
+    //             {
+    //                 $match: { _id: new ObjectId(channelId) }
+    //             },
+    //             {
+    //                 $lookup: { from: 'messages', localField: '_id', foreignField: 'channelId', as: 'messages' }
+    //             }
+    //         ]).next();
+    //         // let object = cursor.toArray();
+    //         return cursor;
 
-        } catch (e) {
-            console.error(`something went wront in getMessagesByChannelId:${e}`);
-            throw e;
-        }
-    }
+    //     } catch (e) {
+    //         console.error(`something went wront in getMessagesByChannelId:${e}`);
+    //         throw e;
+    //     }
+    // }
 
     static async addChannel(
         serverId,
         channelType,
         channelName,
-        userList,
+        usersList,
         createdAt,
         updatedAt
     ) {
@@ -104,7 +103,7 @@ export default class channelDAO {
                 serverId: serverId,
                 channelType: channelType,
                 channelName: channelName,
-                userList: userList,
+                usersList: usersList,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
             };

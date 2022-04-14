@@ -7,7 +7,7 @@ import message from "./message/message.route.js";
 
 const router = express.Router();
 
-router.use("/server", server);
+router.use("/servers", server);
 
 router.use("/channels", channel);
 

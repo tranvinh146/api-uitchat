@@ -1,5 +1,8 @@
 import { ObjectId } from "mongodb";
 import ChannelsDAO from "../../dao/channelsDAO.js";
+import Channel from "../../models/Channel";
+
+import mongoose from "mongoose";
 
 export default class ChannelsController {
     // static async apiGetChannelsByServerId(req, res, next) {
@@ -33,7 +36,7 @@ export default class ChannelsController {
 
     static async apiDeleteUsersByChannelId(req, res, next) {
         try {
-            const usesrList = req.body.usersList;
+            const usersList = req.body.usersList;
             const channelId = req.body.channelId;
 
             const channelResponse = await ChannelsDAO.deleteUsersByChannelId(
