@@ -4,7 +4,7 @@ import ServerModel from "../../models/serverModel.js";
 export default class ServersController {
   static async apiGetServersByUserId(req, res, next) {
     try {
-      const userId = req.query.userid;
+      const userId = req.userId;
       const serversPerPage = req.query.serverPerPage
         ? parseInt(req.query.serverPerPage)
         : 5;

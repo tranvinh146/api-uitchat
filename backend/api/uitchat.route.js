@@ -4,10 +4,12 @@ import channel from "./channel/channel.route.js";
 import auth from "./auth/auth.route.js";
 import user from "./user/user.route.js";
 import message from "./message/message.route.js";
+// import midddlewares
+import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 
-router.use("/servers", server);
+router.use("/servers", verifyToken, server);
 
 router.use("/channels", channel);
 
