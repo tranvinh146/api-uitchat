@@ -49,23 +49,62 @@ serverSchema.statics.createServer = async function (name, avatar, userId) {
 serverSchema.statics.updateServer = async function (
   serverId,
   userId,
-  name,
-  avatar
+  ...updateValue
 ) {
   try {
-    const updatedServer = this.updateOne(
+    const updatedServer = await this.updateOne(
       {
         _id: serverId,
+        adminIds: userId,
       },
-      { name, avatar }
+      ...updateValue
     );
+    if (updatedServer.matchedCount === 0) {
+      return { error: "User may not have permisson" };
+    }
     return updatedServer;
   } catch (error) {
-    console.error(`something went wrong in createServer: ${error}`);
+    console.error(`something went wrong in createServer: ${error.message}`);
     throw error;
   }
 };
 
-serverSchema.statics.deleteServer = async function (serverId, userId) {};
+serverSchema.statics.deleteServer = async function (serverId, userId) {
+  try {
+    const deletedServer = await this.deleteOne({
+      _id: serverId,
+      adminIds: userId,
+    });
+    console.log(deletedServer);
+    if (deletedServer.deletedCount === 0) {
+      return { error: "User may not have permisson" };
+    }
+    return deletedServer;
+  } catch (error) {
+    console.error(`something went wrong in deleteServer: ${error.message}`);
+    throw error;
+  }
+};
+
+serverSchema.statics.addUsers = async function (serverId, adminId, userIds) {
+  try {
+    const addedUsers = await this.updateOne(
+      {
+        _id: serverId,
+        adminIds: adminId,
+      },
+      {
+        $push: { userIds: { $each: userIds } },
+      }
+    );
+    if (addedUsers.matchedCount === 0) {
+      return { error: "User may not have permisson" };
+    }
+    return addedUsers;
+  } catch (error) {
+    console.error(`something went wrong in addUsers: ${error.message}`);
+    throw error;
+  }
+};
 
 export default mongoose.model("Server", serverSchema);

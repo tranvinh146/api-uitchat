@@ -10,7 +10,6 @@ export default class ServersController {
         : 5;
       const page = req.query.page ? parseInt(req.query.page) : 0;
       const serversList = await ServerModel.getServersByUserId(userId);
-      console.log("pass");
       res.status(200).json(serversList);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -20,10 +19,9 @@ export default class ServersController {
   static async apiGetServerById(req, res, next) {
     try {
       let id = req.params.id || {};
-      let server = await ServersDAO.getServerById(id);
+      let server = await ServerModel.getServerById(id);
       if (!server) {
-        res.status(404).json({ error: "not found" });
-        return;
+        return res.status(404).json({ error: "not found" });
       }
       res.json(server);
     } catch (error) {
@@ -33,9 +31,9 @@ export default class ServersController {
 
   static async apiPostServer(req, res, next) {
     try {
-      const userId = req.body.user_id;
       const name = req.body.name;
       const avatar = req.body.avatar;
+      const userId = req.body.user_id;
       const ServerResponse = await ServerModel.createServer(
         name,
         avatar,
@@ -53,26 +51,18 @@ export default class ServersController {
 
   static async apiUpdateServer(req, res, next) {
     try {
-      const serverId = req.body.server_id;
-      const userId = req.body.user_id;
-      const name = req.body.name;
-      const role = req.body.role;
-      const date = new Date();
-      const ServerResponse = await ServersDAO.updateServer(
-        serverId,
-        userId,
-        role,
-        name,
-        date
+      const { server_id, user_id, ...updateField } = req.body;
+
+      const ServerResponse = await ServerModel.updateServer(
+        server_id,
+        user_id,
+        updateField
       );
       let { error } = ServerResponse;
       if (error) {
-        res.json({ error });
+        return res.status(400).json({ error });
       }
-      if (ServerResponse.modifiedCount === 0) {
-        throw new Error("unable to update server. User may not have permisson");
-      }
-      res.json({ status: "success" });
+      res.json({ status: "success", server: ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
@@ -82,15 +72,10 @@ export default class ServersController {
     try {
       const serverId = req.body.server_id;
       const userId = req.body.user_id;
-      const ServerResponse = await ServersDAO.deleteSever(serverId, userId);
+      const ServerResponse = await ServerModel.deleteServer(serverId, userId);
       let { error } = ServerResponse;
       if (error) {
-        res.json({ error });
-      }
-      if (ServerResponse.deletedCount === 0) {
-        throw new Error(
-          "unable to delete server. User may not have permission."
-        );
+        return res.status(400).json({ error });
       }
       res.json({ status: "success" });
       // const role = req.body.role;
@@ -121,9 +106,29 @@ export default class ServersController {
       if (error) {
         res.status(400).json({ error });
       }
-      res.status(200).json({ status: "success", user_list: ServerResponse });
+      res.status(200).json({ status: "success", server: ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiAddUsers(req, res, next) {
+    try {
+      const serverId = req.params.id;
+      const adminId = req.body.user_id;
+      const userIds = req.body.user_list;
+      const ServerResponse = await ServerModel.addUsers(
+        serverId,
+        adminId,
+        userIds
+      );
+      let { error } = ServerResponse;
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      res.status(200).json({ status: "success", server: ServerResponse });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 }
