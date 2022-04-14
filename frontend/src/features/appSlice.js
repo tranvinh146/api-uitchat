@@ -4,7 +4,7 @@ export const appSlice = createSlice({
   name: 'app',
   initialState: {
     channelId: null,
-    channelName: null
+    channelName: []
   },
   reducers: {
     setChannelId: (state, action) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Sidebar from './component/sidebar/Sidebar';
 import Chat from './component/chat/Chat';
-import Navigation from './component/navigation/Navigation';
+import Server from './component/server/Server';
 import Login from './component/login/Login';
 
 import {auth} from './firebase'
@@ -41,7 +41,7 @@ function App() {
       {user ? (
         <>
           {console.log('com2')}
-          <Navigation/>
+          <Server/>
           <Sidebar />
           <Chat />
         </>

@@ -17,9 +17,8 @@
     max-width: 100px ;
     height: auto;
 }
-.nav__sever {
+.nav__servers {
     margin-bottom: 5px;
-    border-bottom: 2px solid #2D2F32;
 }
 .nav__footer {
     display: flex;
@@ -37,4 +36,17 @@
     border-radius: 10px;
     background-color: #3BA55D;
     color: white;
+}
+
+.hide {
+    display: none;
+}
+
+.nav__avt:hover + .hide {
+    display: block;
+    color: white;
+    background-color: black;
+    max-width: 300px;
+    position: absolute;
+    left: 5%;
 }
