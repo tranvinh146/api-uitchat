@@ -12,7 +12,6 @@ const router = express.Router();
 router
   .route("/")
   .get(UserController.getAll)
-  .post(UserController.add)
   .patch(verifyToken, UserController.update)
   .delete(verifyToken, verifyAdmin, UserController.delete);
 
