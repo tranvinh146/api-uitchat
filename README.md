@@ -8,13 +8,13 @@ A brief description of what this project does and who it's for
 
 #### Get all users
 
-```http
+```
   GET /api/v1/uitchat/users
 ```
 
 #### Get user by id
 
-```http
+```
   GET /api/v1/uitchat/users/:id
 ```
 
@@ -24,7 +24,7 @@ A brief description of what this project does and who it's for
 
 #### Add a user
 
-```http
+```
   POST /api/v1/uitchat/users
 ```
 
@@ -36,7 +36,7 @@ A brief description of what this project does and who it's for
 
 #### Update a user
 
-```http
+```
   PATCH /api/v1/uitchat/users
 ```
 
@@ -49,7 +49,7 @@ A brief description of what this project does and who it's for
 
 #### Delete a user
 
-```http
+```
   DELETE /api/v1/uitchat/users
 ```
 
