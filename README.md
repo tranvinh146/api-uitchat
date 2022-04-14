@@ -1,9 +1,4 @@
 
-# API Reference
-
-A brief description of what this project does and who it's for
-
-
 ## USER
 
 #### Get all users
@@ -11,13 +6,13 @@ A brief description of what this project does and who it's for
 ```
   GET /api/v1/uitchat/users
 ```
-
+`Requires access token.`
 #### Get user by id
 
 ```
   GET /api/v1/uitchat/users/:id
 ```
-
+`Requires access token.`
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `string` | Required |
@@ -39,7 +34,7 @@ A brief description of what this project does and who it's for
 ```
   PATCH /api/v1/uitchat/users
 ```
-
+`Requires access token.`
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `userId` | `string` | Required |
@@ -48,7 +43,7 @@ A brief description of what this project does and who it's for
 | `name` | `string` | Optional |
 
 #### Delete a user
-
+`Requires admin access token.`
 ```
   DELETE /api/v1/uitchat/users
 ```
