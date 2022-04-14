@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.route("/:channelid/search").get(MessagesController.apiSearchMessages);
 
-router.route("/:channelid").get(MessagesController.apiGetMessages);
+router.route("/:channelid").get(MessagesController.apiGetMessagesByChannelId);
+
 router
   .route("/")
   .post(MessagesController.apiPostMessage)
