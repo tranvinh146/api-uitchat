@@ -22,6 +22,6 @@ router
   .patch(verifyToken, verifyUserAuthorization, UsersController.apiPatchUser)
   .delete(verifyToken, verifyAdmin, UsersController.apiDeleteUser);
 
-router.route("/users/:id").get(verifyToken, UsersController.getById);
+// router.route("/users/:id").get(verifyToken, UsersController.getById);
 
 export default router;
