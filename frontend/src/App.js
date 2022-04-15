@@ -12,7 +12,6 @@ import {selectUser} from './features/userSlice'
 import {login, logout} from './features/userSlice'
 
 function App() {
-  
   const dispatch = useDispatch();
   const user = useSelector(selectUser)
   useEffect(() => {

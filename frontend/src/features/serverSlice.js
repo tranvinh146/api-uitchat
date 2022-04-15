@@ -10,6 +10,13 @@ export const fetchServerData = createAsyncThunk(
         return data
     }
 )
+export const fetchAddNewServer = createAsyncThunk(
+    'server'/'fetchAddNewServer',
+    async (newServer) => {
+        const {data} =await axios.post('http://localhost:8000/servers',newServer)
+        return data
+    }
+)
 const serverSlice = createSlice({
     name: "server",
     initialState: {
@@ -27,7 +34,11 @@ const serverSlice = createSlice({
         },
         [fetchServerData.rejected](state) {
             state.loading = HTTP_STATUS.REJECTED
-        }
+        },
+        [fetchAddNewServer.fulfilled](state, {payload}) {
+            state.loading = HTTP_STATUS.FULFILLED
+            state.data.push(payload)
+        },
     }
 })
 export const selectServer = (state) => state.server.data;
