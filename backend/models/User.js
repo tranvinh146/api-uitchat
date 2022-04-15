@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     avatar: String,
     status: String,
     serverIds: [mongoose.Types.ObjectId],
+    isAdmin: Boolean,
 }, { timestamps: true });
 
 userSchema.statics.findByCredential = async (username) => {

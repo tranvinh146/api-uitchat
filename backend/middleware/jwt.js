@@ -14,6 +14,10 @@ export async function verifyToken (req, res, next) {
     }
 }
 
+export async function verifyServerOwner(req, res, next) {
+
+}
+
 export async function verifyAdmin (req, res, next) {
     const token = req.headers['authorization'].replace('Bearer ', '');
     const { isAdmin } = jwt.decode(token);
