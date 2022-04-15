@@ -16,5 +16,6 @@ router
   .delete(verifyToken, verifyAdmin, UserController.delete);
 
 router.route("/:id").get(verifyToken, UserController.getById);
+router.route("/serverId/:id").get(UserController.getUsersByServerId);
 
 export default router;

@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
+import Server from '../models/serverModel.js'
 
 export default class UserController {
     // [GET] /users
@@ -12,6 +12,20 @@ export default class UserController {
             res.status(500).json({
                 error: `Unable to issue find command, ${err}`,
             });
+        }
+    }
+
+    // [GET] /users/serverId/:id
+    static async getUsersByServerId(req, res, next) {
+        try {
+            const server = await Server.findById(req.params.id);
+            const userIds = server.userIds;
+            const response = await User.find({ _id: { $in: userIds } });
+            console.log(response);
+            res.status(200).json(response);
+        }
+        catch (err) {
+            res.status(500).json({ error: `Unable to issue find command, ${err}` });
         }
     }
     
