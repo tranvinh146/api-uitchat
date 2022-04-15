@@ -12,6 +12,15 @@ A brief description of what this project does and who it's for
   GET /api/v1/uitchat/users
 ```
 
+#### Get users by server id
+
+```
+  GET /api/v1/uitchat/users/serverId/:id
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | Required |
+
 #### Get user by id
 
 ```
