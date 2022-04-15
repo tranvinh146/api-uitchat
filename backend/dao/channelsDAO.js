@@ -13,27 +13,6 @@ export default class channelDAO {
         }
     }
 
-    // static async getChannelsByServerId(serverId) {
-    //     try {
-    //         return await servers
-    //             .aggregate([
-    //                 { $match: { _id: ObjectId(serverId) } },
-    //                 {
-    //                     $lookup: {
-    //                         from: "channels",
-    //                         localField: "_id",
-    //                         foreignField: "channelId",
-    //                         as: "channels",
-    //                     },
-    //                 },
-    //             ])
-    //             .next();
-    //     } catch (e) {
-    //         console.error(`something went wrong in getChannelByServerId: ${e}`);
-    //         throw e;
-    //     }
-    // }
-
     static async getUsersByChannelId(channelId) {
         try {
             let cursor = await channels.find({ _id: ObjectId(channelId) });
@@ -70,25 +49,6 @@ export default class channelDAO {
             throw e;
         }
     }
-
-    // static async getMessagesByChannelId(channelId) {
-    //     try {
-    //         let cursor = await channels.aggregate([
-    //             {
-    //                 $match: { _id: new ObjectId(channelId) }
-    //             },
-    //             {
-    //                 $lookup: { from: 'messages', localField: '_id', foreignField: 'channelId', as: 'messages' }
-    //             }
-    //         ]).next();
-    //         // let object = cursor.toArray();
-    //         return cursor;
-
-    //     } catch (e) {
-    //         console.error(`something went wront in getMessagesByChannelId:${e}`);
-    //         throw e;
-    //     }
-    // }
 
     static async addChannel(
         serverId,
