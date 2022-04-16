@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import encrypt from 'mongoose-encryption'
+// import encrypt from 'mongoose-encryption'
 
 
 const Schema = mongoose.Schema;
@@ -14,24 +14,20 @@ const MessageSchema = new Schema({
     timestamps: true
 });
 
-// var encKey = process.env.ENCRYPT_ENCKEY;
-// var sigKey = process.env.ENCRYPT_SIGKEY;
+// var encKey = "rc+XAekzWChg+tLdzZrDM+sbxLuzyJsSOU7D/P2pzAI=";
+// var sigKey = "0F8d59lz5pGv9q2RqqfZRa+EQEETa22jLq8hFnyyZkWkRgqM50Ec57GhDcPxo+i3HYzs0fABtwJ3CWMuelZXiA==";
+// var secret = "kythuatphattrienungdungwebprojectIE213"
+// // var encKey = process.env.ENCRYPT_ENCKEY;
+// // var sigKey = process.env.ENCRYPT_SIGKEY;
 
 // MessageSchema.plugin(encrypt, { 
-//     encryptionKey: "rc+XAekzWChg+tLdzZrDM+sbxLuzyJsSOU7D/P2pzAI=", 
-//     signingKey: "0F8d59lz5pGv9q2RqqfZRa+EQEETa22jLq8hFnyyZkWkRgqM50Ec57GhDcPxo+i3HYzs0fABtwJ3CWMuelZXiA==", 
-//     encryptedFields: ['content'] ,
-//     collectionId: 'messages'
+//     secret: secret, 
+//     encryptedFields: ['content']
 // });
 
 MessageSchema.statics.getMessageById = async function (messageId) {
     try {
         const message = await this.find({_id: messageId});
-        const response = await this.find({_id: messageId});
-        // const message = response.decrypt(function(err) {
-        //     if (err) { return handleError(err); }
-        //     console.log(response);
-        //     ;});
         return message ? message[0]: null;
     } catch (e){
         console.error(`Something went wrong in getMessageById: ${e}`);
@@ -39,10 +35,9 @@ MessageSchema.statics.getMessageById = async function (messageId) {
     }
 }
 
-MessageSchema.statics.getMessagesByChannelId = async function (userId, channelId, messagesPerPage = 20) {
+MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messagesPerPage = 20) {
     try {
         const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
-
         //  const messagesList = await this.aggregate([
         //     {
         //         $match: { channelId: channelId}
@@ -62,7 +57,6 @@ MessageSchema.statics.getMessagesByChannelId = async function (userId, channelId
         throw e;
     }
 }
-
 
 MessageSchema.statics.addMessage = async function (userId, channelId, content) {
     try {

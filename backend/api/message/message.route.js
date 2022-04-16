@@ -8,8 +8,6 @@ router.route("/:channelId/search").get(verifyToken, MessagesController.apiSearch
 
 router.route("/:channelId").get(verifyToken, MessagesController.apiGetMessagesByChannelId);
 
-router.route("/:channelid").get(MessagesController.apiGetMessagesByChannelId);
-
 router
   .route("/")
   .post(verifyToken,MessagesController.apiPostMessage)

@@ -10,9 +10,7 @@ export default class MessagesController {
         try {
             const messagesPerPage = req.query.messagesPerPage ? parseInt(req.query.messagesPerPage) : 20;
             let channelId = req.params.channelId || {};
-            const userId = req.userId;
-            console.log(userId);
-            const {messagesList, totalNumMessages} = await Message.getMessagesByChannelId(userId, channelId, messagesPerPage);
+            const {messagesList, totalNumMessages} = await Message.getMessagesByChannelId(channelId, messagesPerPage);
             if (!messagesList) {
                 res.status(404).json({ error: "not found" });
                 return;
@@ -33,7 +31,7 @@ export default class MessagesController {
             const userId = req.userId;
             const channelId = req.body.channelId;
             const content = req.body.content;
-            const result = await Message.addMessage(channelId, content);
+            const result = await Message.addMessage(userId, channelId, content);
             res.status(201).json(result);
         } catch (e) {
             console.log(`Error when Create message`);
