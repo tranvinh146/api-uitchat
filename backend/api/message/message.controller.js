@@ -1,9 +1,11 @@
+
 import Message from "../../models/Message.js";
 
 import mongodb from "mongodb";
 const ObjectId = mongodb.ObjectId;
 
 export default class MessagesController {
+
     static async apiGetMessagesByChannelId(req, res, next) {
         try {
             const messagesPerPage = req.query.messagesPerPage ? parseInt(req.query.messagesPerPage) : 20;
@@ -24,6 +26,7 @@ export default class MessagesController {
             res.status(500).json({ error: e });
         }
     }
+
 
     static async apiPostMessage(req, res, next) {
         try {
@@ -105,3 +108,4 @@ export default class MessagesController {
       }
 
 }
+

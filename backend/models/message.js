@@ -1,17 +1,19 @@
 import mongoose from 'mongoose';
 import encrypt from 'mongoose-encryption'
 
+
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const MessageSchema = new Schema({
-    // userId: {type: String, required: true},
+    userId: {type: String, required: true},
     channelId: {type: String, required: true},
     content: {type: String, index: true, required: true},
 }, {
     _id: true,
     timestamps: true
 });
+
 // var encKey = process.env.ENCRYPT_ENCKEY;
 // var sigKey = process.env.ENCRYPT_SIGKEY;
 
@@ -39,7 +41,7 @@ MessageSchema.statics.getMessageById = async function (messageId) {
 
 MessageSchema.statics.getMessagesByChannelId = async function (userId, channelId, messagesPerPage = 20) {
     try {
-        const messagesList  =  this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
+        const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
 
         //  const messagesList = await this.aggregate([
         //     {
@@ -61,9 +63,11 @@ MessageSchema.statics.getMessagesByChannelId = async function (userId, channelId
     }
 }
 
-MessageSchema.statics.addMessage = async function (channelId, content) {
+
+MessageSchema.statics.addMessage = async function (userId, channelId, content) {
     try {
         this.create({
+            userId: userId,
             channelId: channelId,
             content:content
         }, function(err){

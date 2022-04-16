@@ -1,34 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     username: String,
     password: String,
     name: String,
-    // avatar: String,
+    avatar: String,
     status: String,
-    createAt: String,
+    serverIds: [mongoose.Types.ObjectId],
     isAdmin: Boolean,
-});
+  },
+  { timestamps: true }
+);
 
-userSchema.statics.findByCredentials = async (username, password) => {
-    try {
-        const salt = await bcrypt.genSalt(saltRounds);
-        const hashedPassword = await bcrypt.hash(password, salt);
+userSchema.statics.findByCredential = async (username) => {
+  try {
+    const user = await User.findOne({ username: username });
+    return user;
+  } catch (err) {
+    console.error(`Unable to find user, ${err}`);
+    return;
+  }
+};
 
-        const response = await User.findOne({
-            username: username,
-            password: hashedPassword,
-        });
-        res.status(200).json(response);
-    } catch (err) {
-        console.error(`Unable to find user, ${err}`);
-        res.status(500).json({
-            error: `Unable to find user, ${err}`,
-        });
-    }
-}
-
-const User = mongoose.model('User', userSchema);
-
+const User = mongoose.model("User", userSchema);
 
 export default User;
