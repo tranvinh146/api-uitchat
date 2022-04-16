@@ -1,25 +1,27 @@
 import ServersDAO from "../../dao/serversDAO.js";
-import ServerModel from "../../models/serverModel.js";
+import Server from "../../models/Server.js";
 
 export default class ServersController {
+  // [GET]
   static async apiGetServersByUserId(req, res, next) {
     try {
-      const userId = req.userId;
+      const userId = req.user_id;
       const serversPerPage = req.query.serverPerPage
         ? parseInt(req.query.serverPerPage)
         : 5;
       const page = req.query.page ? parseInt(req.query.page) : 0;
-      const serversList = await ServerModel.getServersByUserId(userId);
+      const serversList = await Server.getServersByUserId(userId);
       res.status(200).json(serversList);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
+  // [GET] /:id
   static async apiGetServerById(req, res, next) {
     try {
-      let id = req.params.id || {};
-      let server = await ServerModel.getServerById(id);
+      let id = req.params.id;
+      let server = await Server.getServerById(id);
       if (!server) {
         return res.status(404).json({ error: "not found" });
       }
@@ -29,16 +31,13 @@ export default class ServersController {
     }
   }
 
+  // [POST]
   static async apiPostServer(req, res, next) {
     try {
       const name = req.body.name;
       const avatar = req.body.avatar;
-      const userId = req.body.user_id;
-      const ServerResponse = await ServerModel.createServer(
-        name,
-        avatar,
-        userId
-      );
+      const userId = req.user_id;
+      const ServerResponse = await Server.createServer(name, avatar, userId);
       let { error } = ServerResponse;
       if (error) {
         return res.json({ error });
@@ -49,13 +48,14 @@ export default class ServersController {
     }
   }
 
+  // [PATCH]
   static async apiUpdateServer(req, res, next) {
     try {
-      const { server_id, user_id, ...updateField } = req.body;
+      const { server_id, ...updateField } = req.body;
 
-      const ServerResponse = await ServerModel.updateServer(
+      const ServerResponse = await Server.updateServer(
         server_id,
-        user_id,
+        req.user_id,
         updateField
       );
       let { error } = ServerResponse;
@@ -68,60 +68,46 @@ export default class ServersController {
     }
   }
 
+  // [DELETE]
   static async apiDeleteServer(req, res, next) {
     try {
       const serverId = req.body.server_id;
-      const userId = req.body.user_id;
-      const ServerResponse = await ServerModel.deleteServer(serverId, userId);
+      const userId = req.user_id;
+      const ServerResponse = await Server.deleteServer(serverId, userId);
       let { error } = ServerResponse;
       if (error) {
         return res.status(400).json({ error });
       }
       res.json({ status: "success" });
-      // const role = req.body.role;
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
   }
 
-  static async apiGetChannelsByServerId(req, res, next) {
-    try {
-      const serverId = req.body.server_id;
-      const ServerResponse = await ServersDAO.getChannels(serverId);
-      let { error } = ServerResponse;
-      if (error) {
-        res.status(400).json({ error });
-      }
-      res.status(200).json({ status: "success", channel_list: ServerResponse });
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  }
-
-  static async apiGetUsersByServerId(req, res, next) {
-    try {
-      const serverId = req.body.server_id;
-      const ServerResponse = await ServersDAO.getUsers(serverId);
-      let { error } = ServerResponse;
-      if (error) {
-        res.status(400).json({ error });
-      }
-      res.status(200).json({ status: "success", server: ServerResponse });
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  }
-
+  // [POST] /users
   static async apiAddUsers(req, res, next) {
     try {
-      const serverId = req.params.id;
+      const serverId = req.body.server_id;
       const adminId = req.body.user_id;
       const userIds = req.body.user_list;
-      const ServerResponse = await ServerModel.addUsers(
-        serverId,
-        adminId,
-        userIds
-      );
+      const ServerResponse = await Server.addUsers(serverId, adminId, userIds);
+      let { error } = ServerResponse;
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      res.status(200).json({ status: "success", server: ServerResponse });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  // [DELETE] /users
+  static async apiRemoveUsers(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const adminId = req.body.user_id;
+      const userIds = req.body.user_list;
+      const ServerResponse = await Server.addUsers(serverId, adminId, userIds);
       let { error } = ServerResponse;
       if (error) {
         return res.status(400).json({ error });
