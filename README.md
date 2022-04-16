@@ -9,13 +9,13 @@ All server's api **require** Authorization token.
 
 #### Get servers by user_id
 
-```http
+```
   GET /api/v1/uitchat/servers
 ```
 
 #### Create new server
 
-```http
+```
   POST /api/v1/uitchat/servers
 ```
 
@@ -26,7 +26,7 @@ All server's api **require** Authorization token.
 
 #### Update server information
 
-```http
+```
   PATCH /api/v1/uitchat/servers
 ```
 
@@ -38,7 +38,7 @@ All server's api **require** Authorization token.
 
 #### Delete server
 
-```http
+```
   DELETE /api/v1/uitchat/servers
 ```
 
@@ -48,7 +48,7 @@ All server's api **require** Authorization token.
 
 #### Get server by id
 
-```http
+```
   GET /api/v1/uitchat/servers/:id
 ```
 
@@ -58,7 +58,7 @@ All server's api **require** Authorization token.
 
 #### Add users into server
 
-```http
+```
   POST /api/v1/uitchat/servers/users
 ```
 
@@ -69,7 +69,7 @@ All server's api **require** Authorization token.
 
 #### Remove users in server
 
-```http
+```
   DELETE /api/v1/uitchat/servers/users
 ```
 
@@ -138,7 +138,7 @@ All server's api **require** Authorization token.
 
 #### Post Channel
 
-```http
+```
   POST /api/v1/uitchat/channels
 ```
 
@@ -152,7 +152,7 @@ All server's api **require** Authorization token.
 
 #### Update Channel
 
-```http
+```
   PUT /api/v1/uitchat/channels
 ```
 
@@ -163,7 +163,7 @@ All server's api **require** Authorization token.
 
 #### Delete channel
 
-```http
+```
   DELETE /api/v1/uitchat/channels
 ```
 
@@ -173,7 +173,7 @@ All server's api **require** Authorization token.
 
 #### Get Channel by Server Id
 
-```http
+```
   GET /api/v1/uitchat/channels/:serverId
 ```
 
@@ -183,7 +183,7 @@ All server's api **require** Authorization token.
 
 #### Delete Users by Channel Id
 
-```http
+```
   DELETE /api/v1/uitchat/channels/users
 ```
 
@@ -194,7 +194,7 @@ All server's api **require** Authorization token.
 
 #### Update Users by Channel Id
 
-```http
+```
   PUT /api/v1/uitchat/channels/users
 ```
 
@@ -205,7 +205,7 @@ All server's api **require** Authorization token.
 
 #### Delete Leaders by Channel Id
 
-```http
+```
   DELETE /api/v1/uitchat/channels/leaders
 ```
 
