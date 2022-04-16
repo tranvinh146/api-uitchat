@@ -5,28 +5,21 @@ const userSchema = new mongoose.Schema(
     username: String,
     password: String,
     name: String,
-    // avatar: String,
+    avatar: String,
     status: String,
+    serverIds: [mongoose.Types.ObjectId],
     isAdmin: Boolean,
   },
   { timestamps: true }
 );
 
-userSchema.statics.findByCredentials = async (username, password) => {
+userSchema.statics.findByCredential = async (username) => {
   try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const response = await User.findOne({
-      username: username,
-      password: hashedPassword,
-    });
-    res.status(200).json(response);
+    const user = await User.findOne({ username: username });
+    return user;
   } catch (err) {
     console.error(`Unable to find user, ${err}`);
-    res.status(500).json({
-      error: `Unable to find user, ${err}`,
-    });
+    return;
   }
 };
 

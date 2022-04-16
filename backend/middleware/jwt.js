@@ -5,7 +5,7 @@ export async function verifyToken (req, res, next) {
         const token = req.headers['authorization'].replace('Bearer ', '');
         const decoded = await jwt.verify(token, process.env.JWT_ACCESS_KEY);
         if (decoded) {
-            req.userId = decoded.userId;
+            req.userId = decoded.user_id;
             next();
         }
     }
@@ -14,15 +14,8 @@ export async function verifyToken (req, res, next) {
     }
 }
 
-export async function verifyUserAuthorization (req, res, next) {
-    const token = req.headers['authorization'].replace('Bearer ', '');
-    const { userId } = jwt.decode(token);
-    if (userId == req.body.userId) {
-        next();
-    }
-    else {
-        res.status(403).json("You're not allowed to perform this action.");
-    }
+export async function verifyServerOwner(req, res, next) {
+
 }
 
 export async function verifyAdmin (req, res, next) {
