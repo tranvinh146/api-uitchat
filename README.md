@@ -58,3 +58,96 @@ A brief description of what this project does and who it's for
 | :-------- | :------- | :------------------------- |
 | `userId` | `string` | Required |
 
+
+
+## CHANNEL
+
+#### Post Channel
+
+```http
+  POST /api/v1/uitchat/channels
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `serverId` | `ObjectId` | **Required** |
+| `channelName` | `string` | **Required**|
+| `channelType` | `string` | **Required**|
+| `leadersList` | `[ObjectId]` | Optional|
+| `usersList` | `[ObjectId` | Optional|
+
+#### Update Channel
+
+```http
+  PUT /api/v1/uitchat/channels
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `channelId` | `ObjectId` | **Required**|
+| `channelName` | `string` | **Required**|
+
+#### Delete channel
+
+```http
+  DELETE /api/v1/uitchat/channels
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `channelId`| `ObjectId` | **Required**|
+
+#### Get Channel by Server Id
+
+```http
+  GET /api/v1/uitchat/channels/:serverId
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `serverId`| `string` | **Required**|
+
+#### Delete Users by Channel Id
+
+```http
+  DELETE /api/v1/uitchat/channels/users
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `channelId`| `ObjectId` | **Required**|
+| `usersList`| `[ObjectId]` | **Required**|
+
+#### Update Users by Channel Id
+
+```http
+  PUT /api/v1/uitchat/channels/users
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `channelId`| `ObjectId` | **Required**|
+| `usersList`| `[ObjectId]` | **Required**|
+
+#### Delete Leaders by Channel Id
+
+```http
+  DELETE /api/v1/uitchat/channels/leaders
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `channelId`| `ObjectId` | **Required**|
+| `leadersList`| `[ObjectId]` | **Required**|
+
+#### Update Leaders by Channel Id
+
+```http
+  PUT /api/v1/uitchat/channels/leaders
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `channelId`| `ObjectId` | **Required**|
+| `leadersList`| `[ObjectId]` | **Required**|
+
