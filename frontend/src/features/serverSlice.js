@@ -5,15 +5,14 @@ import axios from 'axios';
 export const fetchServerData = createAsyncThunk(
     'server/fetchServerData',
     async () => {
-        // const {data} = await axios.get(`${API_URL}/servers`)
-        const {data} =await axios.get('http://localhost:8000/servers')
+        const {data} = await axios.get(`${API_URL}/servers`)
         return data
     }
 )
 export const fetchAddNewServer = createAsyncThunk(
     'server'/'fetchAddNewServer',
     async (newServer) => {
-        const {data} =await axios.post('http://localhost:8000/servers',newServer)
+        const {data} = await axios.post(`${API_URL}/servers`,newServer)
         return data
     }
 )

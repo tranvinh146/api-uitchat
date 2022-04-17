@@ -1,40 +1,96 @@
-import React from 'react'
-import './Login.css'
-import {auth, provider} from '../../firebase'
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
-function Login() {
-    // const signIn = () => {
-    //     auth.signInWithPopup(provider).catch((error) => alert(error.message))
-    // }
-    const signIn = () => {
-        signInWithPopup(auth, provider)
-        .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            // ...
-        }).catch((error) => {
-            alert(error.message)
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-    });}
-    return (
-        <div className='login'>
-            <div className="login__logo">
-                <img src="https://logos-download.com/wp-content/uploads/2021/01/Discord_Logo-1.png" alt="" />
+import React, { useState, useEffect  } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { login } from "../../features/authSlice";
+import { clearMessage } from "../../features/messageSlice";
+const Login = (props) => {
+  const [loading, setLoading] = useState(false);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+  const initialValues = {
+    username: "",
+    password: "",
+  };
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required("This field is required!"),
+    password: Yup.string().required("This field is required!"),
+  });
+  const handleLogin = (formValue) => {
+    const { username, password } = formValue;
+    setLoading(true);
+    dispatch(login({ username, password }))
+      .unwrap()
+      .then(() => {
+        props.history.push("/profile");
+        window.location.reload();
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+  if (isLoggedIn) {
+    return <Redirect to="/profile" />;
+  }
+  return (
+    <div className="col-md-12 login-form">
+      <div className="card card-container">
+        <img
+          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          alt="profile-img"
+          className="profile-img-card"
+        />
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleLogin}
+        >
+          <Form>
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <Field name="username" type="text" className="form-control" />
+              <ErrorMessage
+                name="username"
+                component="div"
+                className="alert alert-danger"
+              />
             </div>
-            <button onClick={signIn}>SIGN IN</button>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <Field name="password" type="password" className="form-control" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="alert alert-danger"
+              />
+            </div>
+            <div className="form-group">
+              <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+                {loading && (
+                  <span className="spinner-border spinner-border-sm"></span>
+                )}
+                <span>Login</span>
+              </button>
+            </div>
+            <Link to={"/register"} className="nav-link">
+                Register
+            </Link>
+          </Form>
+        </Formik>
+      </div>
+      {message && (
+        <div className="form-group">
+          <div className="alert alert-danger" role="alert">
+            {message}
+          </div>
         </div>
-    )
-}
-
-export default Login
+      )}
+    </div>
+  );
+};
+export default Login;

@@ -1,56 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import './App.css';
-import Sidebar from './component/sidebar/Sidebar';
-import Chat from './component/chat/Chat';
-import Server from './component/server/Server';
 import Login from './component/login/Login';
-
-import {auth} from './firebase'
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-import {selectUser} from './features/userSlice'
-import {login, logout} from './features/userSlice'
+import Register from './component/register/Register';
+import Home from "./component/home/Home";
+import Profile from "./component/profile/Profile"
+import { logout } from "./features/authSlice";
 
 function App() {
   const dispatch = useDispatch();
-  const user = useSelector(selectUser)
-  useEffect(() => {
-    console.log('eff')
-    auth.onAuthStateChanged((authUser) => {
-      console.log("user is", authUser)
-      if(authUser) {
-        dispatch(
-          login({
-            uid: authUser.uid,
-            photo: authUser.photoURL,
-            email: authUser.email,
-            displayName: authUser.displayName
-          })
-        )
-      }
-      else {
-        dispatch(logout())
-      }
-    })
-  }, [dispatch])
+  const logOut = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+  const { user: currentUser } = useSelector((state) => state.auth);
+  console.log(currentUser)
   return (
     <div className="app">
-      
-      {console.log('com1')}
-      {user ? (
-        <>
-          {console.log('com2')}
-          <Server/>
-          <Sidebar />
-          <Chat />
-        </>
-      ): (
-        <>
-          {console.log('com3')}
-          <Login/>
-        </>
-      )}
-      {console.log('com4')}
+      <Router>
+       <div className="container mt-3">
+          <Switch>
+            <Route exact path={["/", "/home"]} component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/profile" component={Profile} />
+          </Switch>
+        </div>
+      </Router>
     </div>
   );
 }
