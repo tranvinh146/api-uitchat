@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+// import encrypt from 'mongoose-encryption'
+
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -12,9 +14,42 @@ const MessageSchema = new Schema({
     timestamps: true
 });
 
-MessageSchema.statics.findByChannelId = async function (channelId) {
+// var encKey = "rc+XAekzWChg+tLdzZrDM+sbxLuzyJsSOU7D/P2pzAI=";
+// var sigKey = "0F8d59lz5pGv9q2RqqfZRa+EQEETa22jLq8hFnyyZkWkRgqM50Ec57GhDcPxo+i3HYzs0fABtwJ3CWMuelZXiA==";
+// var secret = "kythuatphattrienungdungwebprojectIE213"
+// // var encKey = process.env.ENCRYPT_ENCKEY;
+// // var sigKey = process.env.ENCRYPT_SIGKEY;
+
+// MessageSchema.plugin(encrypt, { 
+//     secret: secret, 
+//     encryptedFields: ['content']
+// });
+
+MessageSchema.statics.getMessageById = async function (messageId) {
     try {
-        const messagesList = await this.find({channelId: channelId}).sort({createdAt: -1});
+        const message = await this.find({_id: messageId});
+        return message ? message[0]: null;
+    } catch (e){
+        console.error(`Something went wrong in getMessageById: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messagesPerPage = 20) {
+    try {
+        const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
+        //  const messagesList = await this.aggregate([
+        //     {
+        //         $match: { channelId: channelId}
+        //     },
+        //     {
+        //     $lookup:{
+        //         from: 'users', 
+        //         localField: userId,
+        //         foreignField: '_id',
+        //         as: 'user'
+        //     }
+        //     }]).sort({createdAt: -1});
         const totalNumMessages = await this.count({channelId: channelId});
         return {messagesList, totalNumMessages};
     } catch (e){
@@ -31,7 +66,7 @@ MessageSchema.statics.addMessage = async function (userId, channelId, content) {
             content:content
         }, function(err){
             if(err) {
-                handleError(err);
+                console.error(err);
             }   
         });
         return {status: "Created success message"};
@@ -45,7 +80,7 @@ MessageSchema.statics.updateMessage = async function (messageId,userId, content)
     try {
         this.updateOne({_id: messageId, userId: userId}, {content: content}, function (err){
             if(err) {
-                handleError(err);
+                console.error(err);
             }  
         })
         return {status: "Updated success message"};
@@ -59,7 +94,7 @@ MessageSchema.statics.deleteMessage = async function (messageId, userId) {
     try {
         this.deleteOne({_id: messageId, userId: userId}, function (err){
             if(err) {
-                handleError(err);
+                console.error(err);
             }  
         })
         return {status: "Deleted success message"};
@@ -77,6 +112,21 @@ MessageSchema.statics.searchMessage = async function (channelId, userId, searchT
         const messagesList = await this.find(query).sort({createdAt: -1});
         const totalNumMessages = await this.count(query);
         return {messagesList, totalNumMessages};
+    } catch (e) {
+        console.error(`Something went wrong in searchMessage: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.isOwnerMessage = async function (messageId, userId) {
+    try {
+        const result = await this.find({_id: messageId});
+        const message = result[0];
+        if (userId == message.userId)
+            return true;
+        else {
+            return false;
+        }
     } catch (e) {
         console.error(`Something went wrong in searchMessage: ${e}`);
         throw e;
