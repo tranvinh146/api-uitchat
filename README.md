@@ -1,13 +1,17 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Development
 =======
 # Backend Team
+=======
+# Frontend Team
+>>>>>>> frontend
 
-## The Graph demonstrate Git branchs
+## The Graph demonstrates Git branchs
 
 ```mermaid
 graph TD;
-    gitLocal-->backend;
+    gitLocal-->frontend;
     backend-->development;
     frontend-->development;
     development-->main;
@@ -23,10 +27,23 @@ git clone https://github.com/tranvinh146/project-IE213
 
 <br>
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+2. Switch to `frontend` branch
+
+```
+git checkout frontend
+=======
+>>>>>>> frontend
 2. Create and switch to `backend` branch
 
 ```
 git checkout -b backend
+<<<<<<< HEAD
+=======
+>>>>>>> d4788ef50474ec8d0c0ae617faaf56e1dcc9d52b
+>>>>>>> frontend
 ```
 
 <br>
@@ -57,15 +74,15 @@ git commit -m "YourName - Action file.js"
 
 <br>
 
-2. Switch to `backend` branch
+2. Switch to `frontend` branch
 
 ```
-git checkout backend
+git checkout frontend
 ```
 
 <br>
 
-3. Merge your code at `yourname` branch into `backend` branch
+3. Merge your code at `yourname` branch into `frontend` branch
 
 ```
 git merge yourname
@@ -73,18 +90,18 @@ git merge yourname
 
 <br>
 
-4. Pull code from `backend` branch
+4. Pull code from `frontend` branch
 
 ```
-git pull origin backend
+git pull origin frontend
 ```
 
 <br>
 
-5. Push your code to `backend` branch
+5. Push your code to `frontend` branch
 
 ```
-git push origin backend
+git push origin frontend
 ```
 
 <br>
