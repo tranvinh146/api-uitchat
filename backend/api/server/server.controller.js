@@ -1,17 +1,16 @@
-import ServersDAO from "../../dao/serversDAO.js";
 import Server from "../../models/Server.js";
 
 export default class ServersController {
   // [GET]
   static async apiGetServersByUserId(req, res, next) {
     try {
-      const userId = req.user_id;
+      const userId = req.userId;
       const serversPerPage = req.query.serverPerPage
         ? parseInt(req.query.serverPerPage)
         : 5;
       const page = req.query.page ? parseInt(req.query.page) : 0;
       const serversList = await Server.getServersByUserId(userId);
-      res.status(200).json(serversList);
+      res.status(200).json({ status: "success", serversList });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

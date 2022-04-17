@@ -7,17 +7,15 @@ import User from "../../models/User.js";
 const router = express.Router();
 
 router
-	.route("/")
-	.get(UserController.getAll)
-	.patch(verifyToken, UserController.update)
-	.delete(verifyToken, verifyAdmin, UserController.delete);
+  .route("/")
+  .get(UserController.getAll)
+  .patch(verifyToken, UserController.update)
+  .delete(verifyToken, verifyAdmin, UserController.delete);
+
+router.route("/").get(verifyToken, UserController.getById);
 
 router
-	.route("/:id")
-	.get(verifyToken, UserController.getById);
-
-router
-	.route("/serverId/:id")
-	.get(verifyToken, UserController.getUsersByServerId);
+  .route("/serverId/:id")
+  .get(verifyToken, UserController.getUsersByServerId);
 
 export default router;
