@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
+import Base64 from "../utils/Base64.js"
 // import encrypt from 'mongoose-encryption'
 
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
 
 const MessageSchema = new Schema({
-    userId: {type: String, required: true},
+    userId: {type: ObjectId, required: true},
     channelId: {type: String, required: true},
     content: {type: String, index: true, required: true},
 }, {
@@ -14,21 +15,12 @@ const MessageSchema = new Schema({
     timestamps: true
 });
 
-// var encKey = "rc+XAekzWChg+tLdzZrDM+sbxLuzyJsSOU7D/P2pzAI=";
-// var sigKey = "0F8d59lz5pGv9q2RqqfZRa+EQEETa22jLq8hFnyyZkWkRgqM50Ec57GhDcPxo+i3HYzs0fABtwJ3CWMuelZXiA==";
-// var secret = "kythuatphattrienungdungwebprojectIE213"
-// // var encKey = process.env.ENCRYPT_ENCKEY;
-// // var sigKey = process.env.ENCRYPT_SIGKEY;
-
-// MessageSchema.plugin(encrypt, { 
-//     secret: secret, 
-//     encryptedFields: ['content']
-// });
-
 MessageSchema.statics.getMessageById = async function (messageId) {
     try {
         const message = await this.find({_id: messageId});
-        return message ? message[0]: null;
+        message = message ? message[0]: null;
+        message.content = Base64.decode(message.content);
+        return message;
     } catch (e){
         console.error(`Something went wrong in getMessageById: ${e}`);
         throw e;
@@ -37,19 +29,20 @@ MessageSchema.statics.getMessageById = async function (messageId) {
 
 MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messagesPerPage = 20) {
     try {
-        const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
-        //  const messagesList = await this.aggregate([
-        //     {
-        //         $match: { channelId: channelId}
-        //     },
-        //     {
-        //     $lookup:{
-        //         from: 'users', 
-        //         localField: userId,
-        //         foreignField: '_id',
-        //         as: 'user'
-        //     }
-        //     }]).sort({createdAt: -1});
+        // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
+         const messagesList = await this.aggregate([
+            {
+                $match: { channelId: channelId}
+            },
+            {
+            $lookup:{
+                from: 'users', 
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user'
+            }
+            }]).sort({createdAt: -1});
+        messagesList.forEach((message) => message.content = Base64.decode(message.content));
         const totalNumMessages = await this.count({channelId: channelId});
         return {messagesList, totalNumMessages};
     } catch (e){
@@ -60,10 +53,11 @@ MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messa
 
 MessageSchema.statics.addMessage = async function (userId, channelId, content) {
     try {
+        const contentBase64 = Base64.encode(content);
         this.create({
             userId: userId,
             channelId: channelId,
-            content:content
+            content: contentBase64
         }, function(err){
             if(err) {
                 console.error(err);
@@ -78,7 +72,8 @@ MessageSchema.statics.addMessage = async function (userId, channelId, content) {
 
 MessageSchema.statics.updateMessage = async function (messageId,userId, content) {
     try {
-        this.updateOne({_id: messageId, userId: userId}, {content: content}, function (err){
+        const contentBase64 = Base64.encode(content);
+        this.updateOne({_id: messageId, userId: userId}, {content: contentBase64}, function (err){
             if(err) {
                 console.error(err);
             }  
@@ -110,6 +105,7 @@ MessageSchema.statics.searchMessage = async function (channelId, userId, searchT
         ? {channelId: channelId, $text: {$search: searchText}} 
         : {channelId: channelId, userId: userId};
         const messagesList = await this.find(query).sort({createdAt: -1});
+        messagesList.forEach((message) => message.content = Base64.decode(message.content));
         const totalNumMessages = await this.count(query);
         return {messagesList, totalNumMessages};
     } catch (e) {
@@ -122,7 +118,7 @@ MessageSchema.statics.isOwnerMessage = async function (messageId, userId) {
     try {
         const result = await this.find({_id: messageId});
         const message = result[0];
-        if (userId == message.userId)
+        if (userId == message.userId.toString())
             return true;
         else {
             return false;
