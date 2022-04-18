@@ -4,7 +4,7 @@ import user from "./user.js";
 import server from "./server.js";
 import channel from "./channel.js";
 import message from "./message.js";
-// import midddlewares
+// import middlewares
 import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
