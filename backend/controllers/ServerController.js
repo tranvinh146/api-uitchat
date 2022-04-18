@@ -35,7 +35,7 @@ export default class ServersController {
     try {
       const name = req.body.name;
       const avatar = req.body.avatar;
-      const userId = req.user_id;
+      const userId = req.userId;
       const ServerResponse = await Server.createServer(name, avatar, userId);
       let { error } = ServerResponse;
       if (error) {

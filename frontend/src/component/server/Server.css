@@ -42,7 +42,7 @@
     display: none;
 }
 
-.nav__avt:hover + .hide {
+.server__avt:hover + .hide {
     display: block;
     color: white;
     background-color: black;

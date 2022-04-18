@@ -12,7 +12,7 @@ import HeadsetIcon from '@mui/icons-material/Headset';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useSelector } from 'react-redux';
 
-function Sidebar() {
+function Sidebar(props) {
     const [channels, setChannels] = useState([])
     // useEffect(() => {
     //     db.collection('channels').onSnapshot(snapshot => (
@@ -25,6 +25,7 @@ function Sidebar() {
     const handleAddChannel = () => {
 
     }
+    const user = props.dataFromParent
   return (
     <div className='sidebar'>
         <div className="sidebar__top">
