@@ -76,6 +76,16 @@ channelSchema.statics.getChannelsByServerId = async function (serverId) {
     }
 }
 
+channelSchema.statics.getChannel = async function (channelId) {
+    try {
+        let channel = await this.find({ _id: ObjectId(channelId) });
+        return channel;
+    } catch (e) {
+        console.error(`something went wrong in getChannel: ${e}`);
+        throw e;
+    }
+}
+
 channelSchema.statics.deleteUsersByChannelId = async function (channelId, usersList) {
     try {
         const deleteResponse = await this.updateOne(

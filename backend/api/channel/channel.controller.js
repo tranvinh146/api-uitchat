@@ -73,13 +73,28 @@ export default class ChannelsController {
             const serverId = req.params.serverId || {};
             let channels = await ChannelModel.getChannelsByServerId(serverId);
             if (!channels) {
-                res.status(404).json({ error: "not found channels" });
+                res.status(404).json({ error: "not found server" });
                 return;
             }
 
             res.json(channels);
         } catch (e) {
             res.status(500).json({ error: e.message });
+        }
+    }
+
+    static async apiGetChannel(req, res, next) {
+        try {
+            const channelId = req.params.channelId || {};
+            let channel = await ChannelModel.getChannel(channelId);
+            if (!channel) {
+                res.status(400).json({ error: "not found channel" });
+                return;
+            }
+
+            res.json(channel);
+        } catch (e) {
+            res.status
         }
     }
 
