@@ -11,13 +11,15 @@ router
 
 router.route("/:serverId").get(ChannelsController.apiGetChannelsByServerId);
 
+router.route("/:serverId/:channelId").get(ChannelsController.apiGetChannel);
+
 router
-  .route("/users")
+  .route("/:serverId/:channelId/users")
   .delete(ChannelsController.apiDeleteUsersByChannelId)
   .put(ChannelsController.apiUpdateUsersByChannelId);
 
 router
-  .route("/leaders")
+  .route("/:serverId/:channelId/leaders")
   .delete(ChannelsController.apiDeleteLeadersByChannelId)
   .put(ChannelsController.apiUpdateLeadersByChannelId);
 

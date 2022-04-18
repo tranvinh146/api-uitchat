@@ -28,6 +28,7 @@ export default class ChannelsController {
     try {
       const channelId = req.body.channelId;
       const channelName = req.body.channelName;
+      const userId = req.user_id;
 
       const channelResponse = await Channel.updateChannel(
         channelId,
@@ -37,14 +38,14 @@ export default class ChannelsController {
       var { error } = channelResponse;
 
       if (error) {
-        res.status.json({ error });
+        res.status(400).json({ error });
       }
 
       if (channelResponse.modifiedCount === 0) {
         throw new Error("unable to update channel");
       }
 
-      res.json(channelResponse);
+      res.status(200).json(channelResponse);
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

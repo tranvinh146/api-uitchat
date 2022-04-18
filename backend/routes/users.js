@@ -3,11 +3,7 @@ import UserController from "../controllers/UserController.js";
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(UserController.getAll)
-  .patch(UserController.update)
-  .delete(verifyAdmin, UserController.delete);
+router.route("/").patch(UserController.update).delete(UserController.delete);
 
 router.route("/").get(UserController.getById);
 

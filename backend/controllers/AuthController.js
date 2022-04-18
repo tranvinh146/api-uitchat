@@ -1,13 +1,14 @@
-import User from "../models/User.ja";
-import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 import bcrypt from "bcrypt";
+// import middlewares encode
+import { encode } from "../middleware/jwt.js";
 
 export default class AuthController {
   static async login(req, res, next) {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
 
-      const user = await User.findByCredential(username);
+      const user = await User.findByCredential(email);
       if (!user) {
         res.status(404).json("Incorrect username");
         return;
@@ -15,17 +16,13 @@ export default class AuthController {
 
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
-        res.status(404).json("Incorrect password");
+        res.status(400).json("Incorrect password");
         return;
       }
 
       if (user && validPassword) {
-        const accessToken = jwt.sign(
-          { userId: user._id, isAdmin: user.isAdmin },
-          process.env.JWT_ACCESS_KEY,
-          { expiresIn: "7d" }
-        );
-        res.status(200).json({ access_token: accessToken, user_id: user._id });
+        const accessToken = encode(user);
+        res.status(200).json({ success: true, access_token: accessToken });
       }
     } catch (err) {
       res.status(500).json(err);
@@ -34,24 +31,29 @@ export default class AuthController {
 
   static async register(req, res, next) {
     try {
-      const { username, password, name, avatar } = req.body;
+      const { email, name, password, avatar } = req.body;
+
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = new User({
-        // email
-        username: username,
-        password: hashedPassword,
-        name: name,
-        avatar: avatar,
-        status: "offline",
-      });
+      const UserResponse = await Server.createUser(
+        email,
+        hashedPassword,
+        name,
+        avatar
+      );
+      let { error } = UserResponse;
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      const accessToken = encode(UserResponse);
 
-      const response = await user.save();
-      res.status(200).json({ status: "success" });
+      res.status(200).json({ access_token: accessToken });
     } catch (err) {
-      res.status(500).json({ error: `Unable to register user, ${err}` });
+      res
+        .status(500)
+        .json({ error: `Unable to register user, ${err.message}` });
     }
   }
 }
