@@ -1,5 +1,13 @@
 import jwt from "jsonwebtoken";
 
+export async function encode(user) {
+  return jwt.sign(
+    { user_id: user._id, name: user.name, avatar: user.avatar },
+    process.env.JWT_ACCESS_KEY,
+    { expiresIn: "7d" }
+  );
+}
+
 export async function verifyToken(req, res, next) {
   try {
     const token = req.headers["authorization"].replace("Bearer ", "");
