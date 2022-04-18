@@ -1,5 +1,5 @@
 import express from "express";
-import ChannelsController from "../controllers/ChannelController";
+import ChannelsController from "../controllers/ChannelController.js";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router
 
 router.route("/:serverId").get(ChannelsController.apiGetChannelsByServerId);
 
-router.route("/:serverId/:channelId").get(ChannelsController.apiGetChannel);
+// router.route("/:serverId/:channelId").get(ChannelsController.apiGetChannel);
 
 router
   .route("/:serverId/:channelId/users")
