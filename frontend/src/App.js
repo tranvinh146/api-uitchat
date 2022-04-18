@@ -14,7 +14,6 @@ function App() {
     dispatch(logout());
   }, [dispatch]);
   const { user: currentUser } = useSelector((state) => state.auth);
-  console.log(currentUser)
   return (
     <div className="app">
       <Router>

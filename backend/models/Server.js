@@ -41,12 +41,12 @@ serverSchema.statics.createServer = async function (name, avatar, userId) {
       avatar,
       adminIds: userId,
     });
-    this.updateOne(
-      { _id: newServer._id },
-      { channelIds: { $push: { channelIds: "6249a36ebc8788e6132e86c3" } } }
-    );
+    // this.updateOne(
+    //   { _id: newServer._id },
+    //   { channelIds: { $push: { channelIds: "6249a36ebc8788e6132e86c3" } } }
+    // );
     // Channel.createChannel(newServer._id);
-    newServer = this.getServerById(newServer._id);
+    // newServer = this.getServerById(newServer._id);
     return newServer;
   } catch (error) {
     console.error(`something went wrong in createServer: ${error}`);

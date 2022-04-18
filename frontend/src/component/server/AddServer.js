@@ -9,8 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Add from '@mui/icons-material/Add';
 import {fetchAddNewServer} from '../../features/serverSlice'  
 import { useDispatch } from 'react-redux';
-
-export default function AddServer() {
+export default function AddServer(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -25,7 +24,7 @@ export default function AddServer() {
   const handleCreate = () => {
     handleClose();
     if(value !== '') {
-      dispatch(fetchAddNewServer({id: 3, name: value}))
+      dispatch(fetchAddNewServer({name: value, avatar:"//ssl.gstatic.com/accounts/ui/avatar_2x.png"}))
     }
   }
   return (

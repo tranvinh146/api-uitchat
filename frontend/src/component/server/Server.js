@@ -8,11 +8,12 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import AddSerVer from './AddServer'
 
 function Server() {
+  const { user: currentUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(fetchServerData())
-  }, [dispatch])
   const servers = useSelector(selectServer)
+  useEffect(() => {
+    dispatch(fetchServerData({userId: currentUser.user_id}))
+  }, [dispatch])
   return (
     <div className='server'>
         <div className="server__home">
@@ -20,16 +21,17 @@ function Server() {
         </div>
         <div className="server__servers">
             {servers.map((server) => (
-              <div className='server__server'>
+              <div key={server._id} className='server__server'>
                 <Avatar className='server__avt' src=''/>
                 <div class="hide">{server.name}</div>
+                {console.log(server.name)}
               </div>
             ))}
         </div>
         <div className="server__footer">
             <ExploreIcon/>
             <DownloadIcon/>
-            <AddSerVer/>
+            <AddSerVer dataFromParent={currentUser}/>
         </div>
 
     </div>

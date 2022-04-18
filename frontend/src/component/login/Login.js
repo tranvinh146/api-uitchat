@@ -25,17 +25,18 @@ const Login = (props) => {
     const { username, password } = formValue;
     setLoading(true);
     dispatch(login({ username, password }))
-      .unwrap()
-      .then(() => {
-        props.history.push("/profile");
-        window.location.reload();
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    //console.log(".....")
+      // .unwrap()
+      // .then(() => {
+      //   props.history.push("/profile");
+      //   window.location.reload();
+      // })
+      // .catch(() => {
+      //   setLoading(false);
+      // });
   };
   if (isLoggedIn) {
-    return <Redirect to="/profile" />;
+    return <Redirect to="/home" />;
   }
   return (
     <div className="col-md-12 login-form">
