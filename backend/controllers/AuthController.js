@@ -21,7 +21,7 @@ export default class AuthController {
       }
 
       if (user && validPassword) {
-        const accessToken = encode(user);
+        const accessToken = await encode(user);
         res.status(200).json({ success: true, access_token: accessToken });
       }
     } catch (err) {

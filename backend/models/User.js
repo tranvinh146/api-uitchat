@@ -17,9 +17,9 @@ userSchema.statics.findByCredential = async (username) => {
   try {
     const user = await User.findOne({ username: username });
     return user;
-  } catch (err) {
-    console.error(`Unable to find user, ${err.message}`);
-    throw err;
+  } catch (error) {
+    console.error(`Unable to find user, ${error.message}`);
+    throw error;
   }
 };
 
@@ -37,10 +37,26 @@ userSchema.statics.createUser = async function (email, password, name, avatar) {
     });
     return newUser;
   } catch (error) {
-    console.error(`Unable to register: ${err.message}`);
-    throw err;
+    console.error(`Unable to register: ${error.message}`);
+    throw error;
   }
 };
+
+userSchema.statics.joinServer = async function (userId, serverId) {
+  try {
+    const user = await User.findById(userId);
+    if (user.serverIds.includes(serverId)) {
+      throw Error("Already joined this server.")
+    }
+    else {
+      user.serverIds.push(serverId);
+      user.save();
+    }
+  } catch (error) {
+    console.error(`Unable to join server, ${error.message}`);
+    throw error;
+  }
+}
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,22 +1,12 @@
 import User from "../models/User.js";
 import Server from "../models/Server.js";
+import mongodb from "mongodb";
+
+const { ObjectId } = mongodb;
 
 export default class UserController {
-  // [GET] /users
-  static async getAll(req, res, next) {
-    try {
-      const response = await User.find({});
-      res.status(200).json(response);
-    } catch (err) {
-      console.error(`Unable to issue find command, ${err}`);
-      res.status(500).json({
-        error: `Unable to issue find command, ${err}`,
-      });
-    }
-  }
-
-  // [GET] /users/serverId/:id
-  static async getUsersByServerId(req, res, next) {
+  // [GET] /users/server/:id
+  static async apiGetUsersByServerId(req, res, next) {
     try {
       const server = await Server.findById(req.params.id);
       const userIds = server.userIds;
@@ -29,7 +19,7 @@ export default class UserController {
   }
 
   // [GET] /users/:id
-  static async getById(req, res, next) {
+  static async apiGetById(req, res, next) {
     try {
       const { id } = req.userId;
       const response = await User.findById(id);
@@ -40,7 +30,7 @@ export default class UserController {
   }
 
   // [PATCH] /users
-  static async update(req, res, next) {
+  static async apiUpdate(req, res, next) {
     try {
       const userId = req.user_id;
       const newValues = req.body;
@@ -52,7 +42,7 @@ export default class UserController {
   }
 
   // [DELETE] /users
-  static async delete(req, res, next) {
+  static async apiDelete(req, res, next) {
     try {
       const { user_id } = req.body;
       const response = await User.findByIdAndDelete(user_id);
@@ -60,5 +50,18 @@ export default class UserController {
     } catch (err) {
       res.status(500).json({ error: `Unable to update user, ${err}` });
     }
+  }
+
+  // [POST] /:userid/join/:serverid
+  static async apiJoinServer(req, res, next) {
+      try {
+        const serverId = ObjectId(req.params.serverid);
+        const userId = req.userId;
+
+        const response = await User.joinServer(userId, serverId);
+        res.status(200).json({ status: "success" });
+      } catch (error) {
+        res.status(500).json({ error: `Unable to join server, ${error}` });
+      }
   }
 }
