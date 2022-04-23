@@ -80,16 +80,10 @@ All server's api **require** Authorization token.
 
 ## USER
 
-#### Get all users
-
-```
-  GET /api/v1/uitchat/users
-```
-
 #### Get users by server id
 
 ```
-  GET /api/v1/uitchat/users/serverId/:id
+  GET /api/v1/uitchat/users/server/:id
 ```
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
@@ -101,8 +95,6 @@ All server's api **require** Authorization token.
   GET /api/v1/uitchat/users/:id
 ```
 
-`Requires access token.`
-
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `string` | Required |
@@ -112,8 +104,6 @@ All server's api **require** Authorization token.
 ```
   PATCH /api/v1/uitchat/users
 ```
-
-`Requires access token.`
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
