@@ -10,22 +10,26 @@ export default class AuthController {
 
       const user = await User.findByCredential(email);
       if (!user) {
-        res.status(404).json("Incorrect username");
-        return;
+        return res.status(400).json("Incorrect username");
       }
 
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
-        res.status(400).json("Incorrect password");
-        return;
+        return res.status(400).json("Incorrect password");
       }
 
       if (user && validPassword) {
         const accessToken = encode(user);
-        res.status(200).json({ success: true, access_token: accessToken });
+        const userInfo = {
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar,
+        };
+
+        res.status(200).json({ access_token: accessToken, user: userInfo });
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json({ error: err.message });
     }
   }
 
@@ -37,7 +41,7 @@ export default class AuthController {
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const UserResponse = await Server.createUser(
+      const UserResponse = await User.createUser(
         email,
         hashedPassword,
         name,
@@ -48,12 +52,17 @@ export default class AuthController {
         return res.status(400).json({ error });
       }
       const accessToken = encode(UserResponse);
+      const userInfo = {
+        email: UserResponse.email,
+        name: UserResponse.name,
+        avatar: UserResponse.avatar,
+      };
 
-      res.status(200).json({ access_token: accessToken });
+      res.status(200).json({ access_token: accessToken, user: userInfo });
     } catch (err) {
       res
         .status(500)
-        .json({ error: `Unable to register user, ${err.message}` });
+        .json({ error: `Unable to register user: ${err.message}` });
     }
   }
 }
