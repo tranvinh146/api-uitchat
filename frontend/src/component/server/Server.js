@@ -23,7 +23,7 @@ function Server() {
             {servers.map((server) => (
               <div key={server._id} className='server__server'>
                 <Avatar className='server__avt' src=''/>
-                <div class="hide">{server.name}</div>
+                <div className="hide">{server.name}</div>
               </div>
             ))}
         </div>

@@ -41,7 +41,8 @@ const serverSlice = createSlice({
         },
         [fetchAddNewServer.fulfilled](state, {payload}) {
             state.loading = HTTP_STATUS.FULFILLED
-            state.data.push(payload.new_server)
+            console.log(payload)
+            state.data.push(payload.server)
         },
     }
 })
