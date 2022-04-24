@@ -26,7 +26,6 @@ channelSchema.statics.addChannel = async function (
   serverId,
   name,
   type,
-  avatar,
   ownerIds,
   memberIds
 ) {
@@ -35,7 +34,6 @@ channelSchema.statics.addChannel = async function (
       serverId,
       name,
       type,
-      avatar,
       ownerIds,
       memberIds,
     });
@@ -46,11 +44,11 @@ channelSchema.statics.addChannel = async function (
   }
 };
 
-channelSchema.statics.deleteChannel = async function (channelId, userId) {
+channelSchema.statics.deleteChannel = async function (channelId, memberId) {
   try {
     const deleteResponse = await this.deleteOne({
       _id: ObjectId(channelId),
-      owerIds: { $in: userId },
+      owerIds: { $in: memberId },
     });
     return deleteResponse;
   } catch (e) {
@@ -81,7 +79,7 @@ channelSchema.statics.getChannelsByServerId = async function (serverId) {
   }
 };
 
-channelSchema.statics.deleteUsersByChannelId = async function (
+channelSchema.statics.deleteMembersByChannelId = async function (
   channelId,
   memberIds
 ) {
@@ -92,12 +90,12 @@ channelSchema.statics.deleteUsersByChannelId = async function (
     );
     return deleteResponse;
   } catch (e) {
-    console.error(`unable to delete users: ${e}`);
+    console.error(`unable to delete members: ${e}`);
     return { error: e };
   }
 };
 
-channelSchema.statics.updateUsersByChannelId = async function (
+channelSchema.statics.updateMembersByChannelId = async function (
   channelId,
   memberIds
 ) {
@@ -108,12 +106,12 @@ channelSchema.statics.updateUsersByChannelId = async function (
     );
     return updateResponse;
   } catch (e) {
-    console.error(`something went wront in updateUsersByChannelId:${e}`);
+    console.error(`something went wront in updateMembersByChannelId:${e}`);
     throw e;
   }
 };
 
-channelSchema.statics.deleteLeadersByChannelId = async function (
+channelSchema.statics.deleteOwnersByChannelId = async function (
   channelId,
   ownerIds
 ) {
@@ -124,12 +122,12 @@ channelSchema.statics.deleteLeadersByChannelId = async function (
     );
     return deleteResponse;
   } catch (e) {
-    console.error(`unable to delete users: ${e}`);
+    console.error(`unable to delete members: ${e}`);
     return { error: e };
   }
 };
 
-channelSchema.statics.updateLeadersByChannelId = async function (
+channelSchema.statics.updateOwnersByChannelId = async function (
   channelId,
   ownerIds
 ) {
@@ -140,7 +138,7 @@ channelSchema.statics.updateLeadersByChannelId = async function (
     );
     return updateResponse;
   } catch (e) {
-    console.error(`something went wront in updateUsersByChannelId:${e}`);
+    console.error(`something went wront in updateMembersByChannelId:${e}`);
     throw e;
   }
 };
