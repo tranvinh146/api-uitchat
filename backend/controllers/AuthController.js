@@ -32,7 +32,6 @@ export default class AuthController {
   static async register(req, res, next) {
     try {
       const { email, name, password, avatar } = req.body;
-
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);

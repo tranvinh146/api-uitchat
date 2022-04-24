@@ -13,9 +13,10 @@ const Register = () => {
     dispatch(clearMessage());
   }, [dispatch]);
   const initialValues = {
-    username: "",
+    name: "",
     email: "",
     password: "",
+    avatar: ""
   };
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -41,11 +42,13 @@ const Register = () => {
           val.toString().length <= 40
       )
       .required("This field is required!"),
+    avatar: Yup.string()
+      .required("This field is required!")
   });
   const handleRegister = (formValue) => {
-    const { username, email, password } = formValue;
+    const { name, email, password, avatar } = formValue;
     setSuccessful(false);
-    dispatch(register({ username, email, password }))
+    dispatch(register({ name, email, password, avatar }))
       .unwrap()
       .then(() => {
         setSuccessful(true);
@@ -71,10 +74,10 @@ const Register = () => {
             {!successful && (
               <div>
                 <div className="form-group">
-                  <label htmlFor="username">Username</label>
-                  <Field name="username" type="text" className="form-control" />
+                  <label htmlFor="name">Username</label>
+                  <Field name="name" type="text" className="form-control" />
                   <ErrorMessage
-                    name="username"
+                    name="name"
                     component="div"
                     className="alert alert-danger"
                   />
@@ -97,6 +100,19 @@ const Register = () => {
                   />
                   <ErrorMessage
                     name="password"
+                    component="div"
+                    className="alert alert-danger"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="avatar">Avatar-Url</label>
+                  <Field
+                    name="avatar"
+                    type="text"
+                    className="form-control"
+                  />
+                  <ErrorMessage
+                    name="avatar"
                     component="div"
                     className="alert alert-danger"
                   />

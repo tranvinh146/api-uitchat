@@ -1,22 +1,22 @@
 import express from "express";
 import auth from "./auth.js";
-import user from "./user.js";
-import server from "./server.js";
-import channel from "./channel.js";
-import message from "./message.js";
-// import middlewares
+import users from "./users.js";
+import servers from "./servers.js";
+import channels from "./channels.js";
+import messages from "./messages.js";
+// import midddlewares
 import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 
 router.use("/auth", auth);
 
-router.use("/users", verifyToken, user);
+router.use("/users", verifyToken, users);
 
-router.use("/servers", verifyToken, server);
+router.use("/servers", verifyToken, servers);
 
-router.use("/channels", verifyToken, channel);
+router.use("/channels", verifyToken, channels);
 
-router.use("/messages", verifyToken, message);
+router.use("/messages", verifyToken, messages);
 
 export default router;

@@ -14,14 +14,7 @@ import { useSelector } from 'react-redux';
 
 function Sidebar(props) {
     const [channels, setChannels] = useState([])
-    // useEffect(() => {
-    //     db.collection('channels').onSnapshot(snapshot => (
-    //         setChannels(snapshot.docs.map(doc => ({
-    //             id: doc.id,
-    //             channel: doc.data()
-    //         })))
-    //     ))
-    // }, [])
+    const { user: currentUser } = useSelector((state) => state.auth);
     const handleAddChannel = () => {
 
     }
@@ -58,10 +51,11 @@ function Sidebar(props) {
             </div>
         </div>
         <div className="sidebar__profile">
-            {/* <Avatar onClick={() => auth.signOut()} src={user.photo}/> */}
+            {console.log(currentUser)}
+            {/* <Avatar  src={user.photo}/> */}
             <div className="sidebar__profileInfo">
-                {/* <h5>{user.displayName}</h5>
-                <p>#{user.uid.substring(0,5)}</p> */}
+                {/* <h5>{currentUser.displayName}</h5>
+                <p>#{currentUser.user_id.substring(0,5)}</p> */}
             </div>
             <div className="sidebar__profileIcon">
                 <MicIcon/>
