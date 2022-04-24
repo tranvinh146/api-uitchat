@@ -11,30 +11,16 @@ router
 
 router.route("/:serverId").get(ChannelsController.apiGetChannelsByServerId);
 
-<<<<<<< HEAD:backend/api/channel/channel.route.js
-router.route("/:serverId/:channelId").get(ChannelsController.apiGetChannel);
-
-router
-    .route("/users")
-    .delete(ChannelsController.apiDeleteUsersByChannelId)
-    .put(ChannelsController.apiUpdateUsersByChannelId);
-
-router
-    .route("/leaders")
-    .delete(ChannelsController.apiDeleteLeadersByChannelId)
-    .put(ChannelsController.apiUpdateLeadersByChannelId);
-=======
 // router.route("/:serverId/:channelId").get(ChannelsController.apiGetChannel);
 
 router
-  .route("/:serverId/:channelId/users")
-  .delete(ChannelsController.apiDeleteUsersByChannelId)
-  .put(ChannelsController.apiUpdateUsersByChannelId);
+    .route("/:serverId/:channelId/members")
+    .delete(ChannelsController.apiDeleteMembersByChannelId)
+    .put(ChannelsController.apiUpdateMembersByChannelId);
 
 router
-  .route("/:serverId/:channelId/leaders")
-  .delete(ChannelsController.apiDeleteLeadersByChannelId)
-  .put(ChannelsController.apiUpdateLeadersByChannelId);
->>>>>>> 66c292e6b71519c96c48db38279014b1c46fd373:backend/routes/channels.js
+    .route("/:serverId/:channelId/owners")
+    .delete(ChannelsController.apiDeleteOwnersByChannelId)
+    .put(ChannelsController.apiUpdateOwnersByChannelId);
 
 export default router;
