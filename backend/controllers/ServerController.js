@@ -49,7 +49,7 @@ export default class ServersController {
       if (error) {
         return res.json({ error });
       }
-      res.json({ ServerResponse });
+      res.json({ ...ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
