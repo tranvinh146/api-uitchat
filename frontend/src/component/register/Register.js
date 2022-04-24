@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import {Link} from 'react-router-dom'
+import { Redirect, Link } from "react-router-dom";
 import * as Yup from "yup";
 import { register } from "../../features/authSlice";
 import { clearMessage } from "../../features/messageSlice";
 const Register = () => {
+
   const [successful, setSuccessful] = useState(false);
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const { message } = useSelector((state) => state.message);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(clearMessage());
   }, [dispatch]);
   const initialValues = {
-    name: "",
     email: "",
     password: "",
+    name: "",
     avatar: ""
   };
   const validationSchema = Yup.object().shape({
-    username: Yup.string()
+    name: Yup.string()
       .test(
         "len",
         "The username must be between 3 and 20 characters.",
@@ -43,12 +45,14 @@ const Register = () => {
       )
       .required("This field is required!"),
     avatar: Yup.string()
-      .required("This field is required!")
+      .required("This field is required!"),
   });
   const handleRegister = (formValue) => {
-    const { name, email, password, avatar } = formValue;
-    setSuccessful(false);
-    dispatch(register({ name, email, password, avatar }))
+    
+    console.log(formValue)
+    const { email, password, name, avatar } = formValue;
+    setSuccessful(true);
+    dispatch(register({ email, password, name, avatar }))
       .unwrap()
       .then(() => {
         setSuccessful(true);
@@ -57,6 +61,9 @@ const Register = () => {
         setSuccessful(false);
       });
   };
+  if (isLoggedIn) {
+    return <Redirect to="/home" />;
+  }
   return (
     <div className="col-md-12 signup-form">
       <div className="card card-container">
@@ -73,15 +80,6 @@ const Register = () => {
           <Form>
             {!successful && (
               <div>
-                <div className="form-group">
-                  <label htmlFor="name">Username</label>
-                  <Field name="name" type="text" className="form-control" />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="alert alert-danger"
-                  />
-                </div>
                 <div className="form-group">
                   <label htmlFor="email">Email</label>
                   <Field name="email" type="email" className="form-control" />
@@ -100,6 +98,15 @@ const Register = () => {
                   />
                   <ErrorMessage
                     name="password"
+                    component="div"
+                    className="alert alert-danger"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="name">Username</label>
+                  <Field name="name" type="text" className="form-control" />
+                  <ErrorMessage
+                    name="name"
                     component="div"
                     className="alert alert-danger"
                   />

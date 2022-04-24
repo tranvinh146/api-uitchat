@@ -12,17 +12,18 @@ import HeadsetIcon from '@mui/icons-material/Headset';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useSelector } from 'react-redux';
 
-function Sidebar(props) {
+function Sidebar() {
     const [channels, setChannels] = useState([])
     const { user: currentUser } = useSelector((state) => state.auth);
+    const { server: currentServer } = useSelector((state) => state.server);
     const handleAddChannel = () => {
 
     }
-    const user = props.dataFromParent
   return (
     <div className='sidebar'>
         <div className="sidebar__top">
-            <h4>Le Duc Thang</h4>
+            {console.log(currentServer)}
+            {/* <h4>{currentServer.name}</h4> */}
             <KeyboardArrowDownIcon/>
         </div>
         <div className="sidebar__channels">
@@ -52,10 +53,11 @@ function Sidebar(props) {
         </div>
         <div className="sidebar__profile">
             {console.log(currentUser)}
-            {/* <Avatar  src={user.photo}/> */}
+            {/* <Avatar  src={currenUser.user.avatar}/> */}
+            <Avatar />
             <div className="sidebar__profileInfo">
-                {/* <h5>{currentUser.displayName}</h5>
-                <p>#{currentUser.user_id.substring(0,5)}</p> */}
+                <h5>{currentUser.user.name}</h5>
+                <p>#{currentUser.access_token.substring(0,5)}</p>
             </div>
             <div className="sidebar__profileIcon">
                 <MicIcon/>

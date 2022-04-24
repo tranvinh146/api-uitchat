@@ -1,12 +1,20 @@
 import axios from "axios";
 import { API_URL } from "../app/constant";
-const register = (name, email, password, avatar) => {
-  return axios.post(API_URL + "/auth/register", {
-    email,
-    password,
-    name,
-    avatar
-  });
+const register = ( email, password, name, avatar) => {
+  return axios
+    .post(API_URL + "/auth/register", {
+      email,
+      password,
+      name,
+      avatar,
+    })
+    .then((response) => {
+      if (response.data.access_token) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      console.log(response.data)
+      return response.data;
+    });
 };
 const login = (email, password) => {
   return axios

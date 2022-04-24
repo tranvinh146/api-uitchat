@@ -4,11 +4,11 @@ import AuthService from "../services/auth.service";
 const user = JSON.parse(localStorage.getItem("user"));
 export const register = createAsyncThunk(
   "auth/register",
-  async ({ name, email, password, avatar }, thunkAPI) => {
+  async ({ email, password, name, avatar }, thunkAPI) => {
     try {
-      const response = await AuthService.register(name, email, password, avatar);
-      thunkAPI.dispatch(setMessage(response.data.message));
-      return response.data;
+      const data = await AuthService.register( email, password,name, avatar);
+      console.log("run")
+      return { user: data };
     } catch (error) {
       const message =
         (error.response &&
@@ -50,7 +50,8 @@ const authSlice = createSlice({
   initialState,
   extraReducers: {
     [register.fulfilled]: (state, action) => {
-      state.isLoggedIn = false;
+      state.isLoggedIn = true;
+      state.user = action.payload.user;
     },
     [register.rejected]: (state, action) => {
       state.isLoggedIn = false;

@@ -12,7 +12,7 @@ function Server() {
   const dispatch = useDispatch()
   const servers = useSelector(selectServer)
   useEffect(() => {
-    dispatch(fetchServerData({userId: currentUser.user_id}))
+    dispatch(fetchServerData())
   }, [dispatch])
   return (
     <div className='server'>
