@@ -24,7 +24,7 @@ export default function AddServer(props) {
   const handleCreate = () => {
     handleClose();
     if(value !== '') {
-      dispatch(fetchAddNewServer({name: value, avatar:"//ssl.gstatic.com/accounts/ui/avatar_2x.png"}))
+      dispatch(fetchAddNewServer({name: value, avatar:"//ssl.gstatic.com/accounts/ui/avatar_2x.png", ownerIds: [], memberIds: [] }))
     }
   }
   return (

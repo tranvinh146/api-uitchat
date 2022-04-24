@@ -17,9 +17,9 @@ userSchema.statics.findByCredential = async (email) => {
   try {
     const user = await User.findOne({ email });
     return user;
-  } catch (error) {
-    console.error(`Unable to find user, ${error.message}`);
-    throw error;
+  } catch (err) {
+    console.error(`something went wrong in findByCredential: ${err.message}`);
+    throw err;
   }
 };
 
@@ -37,7 +37,7 @@ userSchema.statics.createUser = async function (email, password, name, avatar) {
     });
     return newUser;
   } catch (error) {
-    console.error(`Unable to register: ${error.message}`);
+    console.error(`something went wrong in createUser: ${error.message}`);
     throw error;
   }
 };

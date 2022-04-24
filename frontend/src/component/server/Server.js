@@ -24,7 +24,6 @@ function Server() {
               <div key={server._id} className='server__server'>
                 <Avatar className='server__avt' src=''/>
                 <div class="hide">{server.name}</div>
-                {console.log(server.name)}
               </div>
             ))}
         </div>
