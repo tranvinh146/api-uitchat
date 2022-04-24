@@ -1,11 +1,20 @@
 import jwt from "jsonwebtoken";
 
+export async function encode(user) {
+  const accessToken = jwt.sign(
+    { user_id: user._id, name: user.name, avatar: user.avatar },
+    process.env.JWT_ACCESS_KEY,
+    { expiresIn: "7d" }
+  );
+  return accessToken;
+}
+
 export async function verifyToken(req, res, next) {
   try {
     const token = req.headers["authorization"].replace("Bearer ", "");
     const decoded = await jwt.verify(token, process.env.JWT_ACCESS_KEY);
     if (decoded) {
-      req.userId = decoded.userId;
+      req.userId = decoded.user_id;
       next();
     }
   } catch (err) {
