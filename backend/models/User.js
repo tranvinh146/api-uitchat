@@ -17,15 +17,9 @@ userSchema.statics.findByCredential = async (email) => {
   try {
     const user = await User.findOne({ email });
     return user;
-<<<<<<< HEAD
   } catch (err) {
     console.error(`something went wrong in findByCredential: ${err.message}`);
     throw err;
-=======
-  } catch (error) {
-    console.error(`Unable to find user, ${error.message}`);
-    throw error;
->>>>>>> 66c292e6b71519c96c48db38279014b1c46fd373
   }
 };
 
@@ -43,11 +37,7 @@ userSchema.statics.createUser = async function (email, password, name, avatar) {
     });
     return newUser;
   } catch (error) {
-<<<<<<< HEAD
     console.error(`something went wrong in createUser: ${error.message}`);
-=======
-    console.error(`Unable to register: ${error.message}`);
->>>>>>> 66c292e6b71519c96c48db38279014b1c46fd373
     throw error;
   }
 };

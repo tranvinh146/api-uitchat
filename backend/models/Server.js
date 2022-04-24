@@ -42,22 +42,23 @@ serverSchema.statics.createServer = async function (
 ) {
   try {
     ownerIds.push(userId);
-    const newServer = this.create({
+    const newServer = await this.create({
       name,
       avatar,
       ownerIds,
       memberIds,
     });
-    const newChannel = Channel.create({
-      name: "General",
-      ownerIds,
-      memberIds,
-      serverId: newServer._id,
-    });
+    const newChannel = await Channel.addChannel(
+      newServer._id,
+      "General",
+      "type",
+      newServer.ownerIds,
+      newServer.memberIds
+    );
     return { server: newServer, channel: newChannel };
   } catch (error) {
-    console.error(`something went wrong in createServer: ${error}`);
-    throw error;
+    console.error(`something went wrong in createServer: ${error.message}`);
+    throw error.message;
   }
 };
 

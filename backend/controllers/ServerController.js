@@ -36,14 +36,20 @@ export default class ServersController {
       const name = req.body.name;
       const avatar = req.body.avatar;
       const userId = req.userId;
-      const ownerIds = req.ownerIds;
-      const memberIds = req.memberIds;
-      const ServerResponse = await Server.createServer(name, avatar, userId, ownerIds, memberIds);
+      const ownerIds = req.body.ownerIds;
+      const memberIds = req.body.memberIds;
+      const ServerResponse = await Server.createServer(
+        name,
+        avatar,
+        userId,
+        ownerIds,
+        memberIds
+      );
       let { error } = ServerResponse;
       if (error) {
         return res.json({ error });
       }
-      res.json({ status: "success", new_server: ServerResponse });
+      res.json({ ServerResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
