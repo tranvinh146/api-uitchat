@@ -5,9 +5,8 @@ const serverSchema = new mongoose.Schema(
   {
     name: String,
     avatar: String,
-    channelIds: [mongoose.Types.ObjectId],
-    adminIds: [mongoose.Types.ObjectId],
-    userIds: [mongoose.Types.ObjectId],
+    ownerIds: [mongoose.Types.ObjectId],
+    memberIds: [mongoose.Types.ObjectId],
   },
   { timestamps: true }
 );
@@ -25,7 +24,7 @@ serverSchema.statics.getServerById = async function (serverId) {
 serverSchema.statics.getServersByUserId = async function (userId) {
   try {
     const servers = await this.find({
-      $or: [{ userIds: userId }, { adminIds: userId }],
+      $or: [{ memberIds: userId }, { ownerIds: userId }],
     });
     return servers;
   } catch (error) {
@@ -34,20 +33,28 @@ serverSchema.statics.getServersByUserId = async function (userId) {
   }
 };
 
-serverSchema.statics.createServer = async function (name, avatar, userId) {
+serverSchema.statics.createServer = async function (
+  name,
+  avatar,
+  userId,
+  ownerIds,
+  memberIds
+) {
   try {
-    let newServer = this.create({
+    ownerIds.push(userId);
+    const newServer = this.create({
       name,
       avatar,
-      adminIds: userId,
+      ownerIds,
+      memberIds,
     });
-    // this.updateOne(
-    //   { _id: newServer._id },
-    //   { channelIds: { $push: { channelIds: "6249a36ebc8788e6132e86c3" } } }
-    // );
-    // Channel.createChannel(newServer._id);
-    // newServer = this.getServerById(newServer._id);
-    return newServer;
+    const newChannel = Channel.create({
+      name: "General",
+      ownerIds,
+      memberIds,
+      serverId: newServer._id,
+    });
+    return { server: newServer, channel: newChannel };
   } catch (error) {
     console.error(`something went wrong in createServer: ${error}`);
     throw error;
@@ -63,7 +70,7 @@ serverSchema.statics.updateServer = async function (
     const updatedServer = await this.updateOne(
       {
         _id: serverId,
-        adminIds: userId,
+        ownerIds: userId,
       },
       ...updateValue
     );
@@ -81,28 +88,37 @@ serverSchema.statics.deleteServer = async function (serverId, userId) {
   try {
     const deletedServer = await this.deleteOne({
       _id: serverId,
-      adminIds: userId,
+      ownerIds: userId,
     });
     console.log(deletedServer);
     if (deletedServer.deletedCount === 0) {
       return { error: "User may not have permisson" };
     }
-    return deletedServer;
+    const deletedChannels = Channel.remove({ serverId });
+    return { deletedServer, deletedChannels };
   } catch (error) {
     console.error(`something went wrong in deleteServer: ${error.message}`);
     throw error;
   }
 };
 
-serverSchema.statics.addUsers = async function (serverId, adminId, userIds) {
+serverSchema.statics.addUsers = async function (
+  serverId,
+  userId,
+  ownerIds,
+  memberIds
+) {
   try {
     const addedUsers = await this.updateOne(
       {
         _id: serverId,
-        adminIds: adminId,
+        ownerIds: userId,
       },
       {
-        $addToSet: { userIds: { $each: userIds } },
+        $addToSet: {
+          ownerIds: { $each: ownerIds },
+          memberIds: { $each: memberIds },
+        },
       }
     );
     if (addedUsers.matchedCount === 0) {
@@ -115,32 +131,67 @@ serverSchema.statics.addUsers = async function (serverId, adminId, userIds) {
   }
 };
 
-serverSchema.statics.removeUsers = async function (serverId, adminId, userIds) {
+serverSchema.statics.removeMember = async function (
+  serverId,
+  userId,
+  memberId
+) {
   try {
-    const removedUsers = await this.updateOne(
+    const removedMember = await this.updateOne(
       {
         _id: serverId,
-        adminIds: adminId,
+        ownerIds: userId,
       },
       {
-        $pull: { userIds: { $in: userIds } },
+        $pull: { memberIds: { $in: memberId } },
       }
     );
-    if (removedUsers.matchedCount === 0) {
+    if (removedMember.matchedCount === 0) {
       return { error: "User may not have permisson" };
     }
-    return removedUsers;
+    return removedMember;
   } catch (error) {
     console.error(`something went wrong in removeUsers: ${error.message}`);
     throw error;
   }
 };
 
-serverSchema.statics.addChannel = async function (serverId, channelId) {
-  this.updateOne(
-    { _id: serverId },
-    { channelIds: { $push: { channelIds: channelId } } }
-  );
+serverSchema.statics.grantOwner = function (serverId, userId, memberId) {
+  try {
+    const grantedOwner = this.updateOne(
+      { _id: serverId, ownerIds: userId },
+      {
+        $addToSet: { ownerIds: memberId },
+        $pull: { memberIds: memberId },
+      }
+    );
+    if (grantedOwner.matchedCount === 0) {
+      return { error: "User may not have permisson" };
+    }
+    return grantedOwner;
+  } catch (error) {
+    console.error(`something went wrong in grantOwner: ${error.message}`);
+    throw error;
+  }
+};
+
+serverSchema.statics.revokeOwner = function (serverId, userId, ownerId) {
+  try {
+    const revokedOwner = this.updateOne(
+      { _id: serverId, ownerIds: userId },
+      {
+        $pull: { ownerIds: memberId },
+        $addToSet: { memberIds: memberId },
+      }
+    );
+    if (revokedOwner.matchedCount === 0) {
+      return { error: "User may not have permisson" };
+    }
+    return revokedOwner;
+  } catch (error) {
+    console.error(`something went wrong in revokeOwner: ${error.message}`);
+    throw error;
+  }
 };
 
 export default mongoose.model("Server", serverSchema);
