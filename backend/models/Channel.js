@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Server from "./Server.js";
 
 const channelSchema = new mongoose.Schema(
   {
@@ -10,8 +11,13 @@ const channelSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isPublic: {
+      type: Boolean,
+      required: true,
+    },
     type: {
       type: String,
+      // enum: ["text", "voice"],
       required: true,
     },
     ownerIds: [mongoose.SchemaTypes.ObjectId],
@@ -23,24 +29,44 @@ const channelSchema = new mongoose.Schema(
 );
 
 channelSchema.statics.addChannel = async function (
+  userId,
   serverId,
   name,
   type,
+  isPublic,
   ownerIds,
   memberIds
 ) {
   try {
-    const channel = await this.create({
-      serverId,
-      name,
-      type,
-      ownerIds,
-      memberIds,
-    });
+    let channel;
+    let currentServer = await Server.findById(serverId);
+    let ownersServer = currentServer.ownerIds;
+    if (!ownersServer.include(userId)) {
+      return { error: "You may be not permission." };
+    }
+    if (isPublic) {
+      channel = await this.create({
+        serverId,
+        name,
+        type,
+        isPublic,
+        ownerIds: currentServer.ownerIds,
+        memberIds: currentServer.memberIds,
+      });
+    } else {
+      channel = await this.create({
+        serverId,
+        name,
+        type,
+        isPublic,
+        ownerIds,
+        memberIds,
+      });
+    }
     return channel;
   } catch (e) {
-    console.error(`unable to add channel: ${e}`);
-    return { error: e };
+    console.error(`somthing went wrong in addChannel: ${e.message}`);
+    return { error: e.message };
   }
 };
 
@@ -52,8 +78,8 @@ channelSchema.statics.deleteChannel = async function (channelId, memberId) {
     });
     return deleteResponse;
   } catch (e) {
-    console.error(`unable to delete channel: ${e}`);
-    return { error: e };
+    console.error(`somthing went wrong in deleteChannel: ${e.message}`);
+    return { error: e.message };
   }
 };
 
@@ -65,17 +91,18 @@ channelSchema.statics.updateChannel = async function (channelId, channelName) {
     );
     return updateResponse;
   } catch (e) {
-    console.error(e.message);
+    console.error(`somthing went wrong in updateChannel: ${e.message}`);
+    return { error: e.message };
   }
 };
 
 channelSchema.statics.getChannelsByServerId = async function (serverId) {
   try {
-    let channels = await this.find({ serverId: ObjectId(serverId) });
+    let channels = await this.find({ serverId });
     return channels;
   } catch (e) {
-    console.error(`something went wrong in getChannelByServerId: ${e}`);
-    throw e;
+    console.error(`something went wrong in getChannelByServerId: ${e.message}`);
+    throw e.message;
   }
 };
 
@@ -90,8 +117,10 @@ channelSchema.statics.deleteMembersByChannelId = async function (
     );
     return deleteResponse;
   } catch (e) {
-    console.error(`unable to delete members: ${e}`);
-    return { error: e };
+    console.error(
+      `somthing went wrong in deleteMembersByChannelId: ${e.message}`
+    );
+    return { error: e.message };
   }
 };
 
