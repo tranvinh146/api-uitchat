@@ -41,7 +41,7 @@ channelSchema.statics.addChannel = async function (
     let channel;
     let currentServer = await Server.findById(serverId);
     let ownersServer = currentServer.ownerIds;
-    if (!ownersServer.include(userId)) {
+    if (!ownersServer.includes(userId)) {
       return { error: "You may be not permission." };
     }
     if (isPublic) {

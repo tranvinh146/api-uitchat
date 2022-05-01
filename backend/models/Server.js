@@ -53,6 +53,7 @@ serverSchema.statics.createServer = async function (
       newServer._id,
       "General",
       "type",
+      true,
       newServer.ownerIds,
       newServer.memberIds
     );
