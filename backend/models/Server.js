@@ -1,19 +1,22 @@
 import mongoose from "mongoose";
 import Channel from "./Channel.js";
+import User from "./User.js";
 
 const serverSchema = new mongoose.Schema(
   {
     name: String,
     avatar: String,
-    ownerIds: [mongoose.Types.ObjectId],
-    memberIds: [mongoose.Types.ObjectId],
+    ownerIds: { type: [mongoose.Types.ObjectId], ref: "User" },
+    memberIds: { type: [mongoose.Types.ObjectId], ref: "User" },
   },
   { timestamps: true }
 );
 
 serverSchema.statics.getServerById = async function (serverId) {
   try {
-    const server = await this.findById(serverId);
+    const server = await this.findById(serverId)
+      .populate("memberIds")
+      .populate("ownerIds");
     return server;
   } catch (error) {
     console.error(`something went wrong in getServerById: ${error}`);
