@@ -15,8 +15,14 @@ const serverSchema = new mongoose.Schema(
 serverSchema.statics.getServerById = async function (serverId) {
   try {
     const server = await this.findById(serverId)
-      .populate("memberIds")
-      .populate("ownerIds");
+      .populate({
+        path: "memberIds",
+        select: ["_id", "email", "name", "avatar"],
+      })
+      .populate({
+        path: "ownerIds",
+        select: ["_id", "email", "name", "avatar"],
+      });
     return server;
   } catch (error) {
     console.error(`something went wrong in getServerById: ${error}`);
