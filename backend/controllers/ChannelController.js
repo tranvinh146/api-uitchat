@@ -1,6 +1,20 @@
 import Channel from "../models/Channel.js";
 
 export default class ChannelsController {
+  static async apiGetChannelById(req, res, next) {
+    try {
+      const userId = req.userId;
+      const channelId = req.params.channelId;
+      const channelResponse = await Channel.find({
+        _id: channelId,
+        $or: [{ memberIds: userId }, { ownerIds: userId }],
+      });
+      return res.status(200).json({ channel: channelResponse });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   static async apiPostChannel(req, res, next) {
     try {
       // serverId, name, type, ownerIds, memberIds;

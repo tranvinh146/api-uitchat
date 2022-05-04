@@ -29,7 +29,7 @@ const channelSchema = new mongoose.Schema(
 );
 
 channelSchema.statics.addChannel = async function (
-  userId,
+  userId, // backend added
   serverId,
   name,
   type,
@@ -73,7 +73,7 @@ channelSchema.statics.addChannel = async function (
 channelSchema.statics.deleteChannel = async function (channelId, memberId) {
   try {
     const deleteResponse = await this.deleteOne({
-      _id: ObjectId(channelId),
+      _id: channelId,
       owerIds: { $in: memberId },
     });
     return deleteResponse;
