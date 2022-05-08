@@ -121,12 +121,6 @@ All server's api **require** Authorization token.
   DELETE /api/v1/uitchat/users/me
 ```
 
-`Requires admin access token.`
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `userId` | `string` | Required |
-
 #### Join a server
 
 ```
