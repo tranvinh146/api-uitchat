@@ -8,7 +8,7 @@ export default class AuthController {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findByCredential(email);
+      const user = await User.findByEmail(email);
       if (!user) {
         return res.status(400).json("Incorrect username");
       }
