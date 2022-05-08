@@ -80,29 +80,34 @@ All server's api **require** Authorization token.
 
 ## USER
 
-#### Get users by server id
+#### Get current user
 
 ```
-  GET /api/v1/uitchat/users/server/:id
+  GET /api/v1/uitchat/users/me
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | Required |
 
 #### Get user by id
 
 ```
-  GET /api/v1/uitchat/users/:id
+  GET /api/v1/uitchat/users/:userid
 ```
-
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | Required |
+| `userid`      | `string` | Required |
 
-#### Update a user
+#### Get users by server id
 
 ```
-  PATCH /api/v1/uitchat/users
+  GET /api/v1/uitchat/users/me/servers/:serverid
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `serverid`| `string` | Required |
+
+#### Update user
+
+```
+  PATCH /api/v1/uitchat/users/me
 ```
 
 | Parameter | Type     | Description                |
@@ -111,9 +116,9 @@ All server's api **require** Authorization token.
 | `password` | `string` | Optional |
 | `name` | `string` | Optional |
 
-#### Delete a user
+#### Delete user
 ```
-  DELETE /api/v1/uitchat/users
+  DELETE /api/v1/uitchat/users/me
 ```
 
 `Requires admin access token.`
@@ -122,7 +127,29 @@ All server's api **require** Authorization token.
 | :-------- | :------- | :------------------------- |
 | `userId` | `string` | Required |
 
+#### Join a server
 
+```
+  PATCH /api/v1/uitchat/users/me/servers/:serverid
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `serverid`| `string` | Required |
+
+#### Add a friend
+
+```
+  PATCH /api/v1/uitchat/users/me/friends/:friendid
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `friendid`| `string` | Required |
+
+#### Get friends list
+
+```
+  GET /api/v1/uitchat/users/me/friends
+```
 
 ## CHANNEL
 
