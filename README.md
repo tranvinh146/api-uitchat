@@ -131,7 +131,7 @@ All server's api **require** Authorization token.
 | `serverid`| `string` | Required |
 
 #### Add a friend
-
+`legacy`
 ```
   PATCH /api/v1/uitchat/users/me/friends/:friendid
 ```
@@ -140,7 +140,7 @@ All server's api **require** Authorization token.
 | `friendid`| `string` | Required |
 
 #### Get friends list
-
+`legacy`
 ```
   GET /api/v1/uitchat/users/me/friends
 ```
@@ -236,3 +236,39 @@ All server's api **require** Authorization token.
 | `channelId`| `ObjectId` | **Required**|
 | `leadersList`| `[ObjectId]` | **Required**|
 
+
+## AUTH
+
+#### Login
+
+```
+  POST /api/v1/uitchat/auth/login
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | Required |
+| `password`      | `string` | Required |
+
+#### Login using oauth
+
+```
+  POST /api/v1/uitchat/auth/oauth
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `uid`      | `string` | Required |
+| `email`      | `string` | Required |
+| `name`      | `string` | Required |
+| `avatar`      | `string` | Required |
+
+#### Register
+
+```
+  POST /api/v1/uitchat/auth/register
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | Required |
+| `password`      | `string` | Required |
+| `name`      | `string` | Required |
