@@ -41,7 +41,7 @@ function Server() {
           <div className="server__servers">
               {servers.map((server) => (
                 <div key={server._id} className='server__server'>
-                <Avatar onClick={() => {handleOpenServer(server._id)}} className='server__avt' src=''/>
+                <Avatar src={server.avatar} onClick={() => {handleOpenServer(server._id)}} className='server__avt'/>
                   <div className="hide">{server.name}</div>
                 </div>
               ))}
