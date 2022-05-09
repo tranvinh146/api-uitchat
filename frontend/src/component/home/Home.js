@@ -1,20 +1,18 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import Server from '../server/Server'
-import Sidebar from '../sidebar/Sidebar'
-import Chat from '../chat/Chat'
-import { Redirect } from 'react-router-dom';
-import { useSelector } from "react-redux";
-import './Home.css'
+import { useNavigate, Outlet } from 'react-router-dom';
+import { useSelector} from "react-redux";
 function Home() {
   const { user: currentUser } = useSelector((state) => state.auth);
-  if (!currentUser) {
-    return <Redirect to="/login" />;
-  }
+  let navigate = useNavigate()
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login')
+    }
+  },[currentUser])
   return (
     <div className='home'>
-        <Server/>
-        <Sidebar/>
-        <Chat />
+        <Outlet/>
     </div>
   )
 }

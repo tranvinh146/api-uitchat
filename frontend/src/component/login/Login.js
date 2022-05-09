@@ -1,6 +1,6 @@
 import React, { useState, useEffect  } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, Link } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { login } from "../../features/authSlice";
@@ -36,7 +36,7 @@ const Login = (props) => {
       // });
   };
   if (isLoggedIn) {
-    return <Redirect to="/home" />;
+    return <Navigate to="/servers/@me" />;
   }
   return (
     <div className="col-md-12 login-form">

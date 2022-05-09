@@ -1,19 +1,22 @@
 import React from 'react'
 import './Member.css'
+import { useSelector } from 'react-redux'
 import { Avatar } from '@mui/material'
-
+import {selectInfoServer} from '../../../features/infoServerSlice'
 function Member() {
+  const infoServer = useSelector(selectInfoServer)
+  console.log(infoServer)
   return (
     <div className='member'>
         <h4 className='member__status'>Online - 2</h4>
         <div className="member__users">
           <div className="member__user user__on">
-            <Avatar/>
-            <h4>Thang</h4>
-          </div>
-          <div className="member__user user__on">
-            <Avatar/>
-            <h4>Nhan</h4>
+            {infoServer.ownerIds.map((owner) => (
+              <>
+                <Avatar/>
+                <h4>{owner.name}</h4>
+              </>
+            ))}
           </div>
         </div>
         <h4 className='member__status'>Offline - 4</h4>

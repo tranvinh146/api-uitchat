@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { Redirect, Link } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import * as Yup from "yup";
 import { register } from "../../features/authSlice";
 import { clearMessage } from "../../features/messageSlice";
 const Register = () => {
-
   const [successful, setSuccessful] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.auth);
   const { message } = useSelector((state) => state.message);
@@ -62,7 +61,7 @@ const Register = () => {
       });
   };
   if (isLoggedIn) {
-    return <Redirect to="/home" />;
+    return <Navigate to="/servers/@me" />;
   }
   return (
     <div className="col-md-12 signup-form">

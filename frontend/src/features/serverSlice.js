@@ -7,16 +7,13 @@ export const fetchServerData = createAsyncThunk(
     'server/fetchServerData',
     async () => {
         const {data} = await axios.get(`${API_URL}/servers`, { headers: authHeader() })
-        console.log(data)
         return data
     }
 )
 export const fetchAddNewServer = createAsyncThunk(
     'server/fetchAddNewServer',
     async (newServer) => {
-        console.log(newServer)
         const {data} = await axios.post(`${API_URL}/servers`,newServer, {headers: authHeader()})
-        console.log(data)
         return data
     }
 )
@@ -33,7 +30,6 @@ const serverSlice = createSlice({
         },
         [fetchServerData.fulfilled](state, {payload}) {
             state.loading = HTTP_STATUS.FULFILLED
-            console.log(payload)
             state.data = payload.serversList
         },
         [fetchServerData.rejected](state) {
@@ -41,7 +37,6 @@ const serverSlice = createSlice({
         },
         [fetchAddNewServer.fulfilled](state, {payload}) {
             state.loading = HTTP_STATUS.FULFILLED
-            console.log(payload)
             state.data.push(payload.server)
         },
     }

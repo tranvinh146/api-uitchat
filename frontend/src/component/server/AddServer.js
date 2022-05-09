@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Add from '@mui/icons-material/Add';
 import {fetchAddNewServer} from '../../features/serverSlice'  
 import { useDispatch } from 'react-redux';
-export default function AddServer(props) {
+export default function AddServer() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {

@@ -1,9 +1,9 @@
 import React from 'react'
 import './SidebarChannel.css'
-function SidebarChannel({id, channel}) {
+function SidebarChannel(props) {
   return (
     <div className='sidebarChannel'>
-        <h5><span className='sidebarChannel__hash'>#</span>Youtube</h5>
+        <h5><span className='sidebarChannel__hash'>#</span>{props.dataFromParent.name}</h5>
     </div>
   )
 }

@@ -1,6 +1,12 @@
+.flexColumn {
+    display: flex;
+}
+.server__place {
+    flex-grow: 1;
+}
 .server {
     background-color: #252220;
-
+    max-height: 100vh;
 }
 .server__avt {
     margin: 10px;
@@ -19,6 +25,15 @@
 }
 .server__servers {
     margin-bottom: 5px;
+    max-height: 480px;
+    overflow-y: auto;
+}
+.server__servers::-webkit-scrollbar {
+    width: 6px;
+    background-color: #1A171c;
+} 
+.server__servers::-webkit-scrollbar-thumb {
+    background-color: #000000;
 }
 .server__footer {
     display: flex;
