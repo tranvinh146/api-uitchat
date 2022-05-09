@@ -3,7 +3,13 @@ import UserController from "../controllers/UserController.js";
 
 const router = express.Router();
 
-router.route("/").patch(UserController.apiUpdate).delete(UserController.apiDelete);
+router
+  .route("/")
+  .get(UserController.apiGetAllUsers)
+  .patch(UserController.apiUpdate)
+  .delete(UserController.apiDelete);
+
+router.route("/search").post(UserController.apiSearchUsers);
 
 router.route("/:id").get(UserController.apiGetById);
 

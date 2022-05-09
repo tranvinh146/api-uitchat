@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     email: String,
-    password: String,
     name: String,
+    password: String,
     avatar: String,
     status: String,
     serverIds: [mongoose.Types.ObjectId],
@@ -12,6 +12,15 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.statics.getAllUsers = async function () {
+  try {
+    return this.find({}, "_id email name");
+  } catch (error) {
+    console.error(`something went wrong in getAllUsers: ${error.message}`);
+    throw error;
+  }
+};
 
 userSchema.statics.findByCredential = async (email) => {
   try {
@@ -46,9 +55,8 @@ userSchema.statics.joinServer = async function (userId, serverId) {
   try {
     const user = await User.findById(userId);
     if (user.serverIds.includes(serverId)) {
-      throw Error("Already joined this server.")
-    }
-    else {
+      throw Error("Already joined this server.");
+    } else {
       user.serverIds.push(serverId);
       user.save();
     }
@@ -56,7 +64,27 @@ userSchema.statics.joinServer = async function (userId, serverId) {
     console.error(`Unable to join server, ${error.message}`);
     throw error;
   }
-}
+};
+
+userSchema.statics.searchUsers = async function (textSearching) {
+  try {
+    let regexText = "^" + textSearching + "|\\s" + textSearching;
+    const users = await User.find(
+      {
+        $or: [
+          { email: { $regex: regexText, $options: "i" } },
+          { name: { $regex: regexText, $options: "i" } },
+        ],
+      },
+      "_id email name avatar"
+    ).limit(5);
+    console.log(users);
+    return users;
+  } catch (error) {
+    console.error(`Something wennt wrong in searchUser, ${error.message}`);
+    throw error;
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 

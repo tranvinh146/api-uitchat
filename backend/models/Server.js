@@ -42,20 +42,12 @@ serverSchema.statics.getServersByUserId = async function (userId) {
   }
 };
 
-serverSchema.statics.createServer = async function (
-  name,
-  avatar,
-  userId,
-  ownerIds,
-  memberIds
-) {
+serverSchema.statics.createServer = async function (name, avatar, userId) {
   try {
-    ownerIds.push(userId);
     const newServer = await this.create({
       name,
       avatar,
-      ownerIds,
-      memberIds,
+      ownerIds: userId,
     });
     const newChannel = await Channel.addChannel(
       userId,
@@ -171,7 +163,7 @@ serverSchema.statics.removeMember = async function (
 serverSchema.statics.grantOwner = function (serverId, userId, memberId) {
   try {
     const grantedOwner = this.updateOne(
-      { _id: serverId, ownerIds: userId },
+      { _id: serverId, ownerIds: userId, memberIds: memberId },
       {
         $addToSet: { ownerIds: memberId },
         $pull: { memberIds: memberId },
@@ -190,10 +182,10 @@ serverSchema.statics.grantOwner = function (serverId, userId, memberId) {
 serverSchema.statics.revokeOwner = function (serverId, userId, ownerId) {
   try {
     const revokedOwner = this.updateOne(
-      { _id: serverId, ownerIds: userId },
+      { _id: serverId, ownerIds: userId, ownerIds: ownerId },
       {
-        $pull: { ownerIds: memberId },
-        $addToSet: { memberIds: memberId },
+        $pull: { ownerIds: ownerId },
+        $addToSet: { memberIds: ownerId },
       }
     );
     if (revokedOwner.matchedCount === 0) {
