@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
 		avatar: String,
 		status: String,
 		serverIds: [mongoose.Types.ObjectId],
-		friendIds: [mongoose.Types.ObjectId],
+		// friendIds: [mongoose.Types.ObjectId],
 	},
 	{ timestamps: true }
 );
@@ -78,33 +78,33 @@ userSchema.statics.joinServer = async function (userId, serverId) {
 	}
 };
 
-userSchema.statics.getFriendsList = async function (userId) {
-	try {
-		const user = await User.findById(userId);
-		const friendIds = user.friendIds;
-		return await User.find({ _id: { $in: friendIds } }, "_id email name avatar");
-	} catch (error) {
-		console.error(`Unable to get friends list, ${error.message}`);
-		throw error;
-	}
-};
+// userSchema.statics.getFriendsList = async function (userId) {
+// 	try {
+// 		const user = await User.findById(userId);
+// 		const friendIds = user.friendIds;
+// 		return await User.find({ _id: { $in: friendIds } }, "_id email name avatar");
+// 	} catch (error) {
+// 		console.error(`Unable to get friends list, ${error.message}`);
+// 		throw error;
+// 	}
+// };
 
-userSchema.statics.addFriend = async function (userId, friendId) {
-	try {
-		const user = await User.findById(userId);
-		friendId = mongoose.Types.ObjectId(friendId);
+// userSchema.statics.addFriend = async function (userId, friendId) {
+// 	try {
+// 		const user = await User.findById(userId);
+// 		friendId = mongoose.Types.ObjectId(friendId);
 
-		if (user.friendIds.includes(friendId)) {
-			throw Error("This person has already been in your friends list.");
-		} else {
-			user.friendIds.push(friendId);
-			user.save();
-		}
-	} catch (error) {
-		console.error(`Unable to add friend, ${error.message}`);
-		throw error;
-	}
-};
+// 		if (user.friendIds.includes(friendId)) {
+// 			throw Error("This person has already been in your friends list.");
+// 		} else {
+// 			user.friendIds.push(friendId);
+// 			user.save();
+// 		}
+// 	} catch (error) {
+// 		console.error(`Unable to add friend, ${error.message}`);
+// 		throw error;
+// 	}
+// };
 
 const User = mongoose.model("User", userSchema);
 
