@@ -1,22 +1,22 @@
 import Server from "../models/Server.js";
 
 export default class ServersController {
-  // [GET]
+  // [GET] /servers
   static async apiGetServersByUserId(req, res, next) {
     try {
       const userId = req.userId;
-      const serversPerPage = req.query.serverPerPage
-        ? parseInt(req.query.serverPerPage)
-        : 5;
-      const page = req.query.page ? parseInt(req.query.page) : 0;
+      // const serversPerPage = req.query.serverPerPage
+      //   ? parseInt(req.query.serverPerPage)
+      //   : 5;
+      // const page = req.query.page ? parseInt(req.query.page) : 0;
       const serversList = await Server.getServersByUserId(userId);
-      res.status(200).json({ status: "success", serversList });
+      res.status(200).json({ serversList });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  // [GET] /:id
+  // [GET] /servers/:id
   static async apiGetServerById(req, res, next) {
     try {
       let id = req.params.id;
@@ -30,58 +30,51 @@ export default class ServersController {
     }
   }
 
-  // [POST]
+  // [POST] /servers
   static async apiPostServer(req, res, next) {
     try {
       const name = req.body.name;
       const avatar = req.body.avatar;
       const userId = req.userId;
-      const ownerIds = req.body.ownerIds;
-      const memberIds = req.body.memberIds;
-      const ServerResponse = await Server.createServer(
-        name,
-        avatar,
-        userId,
-        ownerIds,
-        memberIds
-      );
-      let { error } = ServerResponse;
+      const response = await Server.createServer(name, avatar, userId);
+      let { error } = response;
       if (error) {
         return res.json({ error });
       }
-      res.json({ ...ServerResponse });
+      res.json({ ...response });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
   }
 
-  // [PATCH]
+  // [PATCH] /servers
   static async apiUpdateServer(req, res, next) {
     try {
       const { server_id, ...updateField } = req.body;
 
-      const ServerResponse = await Server.updateServer(
+      const response = await Server.updateServer(
         server_id,
-        req.user_id,
+        req.userId,
         updateField
       );
-      let { error } = ServerResponse;
+      let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
-      res.json({ status: "success", server: ServerResponse });
+      const server = await Server.findById(server_id);
+      res.status(200).json({ server });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
   }
 
-  // [DELETE]
+  // [DELETE] /servers
   static async apiDeleteServer(req, res, next) {
     try {
       const serverId = req.body.server_id;
-      const userId = req.user_id;
-      const ServerResponse = await Server.deleteServer(serverId, userId);
-      let { error } = ServerResponse;
+      const userId = req.userId;
+      const response = await Server.deleteServer(serverId, userId);
+      let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
@@ -91,35 +84,79 @@ export default class ServersController {
     }
   }
 
-  // [POST] /users
+  // [POST] /servers/users
   static async apiAddUsers(req, res, next) {
     try {
       const serverId = req.body.server_id;
-      const adminId = req.body.user_id;
-      const userIds = req.body.user_list;
-      const ServerResponse = await Server.addUsers(serverId, adminId, userIds);
-      let { error } = ServerResponse;
+      const userId = req.userId;
+      const ownerIds = req.body.owner_ids;
+      const memberIds = req.body.member_ids;
+      const response = await Server.addUsers(
+        serverId,
+        userId,
+        ownerIds,
+        memberIds
+      );
+      let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
-      res.status(200).json({ status: "success", server: ServerResponse });
+      const server = await Server.findById(serverId);
+      res.status(200).json({ server });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  // [DELETE] /users
-  static async apiRemoveUsers(req, res, next) {
+  // [DELETE] /servers/users
+  static async apiRemoveMembers(req, res, next) {
     try {
       const serverId = req.body.server_id;
-      const adminId = req.body.user_id;
-      const userIds = req.body.user_list;
-      const ServerResponse = await Server.addUsers(serverId, adminId, userIds);
-      let { error } = ServerResponse;
+      const userId = req.userId;
+      const memberIds = req.body.member_ids;
+      const response = await Server.removeMember(serverId, userId, memberIds);
+      let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
-      res.status(200).json({ status: "success", server: ServerResponse });
+      const server = await Server.findById(serverId);
+      res.status(200).json({ server });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  // [POST] /servers/users/owner-role
+  static async apiGrantOwner(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const userId = req.userId;
+      const memberId = req.body.member_id;
+      const response = await Server.grantOwner(serverId, userId, memberId);
+      let { error } = response;
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      const server = await Server.findById(serverId);
+      res.status(200).json({ server });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  // [DELETE] /servers/users/owner-role
+  static async apiRevokeOwner(req, res, next) {
+    try {
+      const serverId = req.body.server_id;
+      const userId = req.userId;
+      const ownerId = req.body.owner_id;
+      const response = await Server.revokeOwner(serverId, userId, ownerId);
+      let { error } = response;
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      const server = await Server.findById(serverId);
+      res.status(200).json({ server });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

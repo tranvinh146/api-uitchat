@@ -5,6 +5,18 @@ import mongodb from "mongodb";
 const { ObjectId } = mongodb;
 
 export default class UserController {
+  // [GET] /users
+  static async apiGetAllUsers(req, res, next) {
+    try {
+      const response = await User.getAllUsers();
+      res.status(200).json(response);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: `Unable to get all users, ${err.message}` });
+    }
+  }
+
   // [GET] /users/server/:id
   static async apiGetUsersByServerId(req, res, next) {
     try {
@@ -34,7 +46,7 @@ export default class UserController {
     try {
       const userId = req.user_id;
       const newValues = req.body;
-      const response = await User.updateOne({ _id: user_id }, newValues);
+      const response = await User.updateOne({ _id: userId }, newValues);
       res.status(200).json({ status: "success" });
     } catch (err) {
       res.status(500).json({ error: `Unable to update user, ${err}` });
@@ -54,14 +66,27 @@ export default class UserController {
 
   // [POST] /:userid/join/:serverid
   static async apiJoinServer(req, res, next) {
-      try {
-        const serverId = ObjectId(req.params.serverid);
-        const userId = req.userId;
+    try {
+      const serverId = ObjectId(req.params.serverid);
+      const userId = req.userId;
 
-        const response = await User.joinServer(userId, serverId);
-        res.status(200).json({ status: "success" });
-      } catch (error) {
-        res.status(500).json({ error: `Unable to join server, ${error}` });
-      }
+      const response = await User.joinServer(userId, serverId);
+      res.status(200).json({ status: "success" });
+    } catch (error) {
+      res.status(500).json({ error: `Unable to join server, ${error}` });
+    }
+  }
+
+  // [GET] /users/search
+  static async apiSearchUsers(req, res, next) {
+    try {
+      const textSearching = req.body.text;
+      const response = await User.searchUsers(textSearching);
+      res.status(200).json({ users: response });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: `Unable to search users: ${error.message}` });
+    }
   }
 }
