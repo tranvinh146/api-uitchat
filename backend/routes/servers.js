@@ -6,7 +6,12 @@ const router = express.Router();
 router
   .route("/users")
   .post(ServersController.apiAddUsers)
-  .delete(ServersController.apiRemoveUsers);
+  .delete(ServersController.apiRemoveMembers);
+
+router
+  .route("/users/owner-role")
+  .post(ServersController.apiGrantOwner)
+  .delete(ServersController.apiRevokeOwner);
 
 router
   .route("/")
