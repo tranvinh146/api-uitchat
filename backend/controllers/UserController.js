@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import bcrypt from "bcrypt";
 
 export default class UserController {
 	// [GET] /users/me/servers/:serverid
@@ -37,9 +38,29 @@ export default class UserController {
 	static async apiUpdate(req, res, next) {
 		try {
 			const userId = req.userId;
-			const newValues = req.body;
-			await User.updateOne({ _id: userId }, newValues);
-			res.status(200).json({ status: "success" });
+			let newValues = req.body;
+
+			if (newValues.email || newValues.password) {
+				// check current password
+				const user = await User.findById(userId);
+				const validPassword = await bcrypt.compare(newValues.current_password, user.password);
+
+				if (!validPassword) {
+					res.status(401).json({ status: "Incorrect password." });
+					return;
+				}
+
+				if (newValues.password) {
+					const saltRounds = 10;
+					const salt = await bcrypt.genSalt(saltRounds);
+					const hashedPassword = await bcrypt.hash(newValues.password, salt);
+					newValues.password = hashedPassword;
+				}
+			}
+			const response = await User.updateOne({ _id: userId }, newValues);
+			if (response.acknowledged) {
+				res.status(200).json({ status: "success" });
+			}
 		} catch (err) {
 			res.status(500).json({ error: `Unable to update user, ${err}` });
 		}
