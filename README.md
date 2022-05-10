@@ -112,9 +112,10 @@ All server's api **require** Authorization token.
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `username` | `string` | Optional |
+| `email` | `string` | Optional |
 | `password` | `string` | Optional |
 | `name` | `string` | Optional |
+| `current_password` | `string` | Required to update email, password |
 
 #### Delete user
 ```
