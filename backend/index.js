@@ -12,14 +12,14 @@ async function main() {
 	const server = http.createServer(app);
 	const io = new Server(server, {
 		cors: {
-		  origin: "*"
+			origin: "*"
 		}
 	});
-	
+
 	socket(io);
-	
+
 	const port = process.env.PORT || 8000;
-	
+
 	server.listen(port, () => {
 		console.log("Server is running on port", port);
 	});

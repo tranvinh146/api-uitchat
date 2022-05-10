@@ -70,25 +70,25 @@ export default class UserController {
 	}
 
 	// [GET] /users/me/friends
-	static async apiGetFriendsList(req, res, next) {
-		try {
-			const userId = req.userId;
-			const response = await User.getFriendsList(userId);
-			res.status(200).json(response);
-		} catch (error) {
-			res.status(500).json({ error: `Unable to get friend list, ${error}` });
-		}
-	}
+	// static async apiGetFriendsList(req, res, next) {
+	// 	try {
+	// 		const userId = req.userId;
+	// 		const response = await User.getFriendsList(userId);
+	// 		res.status(200).json(response);
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: `Unable to get friend list, ${error}` });
+	// 	}
+	// }
 
-	// [PATCH] /users/me/friends/:friendid
-	static async apiAddFriend(req, res, next) {
-		try {
-			const userId = req.userId;
-			const friendId = req.params.friendid;
-			await User.addFriend(userId, friendId);
-			res.status(200).json({ status: "success" });
-		} catch (error) {
-			res.status(500).json({ error: `Unable to add friend, ${error}` });
-		}
-	}
+	// // [PATCH] /users/me/friends/:friendid
+	// static async apiAddFriend(req, res, next) {
+	// 	try {
+	// 		const userId = req.userId;
+	// 		const friendId = req.params.friendid;
+	// 		await User.addFriend(userId, friendId);
+	// 		res.status(200).json({ status: "success" });
+	// 	} catch (error) {
+	// 		res.status(500).json({ error: `Unable to add friend, ${error}` });
+	// 	}
+	// }
 }

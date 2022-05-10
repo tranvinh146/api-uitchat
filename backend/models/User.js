@@ -1,16 +1,26 @@
 import mongoose from "mongoose";
 import Server from "../models/Server.js";
 
-const { ObjectId } = mongoose.Types.ObjectId;
-
 const userSchema = new mongoose.Schema(
 	{
+		uid: String,
 		email: String,
 		password: String,
-		name: String,
-		avatar: String,
-		status: String,
+		name: String, // 
+		avatar: { type: String, default: "https://cdn.discordapp.com/attachments/952774183899791434/973252456899309648/default-avatar.png" },
+		status: { type: String, default: "offline" },
+		socketId: String,
 		serverIds: [mongoose.Types.ObjectId],
+		invitations: [{
+			from: {
+				userId: mongoose.Types.ObjectId,
+				userName: String
+			},
+			server: {
+				serverId: mongoose.Types.ObjectId,
+				serverName: String
+			}
+		}],
 		// friendIds: [mongoose.Types.ObjectId],
 	},
 	{ timestamps: true }
