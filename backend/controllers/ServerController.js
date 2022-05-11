@@ -39,9 +39,9 @@ export default class ServersController {
       const response = await Server.createServer(name, avatar, userId);
       let { error } = response;
       if (error) {
-        return res.json({ error });
+        return res.status(400).json({ error });
       }
-      res.json({ ...response });
+      res.status(200).json({ ...response });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
