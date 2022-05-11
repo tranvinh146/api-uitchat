@@ -2,6 +2,9 @@ import app from "./server.js";
 import connectdb from "./config/mongo.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import socketio from "./utils/Socketio.js"
 // import mongodb from "mongodb";
 // import UsersDAO from "./dao/usersDAO.js";
 // import ServersDAO from "./dao/serversDAO.js";
@@ -31,7 +34,12 @@ async function main() {
 
   connectdb();
 
-  app.listen(port, () => {
+  const httpServer = createServer(app);
+  const io = new Server(httpServer);
+  socketio(io);
+  // next line is the money
+  app.set('socketio', io);
+  httpServer.listen(port, () => {
     console.log("Server is running on port", port);
   });
 }
