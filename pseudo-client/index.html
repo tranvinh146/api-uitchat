@@ -10,6 +10,37 @@
     <script type="module">
         import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
         const socket = io("http://localhost:3000");
+
+        socket.emit("invite", {
+            senderId: "6278cc5b22e0f03450eba787",
+            receiverId: "627a008beef6906a9c30214f",
+            serverId: "6257dfa926632da55e39b1d7",
+        });
+
+        // socket.emit("decline invitation", "627cc0ed22747eb2c47be06e"); // <- invitation id
+
+        socket.on("have new invitation", (invitation) => {
+			// display invitation
+            console.log(invitation)
+		});
+
+        socket.on("invitation responded", () => {
+			// re-render
+		});
+
+        socket.on("invitation has been sent successfully", () => {
+			// ...
+		});
+        
+        socket.on("failed to send invitation", (error) => {
+            // display error
+            console.log(error)
+		});
+        
+        socket.on("failed to decline invitation", (error) => {
+            // display error
+            console.log(error)
+        });
     </script>
 </body>
 </html>

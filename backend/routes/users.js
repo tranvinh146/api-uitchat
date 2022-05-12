@@ -14,6 +14,8 @@ router.route("/me/servers/:serverid").get(UserController.apiGetUsersByServerId);
 
 router.route("/me/servers/:serverid").patch(UserController.apiJoinServer);
 
+router.route("/me/invitations").get(UserController.apiGetInvitations);
+
 // router.route("/me/friends").get(UserController.apiGetFriendsList);
 
 // router.route("/me/friends/:friendid").patch(UserController.apiAddFriend);

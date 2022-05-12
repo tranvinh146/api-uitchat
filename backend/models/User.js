@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import Server from "../models/Server.js";
+import Server from "./Server.js";
+import Invitation from "./Invitation.js";
 
 const userSchema = new mongoose.Schema(
 	{
@@ -11,16 +12,7 @@ const userSchema = new mongoose.Schema(
 		status: { type: String, default: "offline" },
 		socketId: String,
 		serverIds: [mongoose.Types.ObjectId],
-		invitations: [{
-			from: {
-				userId: mongoose.Types.ObjectId,
-				userName: String
-			},
-			server: {
-				serverId: mongoose.Types.ObjectId,
-				serverName: String
-			}
-		}],
+		invitationIds: { type: [mongoose.Types.ObjectId], ref: "Invitation" },
 		// friendIds: [mongoose.Types.ObjectId],
 	},
 	{ timestamps: true }
@@ -36,7 +28,7 @@ userSchema.statics.findByEmail = async (email) => {
 	}
 };
 
-userSchema.statics.getUsersByServerId = async(serverId) => {
+userSchema.statics.getUsersByServerId = async (serverId) => {
 	try {
 		const server = await Server.findById(serverId);
 		const userIds = server.ownerIds.concat(server.memberIds);
@@ -84,6 +76,23 @@ userSchema.statics.joinServer = async function (userId, serverId) {
 		}
 	} catch (error) {
 		console.error(`Unable to join server, ${error.message}`);
+		throw error;
+	}
+};
+
+userSchema.statics.getInvitations = async function (userId) {
+	try {
+		const user = await User.findById(userId).populate({
+			path: 'invitationIds',
+			populate: {
+				path: 'senderId receiverId serverId',
+				select: "name avatar"
+			}
+		});
+		const invitations = user.invitationIds;
+		return invitations;
+	} catch (error) {
+		console.error(`Unable to get invitations list, ${error.message}`);
 		throw error;
 	}
 };

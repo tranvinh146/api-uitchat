@@ -90,6 +90,17 @@ export default class UserController {
 		}
 	}
 
+	// [GET] /users/me/invitations
+	static async apiGetInvitations(req, res, next) {
+		try {
+			const userId = req.userId;
+			const response = await User.getInvitations(userId);
+			res.status(200).json(response);
+		} catch (error) {
+			res.status(500).json({ error: `Unable to get invitations list, ${error}` });
+		}
+	}
+
 	// [GET] /users/me/friends
 	// static async apiGetFriendsList(req, res, next) {
 	// 	try {
