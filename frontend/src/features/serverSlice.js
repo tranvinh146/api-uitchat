@@ -17,6 +17,29 @@ export const fetchAddNewServer = createAsyncThunk(
         return data
     }
 )
+export const fetchDeleteServer = createAsyncThunk(
+    'server/fetchDeleteServer',
+    (serverId) => {
+        axios
+          .delete(
+            "http://localhost:8000/api/v1/uitchat/servers",
+            { serverId },
+            { headers: authHeader() }
+          )
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    // async (serverId) => {
+    //     console.log(serverId)
+    //     const {res} = await axios.delete(`${API_URL}/servers`,serverId, {headers: authHeader()})
+    //     console.log(res)
+    //     return serverId.server_id;
+    // }
+)
 const serverSlice = createSlice({
     name: "server",
     initialState: {
@@ -38,6 +61,9 @@ const serverSlice = createSlice({
         [fetchAddNewServer.fulfilled](state, {payload}) {
             state.loading = HTTP_STATUS.FULFILLED
             state.data.push(payload.server)
+        },
+        [fetchDeleteServer.fulfilled](state) {
+            state.loading = HTTP_STATUS.FULFILLED
         },
     }
 })

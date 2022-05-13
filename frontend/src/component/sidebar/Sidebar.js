@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Sidebar.css'
+import EditServer from './EditServer'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
 import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
@@ -25,7 +26,7 @@ function Sidebar() {
     <div className='sidebar'>
         <div className="sidebar__top">
             <h4>{infoServer.name}</h4>
-            <KeyboardArrowDownIcon/>
+            <EditServer/>
         </div>
         <div className="sidebar__channels">
             <div className="sidebar__channelsHeader">

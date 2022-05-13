@@ -27,15 +27,13 @@ export default function AddServer() {
       setImage(e.target.files[0])
     }
   }
-  console.log(image)
   const handleCreate = () => {
     handleClose();
     const imageRef = ref(storage, "image")
     uploadBytes(imageRef, image).then(() => {
       getDownloadURL(imageRef).then((url) => {
-        console.log(url)
         if(value !== '') {
-          dispatch(fetchAddNewServer({name: value, avatar: url, ownerIds: [], memberIds: [] }))
+          dispatch(fetchAddNewServer({name: value, avatar: url}))
         }
       }).catch(error => {
         console.log(error.message, "error getting the image url")
