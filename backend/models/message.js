@@ -8,7 +8,8 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const MessageSchema = new Schema({
     userId: {type: ObjectId, required: true},
-    channelId: {type: String, required: true},
+    channelId: {type: String},
+    conversationId: {type: String},
     content: {type: String, index: true, required: true},
 }, {
     _id: true,
@@ -51,12 +52,61 @@ MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messa
     }
 }
 
-MessageSchema.statics.addMessage = async function (userId, channelId, content) {
+MessageSchema.statics.getMessagesByConversationId = async function ( receiverId, senderId, messagesPerPage = 20) {
+    try {
+        // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
+         const messagesList = await this.aggregate([
+            {
+                $match: {$or: [
+                    {conversationId: receiverId},
+                    {conversationId: senderId}
+                ]}
+            },
+            {
+            $lookup:{
+                from: 'users', 
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user'
+            }
+            }]).sort({createdAt: -1});
+        messagesList.forEach((message) => message.content = Base64.decode(message.content));
+        const totalNumMessages = await this.count({$or: [
+            {conversationId: receiverId},
+            {conversationId: senderId}
+        ]});
+        return {messagesList, totalNumMessages};
+    } catch (e){
+        console.error(`Something went wrong in findByChannelId: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.addMessageForChannel = async function (userId, channelId, content) {
     try {
         const contentBase64 = Base64.encode(content);
         this.create({
             userId: userId,
             channelId: channelId,
+            content: contentBase64
+        }, function(err){
+            if(err) {
+                console.error(err);
+            }   
+        });
+        return {status: "Created success message"};
+    } catch (e) {
+        console.error(`Something went wrong in addMessage: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.addMessageForConversation = async function (userId, conversationId, content) {
+    try {
+        const contentBase64 = Base64.encode(content);
+        this.create({
+            userId: userId,
+            conversationId: conversationId,
             content: contentBase64
         }, function(err){
             if(err) {
