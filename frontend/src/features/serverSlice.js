@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import { API_URL, HTTP_STATUS } from "../app/constant";
 import authHeader from "../services/auth-header";
 import axios from "axios";
@@ -25,17 +25,17 @@ export const fetchDeleteServer = createAsyncThunk(
   "server/fetchDeleteServer",
   (serverId) => {
     axios
-      .delete(
-        "http://localhost:8000/api/v1/uitchat/servers",
-        { serverId },
-        { headers: authHeader() }
-      )
+      .delete("http://localhost:8000/api/v1/uitchat/servers", {
+        data: { server_id: serverId },
+        headers: authHeader(),
+      })
       .then(function (response) {
-        console.log(response);
+        console.log(response.data);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.message);
       });
+    return serverId;
   }
   // async (serverId) => {
   //     console.log(serverId)
@@ -66,8 +66,11 @@ const serverSlice = createSlice({
       state.loading = HTTP_STATUS.FULFILLED;
       state.data.push(payload.server);
     },
-    [fetchDeleteServer.fulfilled](state) {
+    [fetchDeleteServer.fulfilled](state, { payload }) {
       state.loading = HTTP_STATUS.FULFILLED;
+      state.data = current(state).data.filter(
+        (server) => server._id != payload
+      );
     },
   },
 });
