@@ -3,19 +3,21 @@ import "./Member.css";
 import { useSelector } from "react-redux";
 import { Avatar } from "@mui/material";
 import { selectInfoServer } from "../../../features/infoServerSlice";
-function Member() {
-  const infoServer = useSelector(selectInfoServer);
+function Member(props) {
+  const channel = props.channel;
+
   return (
     <div className="member">
       <h4 className="member__status">Online - 2</h4>
       <div className="member__users">
         <div className="member__user user__on">
-          {infoServer.ownerIds.map((owner) => (
-            <>
-              <Avatar />
-              <h4>{owner.name}</h4>
-            </>
-          ))}
+          {"ownerIds" in channel &&
+            channel.ownerIds.map((owner) => (
+              <div key="owner">
+                <Avatar />
+                <h4>{owner.name}</h4>
+              </div>
+            ))}
         </div>
       </div>
       <h4 className="member__status">Offline - 4</h4>

@@ -30,10 +30,10 @@ export const fetchDeleteServer = createAsyncThunk(
         headers: authHeader(),
       })
       .then(function (response) {
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch(function (error) {
-        console.log(error.message);
+        // console.log(error.message);
       });
     return serverId;
   }

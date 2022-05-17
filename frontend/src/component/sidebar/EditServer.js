@@ -62,14 +62,18 @@ export default function EditServer() {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const { user: currentUser } = useSelector((state) => state.auth);
-  var isOwner = false;
-  infoServer.ownerIds.forEach((owner) => {
-    if (owner.email === currentUser.user.email) {
-      isOwner = true;
-    }
-  });
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  var isOwner = false;
+
+  if ("ownerIds" in infoServer) {
+    infoServer.ownerIds.forEach((owner) => {
+      if (owner.email === currentUser.user.email) {
+        isOwner = true;
+      }
+    });
+  }
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,7 +93,7 @@ export default function EditServer() {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         variant="contained"
-        disableElevation
+        // disableElevation
         onClick={handleClick}
       />
 
@@ -112,7 +116,7 @@ export default function EditServer() {
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         {isOwner ? (
-          <>
+          <div>
             <MenuItem onClick={handleClose} disableRipple>
               <AddIcon />
               Create Channel
@@ -126,7 +130,7 @@ export default function EditServer() {
               <DeleteIcon />
               Delete Server
             </MenuItem>
-          </>
+          </div>
         ) : (
           <MenuItem onClick={handleClose} disableRipple>
             <LogoutIcon />
