@@ -1,18 +1,24 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Add from '@mui/icons-material/Add';
+import EditIcon from "@mui/icons-material/Edit";
+import MenuItem from "@mui/material/MenuItem";
 import {storage} from '../../firebase'
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import {fetchAddNewServer} from '../../features/serverSlice'  
 import { useDispatch } from 'react-redux';
-export default function AddServer() {
+import { fetchUpdateServer } from '../../features/serverSlice';
+import { selectInfoServer } from "../../features/infoServerSlice";
+
+export default function UpdateServer() {
+  const infoServer = useSelector(selectInfoServer);
   const [open, setOpen] = React.useState(false);
   const [image, setImage] = React.useState(null)
+  const [value, setValue] = React.useState(infoServer.name);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -20,41 +26,44 @@ export default function AddServer() {
   const handleClose = () => {
     setOpen(false);
   };
-  const [value, setValue] = React.useState("");
   const dispatch = useDispatch()
   const handleImageChange = (e) => {
     if(e.target.files[0]) {
       setImage(e.target.files[0])
     }
   }
-  const handleCreate = () => {
+  const handleUpdate = () => {
     handleClose();
     if(image !== null) {
       const imageRef = ref(storage, "image")
       uploadBytes(imageRef, image).then(() => {
         getDownloadURL(imageRef).then((url) => {
           if(value !== '') {
-            dispatch(fetchAddNewServer({name: value, avatar: url}))
+            dispatch(fetchUpdateServer({server_id: infoServer._id, name: value, avatar: url}))
           }
         }).catch(error => {
           console.log(error.message, "error getting the image url")
         })
-        setImage(null)
       }).catch(error => {
         console.log(error.message)
       })
     }
     else {
       if(value !== '') {
-        dispatch(fetchAddNewServer({name: value, avatar: null}))
+        dispatch(fetchUpdateServer({server_id: infoServer._id, name: value, avatar: null}))
       }
     }
   }
   return (
     <div>
-      <Add onClick={handleClickOpen}/>
+      <MenuItem onClick={() => {
+            handleClickOpen()
+          }} disableRipple>
+              <EditIcon />
+              Update Server Profile
+      </MenuItem>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add your server</DialogTitle>
+        <DialogTitle>Update your server</DialogTitle>
         <DialogContent>
           <input label="SERVER IMAGE" type="file" onChange={handleImageChange}/>
           <TextField
@@ -73,7 +82,7 @@ export default function AddServer() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleCreate}>Create</Button>
+          <Button onClick={handleUpdate}>Update</Button>
         </DialogActions>
       </Dialog>
     </div>

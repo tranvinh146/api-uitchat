@@ -11,9 +11,11 @@ import SidebarChannel from './SidebarChannel';
 import MicIcon from '@mui/icons-material/Mic';
 import HeadsetIcon from '@mui/icons-material/Headset';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { useSelector } from 'react-redux';
-import {selectChannel} from '../../features/channelSlice'
-import {selectInfoServer} from '../../features/infoServerSlice'
+import {fetchChannelData, selectChannel} from '../../features/channelSlice'
+import {fetchInfoServerData, selectInfoServer} from '../../features/infoServerSlice'
 
 function Sidebar() {
     const channels = useSelector(selectChannel)
@@ -22,6 +24,12 @@ function Sidebar() {
     const handleAddChannel = () => {
         
     }
+    let { serverId, channelId } = useParams();
+    const dispatch = useDispatch();
+    useEffect(() => {
+        Promise.reject(dispatch(fetchInfoServerData(serverId))
+        .then(() => dispatch(fetchChannelData(serverId))))
+    }, [dispatch]);
   return (
     <div className='sidebar'>
         <div className="sidebar__top">
