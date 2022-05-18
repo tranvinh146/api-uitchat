@@ -11,6 +11,10 @@
         import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
         const socket = io("http://localhost:3000");
 
+        socket.on("connect", () => {
+            socket.emit("login", "627a008beef6906a9c30214f"); // <- userId
+        })
+
         // socket.emit("invite", {
         //     senderId: "6278cc5b22e0f03450eba787",
         //     receiverId: "627a008beef6906a9c30214f",
@@ -19,28 +23,46 @@
 
         // socket.emit("decline invitation", "627cc0ed22747eb2c47be06e"); // <- invitation id
 
+        // socket.emit("accept invitation", "62849d3dd094a45a1fb4a473"); // <- invitation id
+
         socket.on("have new invitation", (invitation) => {
-			// display invitation
+			// re-render invitation list
+            // (1)
             console.log(invitation)
 		});
 
         socket.on("invitation responded", () => {
-			// re-render
+			// re-render invitation list
 		});
 
-        socket.on("invitation has been sent successfully", () => {
+        socket.on("successfully sent invitation", () => {
 			// ...
 		});
+
+        socket.on("successfully accepted invitation", () => {
+
+        });
+
+        socket.on("successfully declined invitation", () => {
+
+        });
         
         socket.on("failed to send invitation", (error) => {
             // display error
             console.log(error)
 		});
+
+        socket.on("failed to accept invitation", (error) => {
+            // display error
+            console.log(error)
+        });
         
         socket.on("failed to decline invitation", (error) => {
             // display error
             console.log(error)
         });
+
+        
     </script>
 </body>
 </html>
