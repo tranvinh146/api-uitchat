@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import NotFound from "./component/NotFound";
 import Login from "./component/login/Login";
@@ -17,14 +17,7 @@ function App() {
   const logOut = useCallback(() => {
     dispatch(logout());
   }, [dispatch]);
-  const navigate = useNavigate();
   const { user: currentUser } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-    }
-  }, [currentUser]);
   return (
     <div className="app">
       <div className="container mt-3">
@@ -32,7 +25,6 @@ function App() {
           <Route path="/servers" element={<Server />}>
             <Route path="@me" element={<Home />} />
             <Route path=":serverId" element={<ServerPlace />}>
-              <Route index element={<Chat />} />
               <Route path=":channelId" element={<Chat />} />
             </Route>
           </Route>

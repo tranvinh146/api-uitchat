@@ -6,8 +6,8 @@ export const register = createAsyncThunk(
   "auth/register",
   async ({ email, password, name, avatar }, thunkAPI) => {
     try {
-      const data = await AuthService.register(email, password, name, avatar);
-      // console.log("run")
+      const data = await AuthService.register( email, password,name, avatar);
+      console.log("run")
       return { user: data };
     } catch (error) {
       const message =
@@ -70,4 +70,4 @@ const authSlice = createSlice({
     },
   },
 });
-export default authSlice.reducer;
+export default authSlice.reducer; 

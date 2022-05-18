@@ -5,11 +5,13 @@ export default class ChannelsController {
     try {
       const userId = req.userId;
       const channelId = req.params.channelId;
+      console.log(channelId)
       const channelResponse = await Channel.findOne({
         _id: channelId,
         $or: [{ memberIds: userId }, { ownerIds: userId }],
       });
-      return res.status(200).json(channelResponse);
+      console.log(channelResponse)
+      return res.status(200).json({ channel: channelResponse });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

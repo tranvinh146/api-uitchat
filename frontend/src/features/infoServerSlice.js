@@ -8,6 +8,7 @@ export const fetchInfoServerData = createAsyncThunk(
     const { data } = await axios.get(`${API_URL}/servers/${serverId}`, {
       headers: authHeader(),
     });
+    console.log(data);
     return data;
   }
 );
@@ -16,7 +17,7 @@ const infoServerSlice = createSlice({
   name: "infoServer",
   initialState: {
     loading: null,
-    data: {},
+    data: null,
   },
   reducers: {},
   extraReducers: {

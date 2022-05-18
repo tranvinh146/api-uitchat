@@ -7,39 +7,19 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import GifBoxIcon from "@mui/icons-material/GifBox";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { fetchInfoChannelData } from "../../features/infoChannelSlice";
-import { fetchChannelData } from "../../features/channelSlice";
-import { selectInfoChannel } from "../../features/infoChannelSlice";
-import { selectChannel } from "../../features/channelSlice";
 
 function Chat() {
+  let { serverId, channelId } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { channelId, serverId } = useParams();
-  const { user: currentUser } = useSelector((state) => state.auth);
-  const channel = useSelector(selectInfoChannel);
-  // const channels = useSelector(selectChannel);
-
   useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-    }
-  }, [currentUser]);
-
-  useEffect(async () => {
-    if (channelId) {
-      dispatch(fetchInfoChannelData(channelId, serverId));
-    } 
-      // await dispatch(fetchChannelData(serverId));
-      // await dispatch(fetchInfoChannelData(channels[0]._id, serverId));
-    
-  }, [channelId]);
-
+    dispatch(fetchInfoChannelData(channelId,serverId))
+  }, [dispatch])
   return (
     <div className="chat">
-      <ChatHeader channel={channel} />
+      <ChatHeader />
       <div className="chat__messAndMem">
         <div className="chat__mess">
           <div className="chat__messages">
@@ -62,7 +42,7 @@ function Chat() {
             </div>
           </div>
         </div>
-        <Member channel={channel} />
+        <Member />
       </div>
     </div>
   );
