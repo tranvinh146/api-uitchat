@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect } from "react";
 import "./Chat.css";
 import Member from "./member/Member";
 import ChatHeader from "./chatHeader/ChatHeader";
@@ -9,14 +9,18 @@ import GifBoxIcon from "@mui/icons-material/GifBox";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { fetchChannelData } from "../../features/channelSlice";
+import { fetchInfoServerData } from "../../features/infoServerSlice";
 import { fetchInfoChannelData } from "../../features/infoChannelSlice";
 
 function Chat() {
   let { serverId, channelId } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchInfoChannelData(channelId,serverId))
-  }, [dispatch])
+    return Promise.resolve(dispatch(fetchChannelData(serverId)))
+      .then(() => dispatch(fetchInfoServerData(serverId)))
+      .then(() => dispatch(fetchInfoChannelData(channelId, serverId)));
+  });
   return (
     <div className="chat">
       <ChatHeader />

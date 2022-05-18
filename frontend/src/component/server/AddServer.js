@@ -29,26 +29,18 @@ export default function AddServer() {
   }
   const handleCreate = () => {
     handleClose();
-    if(image !== null) {
-      const imageRef = ref(storage, "image")
-      uploadBytes(imageRef, image).then(() => {
-        getDownloadURL(imageRef).then((url) => {
-          if(value !== '') {
-            dispatch(fetchAddNewServer({name: value, avatar: url}))
-          }
-        }).catch(error => {
-          console.log(error.message, "error getting the image url")
-        })
-        setImage(null)
+    const imageRef = ref(storage, "image")
+    uploadBytes(imageRef, image).then(() => {
+      getDownloadURL(imageRef).then((url) => {
+        if(value !== '') {
+          dispatch(fetchAddNewServer({name: value, avatar: url}))
+        }
       }).catch(error => {
-        console.log(error.message)
+        console.log(error.message, "error getting the image url")
       })
-    }
-    else {
-      if(value !== '') {
-        dispatch(fetchAddNewServer({name: value, avatar: null}))
-      }
-    }
+    }).catch(error => {
+      console.log(error.message)
+    })
   }
   return (
     <div>
