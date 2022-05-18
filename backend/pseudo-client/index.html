@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+        const socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+            socket.emit("login", "627a008beef6906a9c30214f"); // <- userId
+        })
+
+        // socket.emit("invite", {
+        //     senderId: "6278cc5b22e0f03450eba787",
+        //     receiverId: "627a008beef6906a9c30214f",
+        //     serverId: "6257dfa926632da55e39b1d7",
+        // });
+
+        // socket.emit("decline invitation", "627cc0ed22747eb2c47be06e"); // <- invitation id
+
+        // socket.emit("accept invitation", "62849d3dd094a45a1fb4a473"); // <- invitation id
+
+        socket.on("have new invitation", (invitation) => {
+			// re-render invitation list
+            // (1)
+            console.log(invitation)
+		});
+
+        socket.on("invitation responded", () => {
+			// re-render invitation list
+		});
+
+        socket.on("successfully sent invitation", () => {
+			// ...
+		});
+
+        socket.on("successfully accepted invitation", () => {
+
+        });
+
+        socket.on("successfully declined invitation", () => {
+
+        });
+        
+        socket.on("failed to send invitation", (error) => {
+            // display error
+            console.log(error)
+		});
+
+        socket.on("failed to accept invitation", (error) => {
+            // display error
+            console.log(error)
+        });
+        
+        socket.on("failed to decline invitation", (error) => {
+            // display error
+            console.log(error)
+        });
+
+        
+    </script>
+</body>
+</html>
