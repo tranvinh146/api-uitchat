@@ -5,8 +5,6 @@ import { useNavigate, Outlet, Link } from "react-router-dom";
 import { fetchServerData, selectServer } from "../../features/serverSlice";
 import { selectChannel } from "../../features/channelSlice";
 import "./Server.css";
-import DownloadIcon from "@mui/icons-material/Download";
-import ExploreIcon from "@mui/icons-material/Explore";
 import AddSerVer from "./AddServer";
 import { fetchChannelData } from "../../features/channelSlice";
 import { fetchInfoServerData } from "../../features/infoServerSlice";

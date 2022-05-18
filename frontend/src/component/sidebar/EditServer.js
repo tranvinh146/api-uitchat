@@ -2,11 +2,11 @@ import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
+import UpdateServer from "./UpdateServer";
+import InviteUser from "./InviteUser";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import EditIcon from "@mui/icons-material/Edit";
 import Divider from "@mui/material/Divider";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -106,17 +106,11 @@ export default function EditServer() {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
-          <EditIcon />
-          Edit Server Profile
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          <GroupAddIcon />
-          Invite People
-        </MenuItem>
+        <InviteUser />
         <Divider sx={{ my: 0.5 }} />
         {isOwner ? (
           <div>
+            <UpdateServer onClick={handleClose}/>
             <MenuItem onClick={handleClose} disableRipple>
               <AddIcon />
               Create Channel

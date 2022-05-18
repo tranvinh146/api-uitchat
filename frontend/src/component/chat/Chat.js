@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import "./Chat.css";
 import Member from "./member/Member";
 import ChatHeader from "./chatHeader/ChatHeader";
