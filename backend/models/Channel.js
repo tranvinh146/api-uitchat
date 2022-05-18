@@ -20,8 +20,8 @@ const channelSchema = new mongoose.Schema(
       // enum: ["text", "voice"],
       required: true,
     },
-    ownerIds: [mongoose.SchemaTypes.ObjectId],
-    memberIds: [mongoose.SchemaTypes.ObjectId],
+    ownerIds: { type: [mongoose.Types.ObjectId], ref: "User" },
+    memberIds: { type: [mongoose.Types.ObjectId], ref: "User" },
   },
   {
     timestamps: true,

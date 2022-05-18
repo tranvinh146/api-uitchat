@@ -125,6 +125,7 @@ serverSchema.statics.addUsers = async function (
         },
       }
     );
+
     if (addedUsers.matchedCount === 0) {
       return { error: "User may not have permisson" };
     }

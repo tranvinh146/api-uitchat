@@ -102,6 +102,7 @@ export default class ServersController {
         return res.status(400).json({ error });
       }
       const server = await Server.findById(serverId);
+
       res.status(200).json({ server });
     } catch (error) {
       res.status(500).json({ error: error.message });
