@@ -4,6 +4,7 @@ import mongodb from "mongodb";
 const ObjectId = mongodb.ObjectId;
 
 export default class MessagesController {
+ 
   static async apiGetMessagesByChannelId(req, res, next) {
     try {
       const messagesPerPage = req.query.messagesPerPage
@@ -27,12 +28,57 @@ export default class MessagesController {
     }
   }
 
-  static async apiPostMessage(req, res, next) {
+  static async apiPostMessageFromChannel(req, res, next) {
     try {
       const userId = req.userId;
       const channelId = req.body.channelId;
       const content = req.body.content;
-      const result = await Message.addMessage(userId, channelId, content);
+      var io = req.app.get('socketio');
+      const result = await Message.addMessageForChannel(userId, channelId, content);
+      if (result){
+        io.emit('Channel'+channelId, content);
+      }
+      res.status(201).json(result);
+    } catch (e) {
+      console.log(`Error when Create message`);
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiGetMessagesByConversationId(req, res, next) {
+    try {
+      const messagesPerPage = req.query.messagesPerPage
+        ? parseInt(req.query.messagesPerPage)
+        : 20;
+      let receiverId = req.params.guestId+ req.userId;
+      let senderId = req.userId + req.params.guestId;
+      const { messagesList, totalNumMessages } =
+        await Message.getMessagesByConversationId(receiverId, senderId, messagesPerPage);
+      if (!messagesList) {
+        res.status(404).json({ error: "not found" });
+        return;
+      }
+      let response = {
+        count: totalNumMessages,
+        results: messagesList,
+      };
+      res.json(response);
+    } catch (e) {
+      console.log(`api, ${e}`);
+      res.status(500).json({ error: e });
+    }
+  }
+
+  static async apiPostMessageFromConversation(req, res, next) {
+    try {
+      const userId = req.userId;
+      const conversationId = req.body.userId+userId; //set conversationId = userId send message + userId receive message
+      const content = req.body.content;
+      var io = req.app.get('socketio');
+      const result = await Message.addMessageForConversation(userId, conversationId, content);
+      if (result){
+        io.emit('ConversationId'+conversationId, content);
+      }
       res.status(201).json(result);
     } catch (e) {
       console.log(`Error when Create message`);
