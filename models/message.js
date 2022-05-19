@@ -4,13 +4,12 @@ import Base64 from "../utils/Base64.js";
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
-const MessageSchema = new Schema(
-  {
-    userId: { type: ObjectId, required: true },
-    channelId: { type: String, required: true },
-    content: { type: String, index: true, required: true },
-  },
-  {
+const MessageSchema = new Schema({
+    userId: {type: ObjectId, required: true},
+    channelId: {type: String},
+    conversationId: {type: String},
+    content: {type: String, index: true, required: true},
+}, {
     _id: true,
     timestamps: true,
   }
@@ -58,6 +57,7 @@ MessageSchema.statics.getMessagesByChannelId = async function (
   }
 };
 
+<<<<<<< HEAD
 MessageSchema.statics.addMessage = async function (userId, channelId, content) {
   try {
     const contentBase64 = Base64.encode(content);
@@ -102,6 +102,90 @@ MessageSchema.statics.updateMessage = async function (
     throw e;
   }
 };
+=======
+MessageSchema.statics.getMessagesByConversationId = async function ( receiverId, senderId, messagesPerPage = 20) {
+    try {
+        // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
+         const messagesList = await this.aggregate([
+            {
+                $match: {$or: [
+                    {conversationId: receiverId},
+                    {conversationId: senderId}
+                ]}
+            },
+            {
+            $lookup:{
+                from: 'users', 
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user'
+            }
+            }]).sort({createdAt: -1});
+        messagesList.forEach((message) => message.content = Base64.decode(message.content));
+        const totalNumMessages = await this.count({$or: [
+            {conversationId: receiverId},
+            {conversationId: senderId}
+        ]});
+        return {messagesList, totalNumMessages};
+    } catch (e){
+        console.error(`Something went wrong in findByChannelId: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.addMessageForChannel = async function (userId, channelId, content) {
+    try {
+        const contentBase64 = Base64.encode(content);
+        this.create({
+            userId: userId,
+            channelId: channelId,
+            content: contentBase64
+        }, function(err){
+            if(err) {
+                console.error(err);
+            }   
+        });
+        return {status: "Created success message"};
+    } catch (e) {
+        console.error(`Something went wrong in addMessage: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.addMessageForConversation = async function (userId, conversationId, content) {
+    try {
+        const contentBase64 = Base64.encode(content);
+        this.create({
+            userId: userId,
+            conversationId: conversationId,
+            content: contentBase64
+        }, function(err){
+            if(err) {
+                console.error(err);
+            }   
+        });
+        return {status: "Created success message"};
+    } catch (e) {
+        console.error(`Something went wrong in addMessage: ${e}`);
+        throw e;
+    }
+}
+
+MessageSchema.statics.updateMessage = async function (messageId,userId, content) {
+    try {
+        const contentBase64 = Base64.encode(content);
+        this.updateOne({_id: messageId, userId: userId}, {content: contentBase64}, function (err){
+            if(err) {
+                console.error(err);
+            }  
+        })
+        return {status: "Updated success message"};
+    } catch (e) {
+        console.error(`Something went wrong in updateMessage: ${e}`);
+        throw e;
+    }
+}
+>>>>>>> 65432ce915d4476c22b355f93a08bc68656af2b0
 
 MessageSchema.statics.deleteMessage = async function (messageId, userId) {
   try {
