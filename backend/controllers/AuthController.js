@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 // import middlewares encode
 import { encode } from "../middleware/jwt.js";
 
-
 export default class AuthController {
 	static async login(req, res, next) {
 		try {
@@ -36,9 +35,11 @@ export default class AuthController {
 
 	static async oauthLogin(req, res, next) {
 		try {
-			const { uid, email, name, avatar } = req.user;
+			const { uid, email, name, avatar } = req.body;
+
 			// find or create
-			let user = await User.findOne({ email: email });
+			let user = await User.findOne({ uid: uid });
+
 			if (!user) {
 				// create if user does't exist
 				user = {
@@ -56,6 +57,8 @@ export default class AuthController {
 				user.avatar = avatar;
 				await user.save();
 			}
+
+
 			const accessToken = encode(user);
 			const userInfo = {
 				id: user._id,
@@ -64,6 +67,7 @@ export default class AuthController {
 				name: user.name,
 				avatar: user.avatar,
 			};
+
 			res.status(200).json({ access_token: accessToken, user: userInfo });
 		} catch (err) {
 			res.status(500).json({ error: err.message });
