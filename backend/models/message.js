@@ -18,10 +18,20 @@ const MessageSchema = new Schema({
 
 MessageSchema.statics.getMessageById = async function (messageId) {
     try {
-        const message = await this.find({_id: messageId});
-        message = message ? message[0]: null;
-        message.content = Base64.decode(message.content);
-        return message;
+        const messages = await this.aggregate([
+            {
+                $match: { _id: messageId}
+            },
+            {
+            $lookup:{
+                from: 'users', 
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user'
+            }
+            }]).sort({createdAt: -1});
+        messages.forEach((message) => message.content = Base64.decode(message.content));
+        return messages; 
     } catch (e){
         console.error(`Something went wrong in getMessageById: ${e}`);
         throw e;
@@ -30,7 +40,6 @@ MessageSchema.statics.getMessageById = async function (messageId) {
 
 MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messagesPerPage = 20) {
     try {
-        // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
          const messagesList = await this.aggregate([
             {
                 $match: { channelId: channelId}
@@ -54,7 +63,6 @@ MessageSchema.statics.getMessagesByChannelId = async function ( channelId, messa
 
 MessageSchema.statics.getMessagesByConversationId = async function ( receiverId, senderId, messagesPerPage = 20) {
     try {
-        // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
          const messagesList = await this.aggregate([
             {
                 $match: {$or: [
@@ -94,9 +102,15 @@ MessageSchema.statics.addMessageForChannel = async function (userId, channelId, 
                 console.error(err);
             }   
         });
-        return {status: "Created success message"};
+
+        const message = await this.find({
+            userId: userId,
+            channelId: channelId,
+            content: contentBase64}).sort({createdAt: -1});
+        
+        return {status: "Created success message", messageId: message[0]._id};
     } catch (e) {
-        console.error(`Something went wrong in addMessage: ${e}`);
+        console.error(`Something went wrong in addMessageForConversation: ${e}`);
         throw e;
     }
 }
@@ -113,9 +127,14 @@ MessageSchema.statics.addMessageForConversation = async function (userId, conver
                 console.error(err);
             }   
         });
-        return {status: "Created success message"};
+        const message = await this.find({
+            userId: userId,
+            conversationId: conversationId,
+            content: contentBase64}).sort({createdAt: -1});
+
+        return {status: "Created success message", messageId: message[0]._id};
     } catch (e) {
-        console.error(`Something went wrong in addMessage: ${e}`);
+        console.error(`Something went wrong in addMessageForConversation: ${e}`);
         throw e;
     }
 }

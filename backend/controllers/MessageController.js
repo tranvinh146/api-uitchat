@@ -18,7 +18,7 @@ export default class MessagesController {
         return;
       }
       let response = {
-        count: totalNumMessages,
+        total_results: totalNumMessages,
         results: messagesList,
       };
       res.json(response);
@@ -36,9 +36,10 @@ export default class MessagesController {
       var io = req.app.get('socketio');
       const result = await Message.addMessageForChannel(userId, channelId, content);
       if (result){
-        io.emit('Channel'+channelId, content);
+        const message = await Message.getMessageById(result.messageId);
+        io.emit('Channel'+channelId, message);
+        res.status(201).json(result);
       }
-      res.status(201).json(result);
     } catch (e) {
       console.log(`Error when Create message`);
       res.status(500).json({ error: e.message });
@@ -59,7 +60,7 @@ export default class MessagesController {
         return;
       }
       let response = {
-        count: totalNumMessages,
+        total_results: totalNumMessages,
         results: messagesList,
       };
       res.json(response);
@@ -77,9 +78,10 @@ export default class MessagesController {
       var io = req.app.get('socketio');
       const result = await Message.addMessageForConversation(userId, conversationId, content);
       if (result){
-        io.emit('ConversationId'+conversationId, content);
+        const message = await Message.getMessageById(result.messageId);
+        io.emit('ConversationId'+conversationId, message);
+        res.status(201).json(result);
       }
-      res.status(201).json(result);
     } catch (e) {
       console.log(`Error when Create message`);
       res.status(500).json({ error: e.message });
@@ -147,7 +149,7 @@ export default class MessagesController {
       }
       let response = {
         total_results: totalNumMessages,
-        messagesList: messagesList,
+        results: messagesList,
       };
       res.json(response);
     } catch (e) {

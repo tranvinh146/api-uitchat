@@ -17,7 +17,7 @@ async function main() {
 	});
 
 	socket(io);
-
+	app.set("socketio", io);
 	const port = process.env.PORT || 8000;
 
 	server.listen(port, () => {
