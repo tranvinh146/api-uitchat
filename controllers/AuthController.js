@@ -75,18 +75,24 @@ export default class AuthController {
 
   static async register(req, res, next) {
     try {
-      const { email, name, password } = req.body;
+      const { email, name, password, avatar } = req.body;
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const userResponse = await User.createUser(email, hashedPassword, name);
+      const userResponse = await User.createUser(
+        email,
+        hashedPassword,
+        name,
+        avatar
+      );
       let { error } = userResponse;
       if (error) {
         return res.status(400).json({ error });
       }
       const accessToken = encode(userResponse);
       const userInfo = {
+        id: userResponse._id,
         email: userResponse.email,
         name: userResponse.name,
         avatar: userResponse.avatar,
