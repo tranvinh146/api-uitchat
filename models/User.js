@@ -56,6 +56,22 @@ userSchema.statics.getUsersByServerId = async (serverId) => {
   }
 };
 
+userSchema.statics.getMembersByServerId = async (serverId) => {
+  try {
+    const server = await Server.findById(serverId);
+    const memberIds = server.memberIds;
+    return await User.find(
+      { _id: { $in: memberIds } },
+      "_id email name avatar"
+    );
+  } catch (error) {
+    console.error(
+      `something went wrong in getMembersByServerId: ${error.message}`
+    );
+    throw error;
+  }
+};
+
 userSchema.statics.createUser = async function (email, password, name, avatar) {
   try {
     const existUser = await this.findOne({ email });

@@ -12,6 +12,16 @@ export default class UserController {
     }
   }
 
+  // [GET] /users/me/servers/:serverid/members
+  static async apiGetMembersByServerId(req, res, next) {
+    try {
+      const response = await User.getMembersByServerId(req.params.serverid);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ error: `Unable to issue find command, ${err}` });
+    }
+  }
+
   // [GET] /users/me
   static async apiGetCurrentUser(req, res, next) {
     try {
