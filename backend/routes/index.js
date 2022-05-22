@@ -4,6 +4,7 @@ import users from "./users.js";
 import servers from "./servers.js";
 import channels from "./channels.js";
 import messages from "./messages.js";
+import conversations from "./conversations.js";
 // import midddlewares
 import { verifyToken } from "../middleware/jwt.js";
 
@@ -18,5 +19,7 @@ router.use("/servers", verifyToken, servers);
 router.use("/channels", verifyToken, channels);
 
 router.use("/messages", verifyToken, messages);
+
+router.use("/conversations", verifyToken, conversations);
 
 export default router;
