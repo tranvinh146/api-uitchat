@@ -83,18 +83,16 @@ export default function socket(io) {
             }
         });
 
-        // socket.on("chat message", function (msg) {
-        //     console.log("message: " + msg);
-        //     //broadcast message to everyone in port:5000 except yourself.
-        //     socket.broadcast.emit("received", { message: msg });
+        socket.on("chat-message", (message, serverId) => {
+            //broadcast message to everyone in port:5000 except yourself.
+            socket.to(serverId).emit("received", message);
+            //save chat to the database
+            connect.then(db => {
+                console.log("connected correctly to the server");
 
-        //     //save chat to the database
-        //     connect.then(db => {
-        //         console.log("connected correctly to the server");
-
-        //         let chatMessage = new Chat({ message: msg, sender: "Anonymous" });
-        //         chatMessage.save();
-        //     });
-        // });
+                let chatMessage = new Chat({ message: msg, sender: "Anonymous" });
+                chatMessage.save();
+            });
+        });
     });
 }
