@@ -6,23 +6,24 @@ import http from 'http';
 import socket from "./utils/Socket.js";
 
 async function main() {
-	dotenv.config();
-	connectdb();
+    dotenv.config();
+    connectdb();
 
-	const server = http.createServer(app);
-	const io = new Server(server, {
-		cors: {
-			origin: "*"
-		}
-	});
+    const server = http.createServer(app);
 
-	socket(io);
-	app.set("socketio", io);
-	const port = process.env.PORT || 8000;
+    const io = new Server(server, {
+        cors: {
+            origin: "*"
+        }
+    });
 
-	server.listen(port, () => {
-		console.log("Server is running on port", port);
-	});
+    socket(io);
+    app.set("socketio", io);
+    const port = process.env.PORT || 8000;
+
+    server.listen(port, () => {
+        console.log("Server is running on port", port);
+    });
 }
 
 main().catch(console.error);
