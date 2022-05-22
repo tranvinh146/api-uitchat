@@ -1,7 +1,7 @@
 import Message from "../models/Message.js";
+import Conversation from "../models/Conversation.js"
 
 import mongodb from "mongodb";
-const ObjectId = mongodb.ObjectId;
 
 export default class MessagesController {
  
@@ -51,10 +51,9 @@ export default class MessagesController {
       const messagesPerPage = req.query.messagesPerPage
         ? parseInt(req.query.messagesPerPage)
         : 20;
-      let receiverId = req.params.guestId+ req.userId;
-      let senderId = req.userId + req.params.guestId;
+      const conversationId = req.params.conversationId;
       const { messagesList, totalNumMessages } =
-        await Message.getMessagesByConversationId(receiverId, senderId, messagesPerPage);
+        await Message.getMessagesByConversationId(conversationId, messagesPerPage);
       if (!messagesList) {
         res.status(404).json({ error: "not found" });
         return;
@@ -72,11 +71,11 @@ export default class MessagesController {
 
   static async apiPostMessageFromConversation(req, res, next) {
     try {
-      const userId = req.userId;
-      const conversationId = req.body.userId+userId; //set conversationId = userId send message + userId receive message
+      const ownerId = req.userId;
+      const conversationId = req.body.conversationId;
       const content = req.body.content;
       var io = req.app.get('socketio');
-      const result = await Message.addMessageForConversation(userId, conversationId, content);
+      const result = await Message.addMessageForConversation(ownerId, conversationId, content);
       if (result){
         const message = await Message.getMessageById(result.messageId);
         io.emit('ConversationId'+conversationId, message);
