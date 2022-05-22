@@ -13,6 +13,10 @@ router.route("/:userid").get(UserController.apiGetById);
 
 router.route("/me/servers/:serverid").get(UserController.apiGetUsersByServerId);
 
+router
+  .route("/me/servers/:serverid/members")
+  .get(UserController.apiGetMembersByServerId);
+
 router.route("/me/servers/:serverid").patch(UserController.apiJoinServer);
 
 router.route("/me/invitations").get(UserController.apiGetInvitations);
