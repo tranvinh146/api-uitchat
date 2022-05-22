@@ -4,7 +4,7 @@ import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 
-router.route("/conversation/:guestId").get(verifyToken, MessagesController.apiGetMessagesByConversationId);
+router.route("/conversation/:conversationId").get(MessagesController.apiGetMessagesByConversationId);
 
 router.route("/:channelId/search").get(MessagesController.apiSearchMessages);
 
@@ -16,7 +16,7 @@ router
 
   router
   .route("/conversation/")
-  .post(verifyToken,MessagesController.apiPostMessageFromConversation)
+  .post(MessagesController.apiPostMessageFromConversation)
 
  router
   .route("/")
