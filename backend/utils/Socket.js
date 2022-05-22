@@ -85,7 +85,7 @@ export default function socket(io) {
 
         socket.on("chat-message", (message, serverId) => {
             //broadcast message to everyone in port:5000 except yourself.
-            socket.to(serverId).emit("received", message);
+            socket.to(serverId).emit("receive-message", message);
             //save chat to the database
             connect.then(db => {
                 console.log("connected correctly to the server");
