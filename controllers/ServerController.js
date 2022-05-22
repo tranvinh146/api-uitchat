@@ -1,4 +1,5 @@
 import Server from "../models/Server.js";
+import User from "../models/User.js";
 
 export default class ServersController {
   // [GET] /servers
@@ -85,27 +86,23 @@ export default class ServersController {
   }
 
   // [POST] /servers/users
-  static async apiAddUsers(req, res, next) {
+  static async apiAddMembers(req, res, next) {
     try {
       const serverId = req.body.server_id;
       const userId = req.userId;
-      const ownerIds = req.body.owner_ids;
+      // const ownerIds = req.body.owner_ids;
       const memberIds = req.body.member_ids;
       const response = await Server.addUsers(
         serverId,
         userId,
-        ownerIds,
+        // ownerIds,
         memberIds
       );
       let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
-      const members = await Server.findById(serverId).populate({
-        path: "memberIds",
-        select: ["_id", "email", "name", "avatar"],
-      });
-      res.status(200).json({ members });
+      res.status(200).json({ memberInfos: response });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

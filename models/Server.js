@@ -106,10 +106,10 @@ serverSchema.statics.deleteServer = async function (serverId, userId) {
   }
 };
 
-serverSchema.statics.addUsers = async function (
+serverSchema.statics.addMembers = async function (
   serverId,
   userId,
-  ownerIds,
+  // ownerIds,
   memberIds
 ) {
   try {
@@ -120,7 +120,7 @@ serverSchema.statics.addUsers = async function (
       },
       {
         $addToSet: {
-          ownerIds: { $each: ownerIds },
+          // ownerIds: { $each: ownerIds },
           memberIds: { $each: memberIds },
         },
       }
@@ -134,12 +134,13 @@ serverSchema.statics.addUsers = async function (
       },
       {
         $addToSet: {
-          ownerIds: { $each: ownerIds },
+          // ownerIds: { $each: ownerIds },
           memberIds: { $each: memberIds },
         },
       }
     );
-    return addedUsers;
+    const addedUserInfos = await User.getUserInfoByIds(memberIds);
+    return addedUserInfos;
   } catch (error) {
     console.error(`something went wrong in addUsers: ${error.message}`);
     throw error;
