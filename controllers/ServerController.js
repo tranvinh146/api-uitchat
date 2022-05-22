@@ -101,8 +101,11 @@ export default class ServersController {
       if (error) {
         return res.status(400).json({ error });
       }
-      const server = await Server.findById(serverId);
-      res.status(200).json({ server });
+      const members = await Server.findById(serverId).populate({
+        path: "memberIds",
+        select: ["_id", "email", "name", "avatar"],
+      });
+      res.status(200).json({ members });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
