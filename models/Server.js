@@ -142,7 +142,7 @@ serverSchema.statics.addMembers = async function (
     const addedUserInfos = await User.getUserInfoByIds(memberIds);
     return addedUserInfos;
   } catch (error) {
-    console.error(`something went wrong in addUsers: ${error.message}`);
+    console.error(`something went wrong in addMembers: ${error.message}`);
     throw error;
   }
 };
