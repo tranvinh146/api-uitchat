@@ -35,9 +35,7 @@ userSchema.statics.getAllUsersInfo = async () => {
 userSchema.statics.getUserInfoByIds = async (userIds) => {
   try {
     const users = await User.find(
-      {
-        $or: [{ memberIds: { $in: userIds } }, { ownerIds: { $in: userIds } }],
-      },
+      { _id: { $in: userIds } },
       "_id email name avatar"
     );
     return users;
