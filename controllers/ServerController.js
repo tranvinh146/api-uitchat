@@ -85,14 +85,14 @@ export default class ServersController {
     }
   }
 
-  // [POST] /servers/users
+  // [POST] /servers/members
   static async apiAddMembers(req, res, next) {
     try {
       const serverId = req.body.server_id;
       const userId = req.userId;
       // const ownerIds = req.body.owner_ids;
       const memberIds = req.body.member_ids;
-      const response = await Server.addUsers(
+      const response = await Server.addMembers(
         serverId,
         userId,
         // ownerIds,
