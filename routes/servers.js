@@ -4,8 +4,8 @@ import ServersController from "../controllers/ServerController.js";
 const router = express.Router();
 
 router
-  .route("/users")
-  .post(ServersController.apiAddUsers)
+  .route("/members")
+  .post(ServersController.apiAddMembers)
   .delete(ServersController.apiRemoveMembers);
 
 router

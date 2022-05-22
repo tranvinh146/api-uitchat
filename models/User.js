@@ -25,7 +25,21 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.getAllUsersInfo = async () => {
   try {
     const users = await User.find({}, "email name avatar");
-    console.log(users);
+    return users;
+  } catch (error) {
+    console.error(`something went wrong in getAllUsersInfo: ${error.message}`);
+    throw error;
+  }
+};
+
+userSchema.statics.getUserInfoByIds = async (userIds) => {
+  try {
+    const users = await User.find(
+      {
+        $or: [{ memberIds: { $in: userIds } }, { ownerIds: { $in: userIds } }],
+      },
+      "_id email name avatar"
+    );
     return users;
   } catch (error) {
     console.error(`something went wrong in getAllUsersInfo: ${error.message}`);
