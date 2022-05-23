@@ -3,13 +3,11 @@ import Channel from "../models/Channel.js";
 export default class ChannelsController {
   static async apiGetChannelById(req, res, next) {
     try {
-      const userId = req.userId;
       const channelId = req.params.channelId;
-      const channel = await Channel.getChannelById(channelId, userId);
-
+      const channel = await Channel.getChannelById(channelId);
       return res.status(200).json(channel);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ errors: error.message });
     }
   }
 
@@ -45,14 +43,12 @@ export default class ChannelsController {
 
   static async apiUpdateChannel(req, res, next) {
     try {
-      const userId = req.body.channelId;
-      const serverId = req.body.serverId;
+      const userId = req.channelId;
       const channelId = req.body.channelId;
       const channelName = req.body.channelName;
 
       const channelResponse = await Channel.updateChannel(
         userId,
-        serverId,
         channelId,
         channelName
       );
@@ -75,15 +71,10 @@ export default class ChannelsController {
 
   static async apiDeleteChannel(req, res, next) {
     try {
-      const userId = req.body.userId;
-      const serverId = req.body.serverId;
+      const userId = req.userId;
       const channelId = req.body.channelId;
 
-      const channelResponse = await Channel.deleteChannel(
-        userId,
-        serverId,
-        channelId
-      );
+      const channelResponse = await Channel.deleteChannel(userId, channelId);
 
       res.status(204).json(channelResponse);
     } catch (e) {
@@ -96,7 +87,7 @@ export default class ChannelsController {
       const serverId = req.params.serverId || {};
       let channels = await Channel.getChannelsByServerId(serverId);
       if (!channels) {
-        res.status(404).json({ error: "not found channels" });
+        res.status(400).json({ error: "not found channels" });
         return;
       }
 
@@ -108,14 +99,12 @@ export default class ChannelsController {
 
   static async apiUpdateMembersByChannelId(req, res, next) {
     try {
-      const userId = req.body.userId;
-      const serverId = req.body.serverId;
+      const userId = req.userId;
       const memberIds = req.body.memberIds;
       const channelId = req.body.channelId;
 
       const channelResponse = await Channel.updateMembersByChannelId(
         userId,
-        serverId,
         channelId,
         memberIds
       );
@@ -128,14 +117,12 @@ export default class ChannelsController {
 
   static async apiDeleteMembersByChannelId(req, res, next) {
     try {
-      const userId = req.body.userId;
-      const serverId = req.body.serverId;
+      const userId = req.userId;
       const memberIds = req.body.memberIds;
       const channelId = req.body.channelId;
 
       const channelResponse = await Channel.deleteMembersByChannelId(
         userId,
-        serverId,
         channelId,
         memberIds
       );
@@ -148,14 +135,12 @@ export default class ChannelsController {
 
   static async apiUpdateOwnersByChannelId(req, res, next) {
     try {
-      const userId = req.body.userId;
-      const serverId = req.body.serverId;
+      const userId = req.userId;
       const ownerIds = req.body.ownerIds;
       const channelId = req.body.channelId;
 
       const channelResponse = await Channel.updateOwnersByChannelId(
         userId,
-        serverId,
         channelId,
         ownerIds
       );
@@ -168,14 +153,13 @@ export default class ChannelsController {
 
   static async apiDeleteOwnersByChannelId(req, res, next) {
     try {
-      const userId = req.body.userId;
-      const serverId = req.body.serverId;
+      const userId = req.userId;
       const ownerIds = req.body.ownerIds;
       const channelId = req.body.channelId;
 
       const channelResponse = await Channel.deleteOwnersByChannelId(
         userId,
-        serverId,
+
         channelId,
         ownerIds
       );

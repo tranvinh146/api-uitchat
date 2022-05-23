@@ -1,14 +1,53 @@
 import User from "../models/User.js";
+import Message from "../models/Message.js";
 import Invitation from "../models/Invitation.js";
 
 export default function socket(io) {
   io.on("connection", (socket) => {
+    const userId = socket.handshake.query.userId;
+    socket.join(userId);
+
+    // Join channel
+    socket.on("join-channel", (channelId) => {
+      socket.join(channelId);
+    });
+
     // MESSAGE
-    socket.on("send");
+    socket.on("send-message", async ({ channelId, content }) => {
+      const message = await Message.addMessageForChannel(
+        userId,
+        channelId,
+        content
+      );
+      io.to(channelId).emit("receive-message", message);
+    });
 
     // LOGIN/LOGOUT
     // login
-    console.log(`User ${socket.id} has connected.`);
+    // console.log(`User ${socket.id} has connected.`);
+
+    socket.on("login", async (userId) => {
+      try {
+        const user = await User.findById(userId);
+        user.socketId = socket.id;
+        user.status = "online";
+        await user.save();
+      } catch (error) {
+        // console.log(error.message);
+      }
+    });
+
+    socket.on("disconnect", async () => {
+      console.log(`User ${socket.id} has disconnected.`);
+      try {
+        const user = await User.findOne({ socketId: socket.id });
+        user.socketId = null;
+        user.status = "offline";
+        await user.save();
+      } catch (error) {
+        // console.log(error.message);
+      }
+    });
 
     socket.on("login", async (userId) => {
       try {
@@ -31,6 +70,16 @@ export default function socket(io) {
       } catch (error) {
         console.log(error.message);
       }
+    });
+
+    //user join an room with serverlId is the name
+    socket.on("join-room", (serverId) => {
+      socket.join(serverId);
+    });
+
+    //user leave room when clicking other server
+    socket.on("leave-room", (serverId) => {
+      socket.leave(serverId);
     });
 
     // INVITATION
