@@ -1,10 +1,8 @@
 import Message from "../models/Message.js";
 
 import mongodb from "mongodb";
-const ObjectId = mongodb.ObjectId;
 
 export default class MessagesController {
- 
   static async apiGetMessagesByChannelId(req, res, next) {
     try {
       const messagesPerPage = req.query.messagesPerPage
@@ -33,11 +31,15 @@ export default class MessagesController {
       const userId = req.userId;
       const channelId = req.body.channelId;
       const content = req.body.content;
-      var io = req.app.get('socketio');
-      const result = await Message.addMessageForChannel(userId, channelId, content);
-      if (result){
-        io.emit('Channel'+channelId, content);
-      }
+      // var io = req.app.get('socketio');
+      const result = await Message.addMessageForChannel(
+        userId,
+        channelId,
+        content
+      );
+      // if (result){
+      //   io.emit('Channel'+channelId, content);
+      // }
       res.status(201).json(result);
     } catch (e) {
       console.log(`Error when Create message`);
@@ -50,10 +52,14 @@ export default class MessagesController {
       const messagesPerPage = req.query.messagesPerPage
         ? parseInt(req.query.messagesPerPage)
         : 20;
-      let receiverId = req.params.guestId+ req.userId;
+      let receiverId = req.params.guestId + req.userId;
       let senderId = req.userId + req.params.guestId;
       const { messagesList, totalNumMessages } =
-        await Message.getMessagesByConversationId(receiverId, senderId, messagesPerPage);
+        await Message.getMessagesByConversationId(
+          receiverId,
+          senderId,
+          messagesPerPage
+        );
       if (!messagesList) {
         res.status(404).json({ error: "not found" });
         return;
@@ -72,12 +78,16 @@ export default class MessagesController {
   static async apiPostMessageFromConversation(req, res, next) {
     try {
       const userId = req.userId;
-      const conversationId = req.body.userId+userId; //set conversationId = userId send message + userId receive message
+      const conversationId = req.body.userId + userId; //set conversationId = userId send message + userId receive message
       const content = req.body.content;
-      var io = req.app.get('socketio');
-      const result = await Message.addMessageForConversation(userId, conversationId, content);
-      if (result){
-        io.emit('ConversationId'+conversationId, content);
+      var io = req.app.get("socketio");
+      const result = await Message.addMessageForConversation(
+        userId,
+        conversationId,
+        content
+      );
+      if (result) {
+        io.emit("ConversationId" + conversationId, content);
       }
       res.status(201).json(result);
     } catch (e) {
