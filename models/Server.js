@@ -179,10 +179,10 @@ serverSchema.statics.addMembers = async function (
     }
 };
 
-serverSchema.statics.removeMember = async function (
+serverSchema.statics.removeMembers = async function (
     serverId,
     userId,
-    memberId
+    memberIds
 ) {
     try {
         const removedMember = await this.updateOne(
@@ -191,21 +191,22 @@ serverSchema.statics.removeMember = async function (
                 ownerIds: userId,
             },
             {
-                $pull: { memberIds: { $in: memberId } },
+                $pull: { memberIds: { $in: memberIds } },
             }
         );
         if (removedMember.matchedCount === 0) {
             return { error: "User may not have permisson" };
         }
-
-        //get user socketId
-        let socket = await User.findById(userId).socketId;
-
-        //emit to frontend
-        socket.emit("remove-member-in-server-success");
-        socket.to(serverId).emit("remove-member-in-server-success");
-
-        return removedMember;
+        await Channel.updateOne(
+            {
+                serverId: serverId,
+            },
+            {
+                $pull: { memberIds: { $in: memberIds } },
+            }
+        );
+        const removedUserInfos = await User.getUserInfoByIds(memberIds);
+        return removedUserInfos;
     } catch (error) {
         console.error(`something went wrong in removeUsers: ${error.message}`);
         throw error;
