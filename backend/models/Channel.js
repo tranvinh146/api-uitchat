@@ -104,8 +104,8 @@ channelSchema.statics.addChannel = async function (
 
 channelSchema.statics.deleteChannel = async function (
     userId,
-    channelId,
-    memberId) {
+    channelId
+    ) {
     try {
 
         //checking if userId in ownerIds of channel 
@@ -115,7 +115,7 @@ channelSchema.statics.deleteChannel = async function (
         }
 
         const deleteResponse = await this.deleteOne({
-            _id: channelId,
+            _id: ObjectId(channelId),
             owerIds: { $in: memberId },
         });
         //emit to frontend
