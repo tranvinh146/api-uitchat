@@ -31,13 +31,17 @@ MessageSchema.statics.getMessageById = async function (messageId) {
 
 MessageSchema.statics.getMessagesByChannelId = async function (
   channelId,
-  messagesPerPage = 20
+  messagesPerPage = 20,
+  page = 0
 ) {
   try {
     // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
     const messagesList = await this.aggregate([
       {
         $match: { channelId: channelId },
+      },
+      {
+        $sort: { createdAt: -1 },
       },
       {
         $lookup: {
@@ -47,7 +51,10 @@ MessageSchema.statics.getMessagesByChannelId = async function (
           as: "user",
         },
       },
-    ]).sort({ createdAt: -1 });
+      { $skip: page * messagesPerPage },
+      { $limit: messagesPerPage },
+      { $sort: { createdAt: 1 } },
+    ]);
     messagesList.forEach(
       (message) => (message.content = Base64.decode(message.content))
     );
@@ -101,19 +108,13 @@ MessageSchema.statics.addMessageForChannel = async function (
 ) {
   try {
     const contentBase64 = Base64.encode(content);
-    this.create(
-      {
-        userId: userId,
-        channelId: channelId,
-        content: contentBase64,
-      },
-      function (err) {
-        if (err) {
-          console.error(err);
-        }
-      }
-    );
-    return { status: "Created success message" };
+    const message = await this.create({
+      userId: userId,
+      channelId: channelId,
+      content: contentBase64,
+    });
+    message.content = Base64.decode(message.content);
+    return message;
   } catch (e) {
     console.error(`Something went wrong in addMessage: ${e}`);
     throw e;

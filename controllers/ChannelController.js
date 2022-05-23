@@ -6,7 +6,6 @@ export default class ChannelsController {
       const userId = req.userId;
       const channelId = req.params.channelId;
       const channel = await Channel.getChannelById(channelId, userId);
-      console.log(channel);
 
       return res.status(200).json(channel);
     } catch (error) {
