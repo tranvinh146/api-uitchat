@@ -147,10 +147,10 @@ serverSchema.statics.addMembers = async function (
   }
 };
 
-serverSchema.statics.removeMember = async function (
+serverSchema.statics.removeMembers = async function (
   serverId,
   userId,
-  memberId
+  memberIds
 ) {
   try {
     const removedMember = await this.updateOne(
@@ -159,13 +159,22 @@ serverSchema.statics.removeMember = async function (
         ownerIds: userId,
       },
       {
-        $pull: { memberIds: { $in: memberId } },
+        $pull: { memberIds: { $in: memberIds } },
       }
     );
     if (removedMember.matchedCount === 0) {
       return { error: "User may not have permisson" };
     }
-    return removedMember;
+    await Channel.updateOne(
+      {
+        serverId: serverId,
+      },
+      {
+        $pull: { memberIds: { $in: memberIds } },
+      }
+    );
+    const removedUserInfos = await User.getUserInfoByIds(memberIds);
+    return removedUserInfos;
   } catch (error) {
     console.error(`something went wrong in removeUsers: ${error.message}`);
     throw error;
