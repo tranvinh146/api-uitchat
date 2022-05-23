@@ -49,6 +49,39 @@ export default function socket(io) {
       }
     });
 
+    socket.on("login", async (userId) => {
+      try {
+        const user = await User.findById(userId);
+        user.socketId = socket.id;
+        user.status = "online";
+        await user.save();
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
+
+    socket.on("disconnect", async () => {
+      console.log(`User ${socket.id} has disconnected.`);
+      try {
+        const user = await User.findOne({ socketId: socket.id });
+        user.socketId = null;
+        user.status = "offline";
+        await user.save();
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
+
+    //user join an room with serverlId is the name
+    socket.on("join-room", (serverId) => {
+      socket.join(serverId);
+    });
+
+    //user leave room when clicking other server
+    socket.on("leave-room", (serverId) => {
+      socket.leave(serverId);
+    });
+
     // INVITATION
     socket.on("invite", async (invitation) => {
       try {
