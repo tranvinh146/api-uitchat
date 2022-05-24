@@ -31,7 +31,7 @@ const channelSchema = new mongoose.Schema(
 
 channelSchema.statics.getChannelById = async function (channelId) {
   try {
-    return await this.findById(channelId)
+    return await this.find({ channelId })
       .populate({
         path: "memberIds",
         select: ["_id", "email", "name", "avatar"],
@@ -53,7 +53,7 @@ channelSchema.statics.addChannel = async function (
   type,
   isPublic,
   ownerIds,
-  memberIds,
+  memberIds
 ) {
   try {
     //checking if userId is in ownerIds of server
