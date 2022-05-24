@@ -31,7 +31,7 @@ const channelSchema = new mongoose.Schema(
 
 channelSchema.statics.getChannelById = async function (channelId) {
   try {
-    return await this.find({ channelId })
+    return await this.findById(channelId)
       .populate({
         path: "memberIds",
         select: ["_id", "email", "name", "avatar"],
