@@ -76,6 +76,7 @@ export default class UserController {
 				res.status(200).json({
 					status: "success",
 					userInfo: {
+						id: user._id,
 						name: user.name,
 						email: user.email,
 						avatar: user.avatar,
