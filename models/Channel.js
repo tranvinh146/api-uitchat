@@ -34,7 +34,7 @@ channelSchema.statics.addChannel = async function (
   type,
   isPublic,
   ownerIds,
-  memberIds
+  memberIds,
 ) {
   try {
     let channel;
