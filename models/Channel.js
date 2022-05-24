@@ -53,7 +53,7 @@ channelSchema.statics.addChannel = async function (
   type,
   isPublic,
   ownerIds,
-  memberIds,
+  memberIds
 ) {
   try {
     //checking if userId is in ownerIds of server
