@@ -1,97 +1,162 @@
 import User from "../models/User.js";
+import Message from "../models/Message.js";
 import Invitation from "../models/Invitation.js";
 
 export default function socket(io) {
-	io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
+    const userId = socket.handshake.query.userId;
+    socket.join(userId);
 
-		// LOGIN/LOGOUT
-		// login
-		console.log(`User ${socket.id} has connected.`);
+    // Join channel
+    socket.on("join-channel", (channelId) => {
+      socket.join(channelId);
+    });
 
-		socket.on("login", async (userId) => {
-			try {
-				const user = await User.findById(userId);
-				user.socketId = socket.id;
-				user.status = "online";
-				await user.save();
-			} catch (error) {
-				console.log(error.message);
-			}
-		});
+    // MESSAGE
+    socket.on("send-message", async ({ channelId, content }) => {
+      const message = await Message.addMessageForChannel(
+        userId,
+        channelId,
+        content
+      );
+      io.to(channelId).emit("receive-message", message);
+    });
 
-		socket.on("disconnect", async () => {
-			console.log(`User ${socket.id} has disconnected.`);
-			try {
-				const user = await User.findOne({ socketId: socket.id });
-				user.socketId = null;
-				user.status = "offline";
-				await user.save();
-			} catch (error) {
-				console.log(error.message);
-			}
-		});
+    // LOGIN/LOGOUT
+    // login
+    // console.log(`User ${socket.id} has connected.`);
 
-		// INVITATION
-		socket.on("invite", async (invitation) => {
-			try {
-				const receiver = await User.findById(invitation.receiverId);
+    socket.on("login", async (userId) => {
+      try {
+        const user = await User.findById(userId);
+        user.socketId = socket.id;
+        user.status = "online";
+        await user.save();
+      } catch (error) {
+        // console.log(error.message);
+      }
+    });
 
-				// save invitation to db
-				const newInvitation = await Invitation.addInvitation(receiver._id, invitation);
+    socket.on("disconnect", async () => {
+      console.log(`User ${socket.id} has disconnected.`);
+      try {
+        const user = await User.findOne({ socketId: socket.id });
+        user.socketId = null;
+        user.status = "offline";
+        await user.save();
+      } catch (error) {
+        // console.log(error.message);
+      }
+    });
 
-				const populatedInvitation = await Invitation.findById(newInvitation._id).populate({
-					path: 'senderId receiverId serverId',
-					select: "name avatar"
-				});
+    socket.on("login", async (userId) => {
+      try {
+        const user = await User.findById(userId);
+        user.socketId = socket.id;
+        user.status = "online";
+        await user.save();
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
 
-				io.to(receiver.socketId).emit("have new invitation", populatedInvitation);
-				socket.emit("successfully sent invitation");
-			} catch (error) {
-				socket.emit("failed to send invitation", error.message);
-			}
+    socket.on("disconnect", async () => {
+      console.log(`User ${socket.id} has disconnected.`);
+      try {
+        const user = await User.findOne({ socketId: socket.id });
+        user.socketId = null;
+        user.status = "offline";
+        await user.save();
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
 
-		});
+    //user join an room with serverlId is the name
+    socket.on("join-room", (serverId) => {
+      socket.join(serverId);
+    });
 
-		socket.on("accept invitation", async (invitationId) => {
-			try {
-				const invitation = await Invitation.findById(invitationId).populate({
-					path: "senderId receiverId serverId",
-					select: "socketId"
-				});
-				if (!invitation) {
-					throw Error("Invitation doesn't exist");
-				}
+    //user leave room when clicking other server
+    socket.on("leave-room", (serverId) => {
+      socket.leave(serverId);
+    });
 
-				await Invitation.removeInvitation(invitation.receiverId._id, invitationId);
-				await User.joinServer(invitation.receiverId._id, invitation.serverId._id);
+    // INVITATION
+    socket.on("invite", async (invitation) => {
+      try {
+        const receiver = await User.findById(invitation.receiverId);
 
-				socket.emit("successfully accepted invitation");
-				io.to(invitation.senderId.socketId).emit("invitation responded");
-				// emit to server -> re-render member list
+        // save invitation to db
+        const newInvitation = await Invitation.addInvitation(
+          receiver._id,
+          invitation
+        );
 
-			} catch (error) {
-				socket.emit("failed to accept invitation", error.message);
-			}
-		});
+        const populatedInvitation = await Invitation.findById(
+          newInvitation._id
+        ).populate({
+          path: "senderId receiverId serverId",
+          select: "name avatar",
+        });
 
-		socket.on("decline invitation", async (invitationId) => {
-			try {
-				const invitation = await Invitation.findById(invitationId).populate({
-					path: "senderId receiverId",
-					select: "socketId"
-				});
-				if (!invitation) {
-					throw Error("Invitation doesn't exist");
-				}
+        io.to(receiver.socketId).emit(
+          "have new invitation",
+          populatedInvitation
+        );
+        socket.emit("successfully sent invitation");
+      } catch (error) {
+        socket.emit("failed to send invitation", error.message);
+      }
+    });
 
-				await Invitation.removeInvitation(invitation.receiverId._id, invitationId);
+    socket.on("accept invitation", async (invitationId) => {
+      try {
+        const invitation = await Invitation.findById(invitationId).populate({
+          path: "senderId receiverId serverId",
+          select: "socketId",
+        });
+        if (!invitation) {
+          throw Error("Invitation doesn't exist");
+        }
 
-				socket.emit("successfully declined invitation");
-				io.to(invitation.senderId.socketId).emit("invitation responded");
+        await Invitation.removeInvitation(
+          invitation.receiverId._id,
+          invitationId
+        );
+        await User.joinServer(
+          invitation.receiverId._id,
+          invitation.serverId._id
+        );
 
-			} catch (error) {
-				socket.emit("failed to decline invitation", error.message);
-			}
-		});
-	});
+        socket.emit("successfully accepted invitation");
+        io.to(invitation.senderId.socketId).emit("invitation responded");
+        // emit to server -> re-render member list
+      } catch (error) {
+        socket.emit("failed to accept invitation", error.message);
+      }
+    });
+
+    socket.on("decline invitation", async (invitationId) => {
+      try {
+        const invitation = await Invitation.findById(invitationId).populate({
+          path: "senderId receiverId",
+          select: "socketId",
+        });
+        if (!invitation) {
+          throw Error("Invitation doesn't exist");
+        }
+
+        await Invitation.removeInvitation(
+          invitation.receiverId._id,
+          invitationId
+        );
+
+        socket.emit("successfully declined invitation");
+        io.to(invitation.senderId.socketId).emit("invitation responded");
+      } catch (error) {
+        socket.emit("failed to decline invitation", error.message);
+      }
+    });
+  });
 }

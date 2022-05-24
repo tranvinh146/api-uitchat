@@ -114,13 +114,12 @@ export default class ServersController {
       const serverId = req.body.server_id;
       const userId = req.userId;
       const memberIds = req.body.member_ids;
-      const response = await Server.removeMember(serverId, userId, memberIds);
+      const response = await Server.removeMembers(serverId, userId, memberIds);
       let { error } = response;
       if (error) {
         return res.status(400).json({ error });
       }
-      const server = await Server.findById(serverId);
-      res.status(200).json({ server });
+      res.status(200).json({ memberInfos: response });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
