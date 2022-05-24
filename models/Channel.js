@@ -56,9 +56,8 @@ channelSchema.statics.addChannel = async function (
   memberIds
 ) {
   try {
-    //checking if userId is in ownerIds of server
-    let server = await Server.findById(serverId).populate("ownerIds", "_id");
-    if (!server.ownerIds._id.includes(userId)) {
+    let currentServer = await Server.findById(serverId);
+    if (!currentServer.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -84,13 +83,6 @@ channelSchema.statics.addChannel = async function (
       });
     }
 
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("add-channel-success");
-    socket.to(channel.serverId).emit("add-channel-success");
-
     return channel;
   } catch (e) {
     console.error(`somthing went wrong in addChannel: ${e.message}`);
@@ -100,23 +92,15 @@ channelSchema.statics.addChannel = async function (
 
 channelSchema.statics.deleteChannel = async function (userId, channelId) {
   try {
-    //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
     const deleteResponse = await this.deleteOne({
       _id: ObjectId(channelId),
-      owerIds: { $in: memberId },
+      owerIds: userId,
     });
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("delete-channel-success");
-    socket.to(channel.serverId).emit("delete-channel-success");
 
     return deleteResponse;
   } catch (e) {
@@ -131,9 +115,8 @@ channelSchema.statics.updateChannel = async function (
   channelName
 ) {
   try {
-    //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -141,13 +124,6 @@ channelSchema.statics.updateChannel = async function (
       { _id: ObjectId(channelId) },
       { $set: { name: channelName } }
     );
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("update-channel-success");
-    socket.to(channel.serverId).emit("update-channel-success");
 
     return updateResponse;
   } catch (e) {
@@ -181,9 +157,8 @@ channelSchema.statics.deleteMembersByChannelId = async function (
   memberIds
 ) {
   try {
-    //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -191,13 +166,6 @@ channelSchema.statics.deleteMembersByChannelId = async function (
       { _id: ObjectId(channelId) },
       { $pull: { memberIds: { $in: memberIds } } }
     );
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("delete-member-in-channel-success");
-    socket.to(channel.serverId).emit("delete-member-in-channel-success");
 
     return deleteResponse;
   } catch (e) {
@@ -215,8 +183,8 @@ channelSchema.statics.updateMembersByChannelId = async function (
 ) {
   try {
     //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -224,13 +192,6 @@ channelSchema.statics.updateMembersByChannelId = async function (
       { _id: ObjectId(channelId) },
       { $addToSet: { memberIds: { $each: memberIds } } }
     );
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("update-member-in-channel-success");
-    socket.to(channel.serverId).emit("update-member-in-channel-success");
 
     return updateResponse;
   } catch (e) {
@@ -245,9 +206,8 @@ channelSchema.statics.deleteOwnersByChannelId = async function (
   ownerIds
 ) {
   try {
-    //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -255,13 +215,6 @@ channelSchema.statics.deleteOwnersByChannelId = async function (
       { _id: ObjectId(channelId) },
       { $pull: { ownerIds: { $in: ownerIds } } }
     );
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("delete-owner-in-channel-success");
-    socket.to(channel.serverId).emit("delete-owner-in-channel-success");
 
     return deleteResponse;
   } catch (e) {
@@ -277,8 +230,8 @@ channelSchema.statics.updateOwnersByChannelId = async function (
 ) {
   try {
     //checking if userId in ownerIds of channel
-    let channel = await this.findById(channelId).populate("ownerIds", "_id");
-    if (!channel.ownerIds._id.includes(userId)) {
+    let channel = await this.findById(channelId);
+    if (!channel.ownerIds.includes(userId)) {
       return { error: "You may not have permisson." };
     }
 
@@ -286,13 +239,6 @@ channelSchema.statics.updateOwnersByChannelId = async function (
       { _id: ObjectId(channelId) },
       { $addToSet: { ownerIds: { $each: ownerIds } } }
     );
-
-    //get user socketId
-    let socket = await User.findById(userId).socketId;
-
-    //emit to frontend
-    socket.emit("update-owner-in-channel-success");
-    socket.to(channel.serverId).emit("update-owner-in-channel-success");
 
     return updateResponse;
   } catch (e) {
