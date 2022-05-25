@@ -5,14 +5,28 @@ import Invitation from "../models/Invitation.js";
 export default function socket(io) {
   io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
+    console.log(`${userId} connected`);
     socket.join(userId);
 
     // Join channel
-    socket.on("join-channel", (channelId) => {
-      socket.join(channelId);
+    socket.on("join-server", ({ serverId }) => {
+      if (serverId) {
+        socket.join(serverId);
+        console.log(`user ${userId} joined server ${serverId}`);
+      }
     });
 
-    // MESSAGE
+    // Join channel
+    socket.on("join-channel", ({ channelId }) => {
+      if (channelId) {
+        socket.join(channelId);
+        console.log(`user ${userId} joined ${channelId}`);
+      }
+    });
+
+    // ================= MESSAGE =======================
+
+    // add message
     socket.on("send-message", async ({ channelId, content }) => {
       const message = await Message.addMessageForChannel(
         userId,
@@ -21,6 +35,20 @@ export default function socket(io) {
       );
       io.to(channelId).emit("receive-message", message);
     });
+
+    // update message
+    socket.on("update-message", async ({ channelId, messageId, content }) => {
+      const message = await Message.updateMessage(messageId, userId, content);
+      io.to(channelId).emit("updated-message", message);
+    });
+
+    // update message
+    socket.on("delete-message", async ({ channelId, messageId }) => {
+      await Message.deleteMessage(messageId, userId);
+      io.to(channelId).emit("deleted-message", messageId);
+    });
+
+    // =================================================
 
     // LOGIN/LOGOUT
     // login
@@ -56,7 +84,7 @@ export default function socket(io) {
         user.status = "online";
         await user.save();
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
       }
     });
 
@@ -68,7 +96,7 @@ export default function socket(io) {
         user.status = "offline";
         await user.save();
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
       }
     });
 

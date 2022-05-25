@@ -10,6 +10,7 @@ const MessageSchema = new Schema(
     channelId: { type: String },
     conversationId: { type: String },
     content: { type: String, index: true, required: true },
+    deleted: { type: Boolean, default: false },
   },
   {
     _id: true,
@@ -51,8 +52,8 @@ MessageSchema.statics.getMessagesByChannelId = async function (
           as: "user",
         },
       },
-      { $skip: page * messagesPerPage },
-      { $limit: messagesPerPage },
+      // { $skip: page * messagesPerPage },
+      // { $limit: messagesPerPage },
       { $sort: { createdAt: 1 } },
     ]);
     messagesList.forEach(
@@ -154,16 +155,13 @@ MessageSchema.statics.updateMessage = async function (
 ) {
   try {
     const contentBase64 = Base64.encode(content);
-    this.updateOne(
+    await this.updateOne(
       { _id: messageId, userId: userId },
-      { content: contentBase64 },
-      function (err) {
-        if (err) {
-          console.error(err);
-        }
-      }
+      { content: contentBase64 }
     );
-    return { status: "Updated success message" };
+    const message = await this.findById(messageId);
+    message.content = content;
+    return message;
   } catch (e) {
     console.error(`Something went wrong in updateMessage: ${e}`);
     throw e;
@@ -172,12 +170,11 @@ MessageSchema.statics.updateMessage = async function (
 
 MessageSchema.statics.deleteMessage = async function (messageId, userId) {
   try {
-    this.deleteOne({ _id: messageId, userId: userId }, function (err) {
-      if (err) {
-        console.error(err);
-      }
-    });
-    return { status: "Deleted success message" };
+    const deleteResponse = await this.updateOne(
+      { _id: messageId, userId: userId },
+      { deleted: true }
+    );
+    return deleteResponse;
   } catch (e) {
     console.error(`Something went wrong in deleteMessage: ${e}`);
     throw e;
