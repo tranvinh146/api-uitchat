@@ -7,16 +7,16 @@ import socket from "./utils/Socket.js";
 
 async function main() {
   dotenv.config();
-  // connectdb();
+  connectdb();
 
-  // const server = http.createServer(app);
-  // const io = new Server(server, {
-  //   cors: {
-  //     origin: "*",
-  //   },
-  // });
+  const server = http.createServer(app);
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
+    },
+  });
 
-  // socket(io);
+  socket(io);
 
   const port = process.env.PORT || 8000;
 
