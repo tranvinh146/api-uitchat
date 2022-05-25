@@ -9,18 +9,18 @@ async function main() {
   dotenv.config();
   connectdb();
 
-  const server = http.createServer(app);
-  const io = new Server(server, {
-    cors: {
-      origin: "*",
-    },
-  });
+  // const server = http.createServer(app);
+  // const io = new Server(server, {
+  //   cors: {
+  //     origin: "*",
+  //   },
+  // });
 
-  socket(io);
+  // socket(io);
 
   const port = process.env.PORT || 8000;
 
-  server.listen(port, () => {
+  app.listen(port, () => {
     console.log("Server is running on port", port);
   });
 }
