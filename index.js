@@ -7,7 +7,7 @@ import socket from "./utils/Socket.js";
 
 async function main() {
   dotenv.config();
-  connectdb();
+  // connectdb();
 
   // const server = http.createServer(app);
   // const io = new Server(server, {
