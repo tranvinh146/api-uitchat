@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import Message from "../models/Message.js";
+import Message from "../models/message.js";
 import Invitation from "../models/Invitation.js";
 
 export default function socket(io) {
