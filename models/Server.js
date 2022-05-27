@@ -72,16 +72,18 @@ serverSchema.statics.updateServer = async function (
   ...updateValue
 ) {
   try {
-    const updatedServer = await this.updateOne(
+    const updateResponse = await this.updateOne(
       {
         _id: serverId,
         ownerIds: userId,
       },
       ...updateValue
     );
-    if (updatedServer.matchedCount === 0) {
+    if (updateResponse.matchedCount === 0) {
       return { error: "User may not have permisson" };
     }
+
+    const updatedServer = await this.findById(serverId);
 
     return updatedServer;
   } catch (error) {
