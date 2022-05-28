@@ -6,7 +6,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const MessageSchema = new Schema(
   {
-    userId: { type: ObjectId, required: true },
+    userId: { type: ObjectId, required: true, ref: "User" },
     channelId: { type: String },
     conversationId: { type: String },
     content: { type: String, index: true, required: true },
@@ -20,8 +20,10 @@ const MessageSchema = new Schema(
 
 MessageSchema.statics.getMessageById = async function (messageId) {
   try {
-    const message = await this.find({ _id: messageId });
-    message = message ? message[0] : null;
+    const message = await this.findById(messageId).populate({
+      path: "userId",
+      select: ["_id", "email", "name", "avatar"],
+    });
     message.content = Base64.decode(message.content);
     return message;
   } catch (e) {
@@ -49,12 +51,25 @@ MessageSchema.statics.getMessagesByChannelId = async function (
           from: "users",
           localField: "userId",
           foreignField: "_id",
-          as: "user",
+          as: "userId",
         },
+      },
+      {
+        $unwind: "$userId",
       },
       // { $skip: page * messagesPerPage },
       // { $limit: messagesPerPage },
       { $sort: { createdAt: 1 } },
+      {
+        $project: {
+          "userId.password": 0,
+          "userId.createdAt": 0,
+          "userId.updatedAt": 0,
+          "userId.status": 0,
+          "userId.__v": 0,
+          "userId.serverIds": 0,
+        },
+      },
     ]);
     messagesList.forEach(
       (message) => (message.content = Base64.decode(message.content))
@@ -109,12 +124,12 @@ MessageSchema.statics.addMessageForChannel = async function (
 ) {
   try {
     const contentBase64 = Base64.encode(content);
-    const message = await this.create({
+    const newMessage = await this.create({
       userId: userId,
       channelId: channelId,
       content: contentBase64,
     });
-    message.content = Base64.decode(message.content);
+    const message = await this.getMessageById(newMessage._id);
     return message;
   } catch (e) {
     console.error(`Something went wrong in addMessage: ${e}`);
@@ -159,8 +174,7 @@ MessageSchema.statics.updateMessage = async function (
       { _id: messageId, userId: userId },
       { content: contentBase64 }
     );
-    const message = await this.findById(messageId);
-    message.content = content;
+    const message = await this.getMessageById(messageId);
     return message;
   } catch (e) {
     console.error(`Something went wrong in updateMessage: ${e}`);

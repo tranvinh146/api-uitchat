@@ -7,7 +7,6 @@ export default class ServersController {
     try {
       const userId = req.userId;
       const inviteList = await Invite.getInvitesByUserId(userId);
-      console.log({ inviteList });
       res.status(200).json({ inviteList });
     } catch (error) {
       res.status(500).json({ error: error.message });
