@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Channel from "./Channel.js";
 import Server from "./Server.js";
 import User from "./User.js";
 
@@ -7,15 +8,22 @@ const inviteSchema = new mongoose.Schema(
     senderId: { type: mongoose.Types.ObjectId, ref: "User" },
     receiverId: { type: mongoose.Types.ObjectId, ref: "User" },
     serverId: { type: mongoose.Types.ObjectId, ref: "Server" },
-    waiting: { type: Boolean, default: true },
-    isAccept: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-inviteSchema.statics.getInviteByUserId = async function (userId) {
+inviteSchema.statics.getInvitesByUserId = async function (userId) {
   try {
-    return await this.find({ userId });
+    return await this.find({ receiverId: userId })
+      .sort({ createdAt: "desc" })
+      .populate({
+        path: "senderId",
+        select: ["_id", "name"],
+      })
+      .populate({
+        path: "serverId",
+        select: ["_id", "name"],
+      });
   } catch (error) {
     console.error(
       `something went wrong in getInviteByUserId: ${error.message}`
@@ -40,29 +48,46 @@ inviteSchema.statics.sendInvite = async function (
       return;
     }
     // add invite to db
-    await this.create({ senderId, receiverId, serverId });
-    return { status: "success" };
+    const createResponse = await this.create({
+      senderId,
+      receiverId,
+      serverId,
+    });
+    const invite = await this.findById(createResponse._id)
+      .populate({
+        path: "receiverId",
+        select: ["_id", "name"],
+      })
+      .populate({
+        path: "senderId",
+        select: ["_id", "name"],
+      })
+      .populate({
+        path: "serverId",
+        select: ["_id", "name"],
+      });
+    return invite;
   } catch (error) {
-    console.error(`Unable to add invite, ${error.message}`);
+    console.error(`something went wrong in sendInvite: ${error.message}`);
     throw error;
   }
 };
 
-inviteSchema.statics.acceptInvite = async function (
-  senderId,
-  receiverId,
-  serverId
-) {
+inviteSchema.statics.acceptInvite = async function (id, serverId, receiverId) {
   try {
-    await this.update(
-      { senderId, receiverId, serverId },
-      { $set: { waiting: false, isAccept: true } }
-    );
+    await this.deleteOne({ _id: id });
     const updateServer = await Server.updateOne(
       {
         _id: serverId,
-        ownerIds: senderId,
       },
+      {
+        $addToSet: {
+          memberIds: receiverId,
+        },
+      }
+    );
+    await Channel.updateMany(
+      { serverId },
       {
         $addToSet: {
           memberIds: receiverId,
@@ -76,16 +101,9 @@ inviteSchema.statics.acceptInvite = async function (
   }
 };
 
-inviteSchema.statics.rejectInvite = async function (
-  senderId,
-  receiverId,
-  serverId
-) {
+inviteSchema.statics.rejectInvite = async function (id) {
   try {
-    await this.update(
-      { senderId, receiverId, serverId },
-      { $set: { waiting: false, isAccept: false } }
-    );
+    await this.deleteOne({ _id: id });
     return { status: "success" };
   } catch (error) {
     console.error(`something went wrong in rejectInvite: ${error.message}`);

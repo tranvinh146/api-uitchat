@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Server from "../models/Server.js";
 import Invite from "../models/Invite.js";
+import Channel from "../models/Channel.js";
 
 export default function socket(io) {
   io.on("connection", (socket) => {
@@ -35,6 +36,48 @@ export default function socket(io) {
     });
     // =================================================
 
+    // ================== INVITE =======================
+    socket.on("invite-users", async ({ serverId, receiverIds }) => {
+      return Promise.all(
+        receiverIds.map((receiverId) => {
+          return new Promise((resolve, reject) => {
+            Invite.sendInvite(userId, receiverId, serverId)
+              .then((invite) => {
+                resolve(invite);
+              })
+              .catch((error) => {
+                // console.log(error.message);
+              });
+          });
+        })
+      ).then((invites) => {
+        invites.forEach((invite) => {
+          if (invite !== undefined) {
+            io.to(invite.receiverId._id.toString()).emit("send-invite", invite);
+          }
+        });
+      });
+    });
+
+    socket.on("accept-invite", async ({ inviteId, serverId }) => {
+      await Invite.acceptInvite(inviteId, serverId, userId);
+      socket.join(serverId);
+      const server = await Server.findById(serverId);
+      socket.emit("remove-invite", inviteId);
+      socket.emit("accepted-invite", server);
+      const user = await User.findById(userId, "_id email name avatar");
+      const channels = await Channel.find({ serverId, isPublic: true });
+      channels.map((channel) =>
+        io.to(channel._id.toString()).emit("user-join-channel", user)
+      );
+    });
+
+    socket.on("reject-invite", async ({ inviteId }) => {
+      await Invite.rejectInvite(inviteId);
+      socket.emit("remove-invite", inviteId);
+    });
+    // =================================================
+
     // ================= MESSAGE =======================
 
     // add message
@@ -53,7 +96,7 @@ export default function socket(io) {
       io.to(channelId).emit("updated-message", message);
     });
 
-    // update message
+    // delete message
     socket.on("delete-message", async ({ channelId, messageId }) => {
       await Message.deleteMessage(messageId, userId);
       io.to(channelId).emit("deleted-message", messageId);
@@ -65,61 +108,61 @@ export default function socket(io) {
     // login
     // console.log(`User ${socket.id} has connected.`);
 
-    socket.on("login", async (userId) => {
-      try {
-        const user = await User.findById(userId);
-        user.socketId = socket.id;
-        user.status = "online";
-        await user.save();
-      } catch (error) {
-        // console.log(error.message);
-      }
-    });
+    // socket.on("login", async (userId) => {
+    //   try {
+    //     const user = await User.findById(userId);
+    //     user.socketId = socket.id;
+    //     user.status = "online";
+    //     await user.save();
+    //   } catch (error) {
+    //     // console.log(error.message);
+    //   }
+    // });
 
-    socket.on("disconnect", async () => {
-      console.log(`User ${socket.id} has disconnected.`);
-      try {
-        const user = await User.findOne({ socketId: socket.id });
-        user.socketId = null;
-        user.status = "offline";
-        await user.save();
-      } catch (error) {
-        // console.log(error.message);
-      }
-    });
+    // socket.on("disconnect", async () => {
+    //   console.log(`User ${socket.id} has disconnected.`);
+    //   try {
+    //     const user = await User.findOne({ socketId: socket.id });
+    //     user.socketId = null;
+    //     user.status = "offline";
+    //     await user.save();
+    //   } catch (error) {
+    //     // console.log(error.message);
+    //   }
+    // });
 
-    socket.on("login", async (userId) => {
-      try {
-        const user = await User.findById(userId);
-        user.socketId = socket.id;
-        user.status = "online";
-        await user.save();
-      } catch (error) {
-        // console.log(error.message);
-      }
-    });
+    // socket.on("login", async (userId) => {
+    //   try {
+    //     const user = await User.findById(userId);
+    //     user.socketId = socket.id;
+    //     user.status = "online";
+    //     await user.save();
+    //   } catch (error) {
+    //     // console.log(error.message);
+    //   }
+    // });
 
-    socket.on("disconnect", async () => {
-      console.log(`User ${socket.id} has disconnected.`);
-      try {
-        const user = await User.findOne({ socketId: socket.id });
-        user.socketId = null;
-        user.status = "offline";
-        await user.save();
-      } catch (error) {
-        // console.log(error.message);
-      }
-    });
+    // socket.on("disconnect", async () => {
+    //   console.log(`User ${socket.id} has disconnected.`);
+    //   try {
+    //     const user = await User.findOne({ socketId: socket.id });
+    //     user.socketId = null;
+    //     user.status = "offline";
+    //     await user.save();
+    //   } catch (error) {
+    //     // console.log(error.message);
+    //   }
+    // });
 
-    //user join an room with serverlId is the name
-    socket.on("join-room", (serverId) => {
-      socket.join(serverId);
-    });
+    // //user join an room with serverlId is the name
+    // socket.on("join-room", (serverId) => {
+    //   socket.join(serverId);
+    // });
 
-    //user leave room when clicking other server
-    socket.on("leave-room", (serverId) => {
-      socket.leave(serverId);
-    });
+    // //user leave room when clicking other server
+    // socket.on("leave-room", (serverId) => {
+    //   socket.leave(serverId);
+    // });
 
     // // INVITATION
     // socket.on("invite", async (invitation) => {
