@@ -34,6 +34,12 @@ export default function socket(io) {
       });
       io.to(serverId).emit("updated-server", server);
     });
+
+    socket.on("delete-server" , async({serverId}) => {
+      await Server.deleteServer(serverId, userId)
+      io.to(serverId).emit("deleted-server", serverId)
+    })
+
     // =================================================
 
     // ================== INVITE =======================
