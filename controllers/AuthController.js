@@ -10,7 +10,7 @@ export default class AuthController {
 
       const user = await User.findByEmail(email);
       if (!user) {
-        return res.status(400).json("Incorrect username");
+        return res.status(400).json("Incorrect email");
       }
 
       const validPassword = await bcrypt.compare(password, user.password);
