@@ -3,6 +3,8 @@ import UserController from "../controllers/UserController.js";
 
 const router = express.Router();
 
+router.route("/contact").get(UserController.apiGetContactsByUserId);
+
 router
   .route("/me")
   .get(UserController.apiGetCurrentUser)
