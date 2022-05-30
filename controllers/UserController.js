@@ -8,12 +8,22 @@ export default class UserController {
     try {
       const userId = req.userId;
       const contactList = await Contact.getContactsByUserId(userId);
-      res.status(200).json({ contactList });
+      res.status(200).json(contactList);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
+  // [GET] /users/contacts/:contactId
+  static async apiGetContactById(req, res, next) {
+    try {
+      const { contactId } = req.params;
+      const contactList = await Contact.getContactById(contactId);
+      res.status(200).json(contactList);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
   // [GET] /users/me/servers/:serverid
   static async apiGetUsersByServerId(req, res, next) {
     try {

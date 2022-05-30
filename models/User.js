@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Server from "./Server.js";
 import Invitation from "./Invite.js";
+import Contact from "./Contact.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -96,6 +97,7 @@ userSchema.statics.createUser = async function (email, password, name, avatar) {
       name,
       avatar,
     });
+    await Contact.create({ userId: newUser._id });
     return newUser;
   } catch (error) {
     console.error(`something went wrong in createUser: ${error.message}`);

@@ -118,9 +118,7 @@ serverSchema.statics.leaveServer = async function (userId, serverId) {
         _id: serverId,
       },
       {
-        $pull: {
-          $or: [{ memberIds: { $in: userId } }, { ownerIds: { $in: userId } }],
-        },
+        $pull: { memberIds: userId },
       }
     );
     return await User.findById(userId, "_id email name avatar");
