@@ -36,8 +36,14 @@ export default function socket(io) {
     });
 
     socket.on("delete-server" , async({serverId}) => {
+      console.log(serverId)
       await Server.deleteServer(serverId, userId)
       io.to(serverId).emit("deleted-server", serverId)
+    })
+
+    socket.on("leave-server" , async({serverId}) => {
+      await Server.leaveServer(serverId, userId)
+      //io.to(serverId).emit("left-server", serverId)
     })
 
     // =================================================
