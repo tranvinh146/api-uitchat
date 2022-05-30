@@ -117,6 +117,7 @@ serverSchema.statics.leaveServer = async function (userId, serverId) {
         $pull: { memberIds: userId },
       }
     );
+    await this.updateMany({ serverId }, { $pull: { memberIds: userId } });
     return await User.findById(userId, "_id email name avatar");
   } catch (error) {
     console.error(`something went wrong in leaveServer: ${error.message}`);
