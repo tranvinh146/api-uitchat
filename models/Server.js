@@ -98,11 +98,7 @@ serverSchema.statics.deleteServer = async function (serverId, userId) {
       _id: serverId,
       ownerIds: userId,
     });
-    console.log(deletedServer);
-    if (deletedServer.deletedCount === 0) {
-      return { error: "User may not have permisson" };
-    }
-    const deletedChannels = Channel.remove({ serverId });
+    const deletedChannels = await Channel.deleteMany({ serverId });
 
     return { deletedServer, deletedChannels };
   } catch (error) {
