@@ -8,7 +8,6 @@ const MessageSchema = new Schema(
   {
     userId: { type: ObjectId, required: true, ref: "User" },
     channelId: { type: String },
-    conversationId: { type: String },
     content: { type: String, index: true, required: true },
     deleted: { type: Boolean, default: false },
   },
@@ -75,41 +74,6 @@ MessageSchema.statics.getMessagesByChannelId = async function (
       (message) => (message.content = Base64.decode(message.content))
     );
     const totalNumMessages = await this.count({ channelId: channelId });
-    return { messagesList, totalNumMessages };
-  } catch (e) {
-    console.error(`Something went wrong in findByChannelId: ${e}`);
-    throw e;
-  }
-};
-
-MessageSchema.statics.getMessagesByConversationId = async function (
-  receiverId,
-  senderId,
-  messagesPerPage = 20
-) {
-  try {
-    // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
-    const messagesList = await this.aggregate([
-      {
-        $match: {
-          $or: [{ conversationId: receiverId }, { conversationId: senderId }],
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-    ]).sort({ createdAt: -1 });
-    messagesList.forEach(
-      (message) => (message.content = Base64.decode(message.content))
-    );
-    const totalNumMessages = await this.count({
-      $or: [{ conversationId: receiverId }, { conversationId: senderId }],
-    });
     return { messagesList, totalNumMessages };
   } catch (e) {
     console.error(`Something went wrong in findByChannelId: ${e}`);

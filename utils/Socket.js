@@ -3,6 +3,7 @@ import Message from "../models/Message.js";
 import Server from "../models/Server.js";
 import Invite from "../models/Invite.js";
 import Channel from "../models/Channel.js";
+import Contact from "../models/Contact.js";
 
 export default function socket(io) {
   io.on("connection", (socket) => {
@@ -26,6 +27,14 @@ export default function socket(io) {
       }
     });
 
+    // Leave channel
+    socket.on("leave-channel", ({ channelId }) => {
+      if (channelId) {
+        socket.leave(channelId);
+        // console.log(`user ${userId} leaved ${channelId}`);
+      }
+    });
+
     // ================== SERVER =======================
     socket.on("update-server", async ({ serverId, name, avatar }) => {
       const server = await Server.updateServer(serverId, userId, {
@@ -35,17 +44,29 @@ export default function socket(io) {
       io.to(serverId).emit("updated-server", server);
     });
 
-    socket.on("delete-server" , async({serverId}) => {
-      console.log(serverId)
-      await Server.deleteServer(serverId, userId)
-      io.to(serverId).emit("deleted-server", serverId)
-    })
+    socket.on("delete-server", async ({ serverId }) => {
+      await Server.deleteServer(serverId, userId);
+      io.to(serverId).emit("deleted-server", serverId);
+    });
 
     socket.on("leave-server" , async({serverId}) => {
       await Server.leaveServer(serverId, userId)
-      //io.to(serverId).emit("left-server", serverId)
+      io.to(serverId).emit("left-server", {userId, serverId})
     })
 
+    // =================================================
+    // =================================================
+
+    // ================== CONTACT ======================
+
+    socket.on("create-contact", async ({ receiverId }) => {
+      const contact = await Contact.createContact(userId, receiverId);
+      if (contact) {
+        io.to(userId).to(receiverId).emit('created-contact', contact)
+      }
+    });
+
+    // =================================================
     // =================================================
 
     // ================== INVITE =======================

@@ -111,16 +111,14 @@ serverSchema.statics.deleteServer = async function (serverId, userId) {
   }
 };
 
-serverSchema.statics.leaveServer = async function (userId, serverId) {
-  try {
-    await this.updateOne(
+serverSchema.statics.leaveServer = async function (serverId, userId) {
+  try {  
+    const res = await this.updateOne(
       {
         _id: serverId,
       },
       {
-        $pull: {
-          $or: [{ memberIds: { $in: userId } }, { ownerIds: { $in: userId } }],
-        },
+        $pull: { memberIds: userId },
       }
     );
     return await User.findById(userId, "_id email name avatar");
