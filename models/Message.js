@@ -101,32 +101,6 @@ MessageSchema.statics.addMessageForChannel = async function (
   }
 };
 
-MessageSchema.statics.addMessageForConversation = async function (
-  userId,
-  conversationId,
-  content
-) {
-  try {
-    const contentBase64 = Base64.encode(content);
-    this.create(
-      {
-        userId: userId,
-        conversationId: conversationId,
-        content: contentBase64,
-      },
-      function (err) {
-        if (err) {
-          console.error(err);
-        }
-      }
-    );
-    return { status: "Created success message" };
-  } catch (e) {
-    console.error(`Something went wrong in addMessage: ${e}`);
-    throw e;
-  }
-};
-
 MessageSchema.statics.updateMessage = async function (
   messageId,
   userId,
@@ -175,20 +149,6 @@ MessageSchema.statics.searchMessage = async function (
     );
     const totalNumMessages = await this.count(query);
     return { messagesList, totalNumMessages };
-  } catch (e) {
-    console.error(`Something went wrong in searchMessage: ${e}`);
-    throw e;
-  }
-};
-
-MessageSchema.statics.isOwnerMessage = async function (messageId, userId) {
-  try {
-    const result = await this.find({ _id: messageId });
-    const message = result[0];
-    if (userId == message.userId.toString()) return true;
-    else {
-      return false;
-    }
   } catch (e) {
     console.error(`Something went wrong in searchMessage: ${e}`);
     throw e;
