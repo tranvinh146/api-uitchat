@@ -62,7 +62,7 @@ export default function socket(io) {
     socket.on("create-contact", async ({ receiverId }) => {
       const contact = await Contact.createContact(userId, receiverId);
       if (contact) {
-        io.to(userId).to(receiverId).emit('created-contact', contact)
+        io.to(userId).to(receiverId).emit("created-contact", contact);
       }
     });
 
@@ -99,10 +99,7 @@ export default function socket(io) {
       socket.emit("remove-invite", inviteId);
       socket.emit("accepted-invite", server);
       const user = await User.findById(userId, "_id email name avatar");
-      const channels = await Channel.find({ serverId, isPublic: true });
-      channels.map((channel) =>
-        io.to(channel._id.toString()).emit("user-join-channel", user)
-      );
+      io.to(serverId).emit("user-join-server", user);
     });
 
     socket.on("reject-invite", async ({ inviteId }) => {
