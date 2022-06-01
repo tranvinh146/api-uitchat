@@ -82,7 +82,7 @@ channelSchema.statics.addChannel = async function (
         memberIds,
       });
     }
-
+    console.log(channel)
     return channel;
   } catch (e) {
     console.error(`somthing went wrong in addChannel: ${e.message}`);
@@ -92,17 +92,19 @@ channelSchema.statics.addChannel = async function (
 
 channelSchema.statics.deleteChannel = async function (userId, channelId) {
   try {
-    let channel = await this.findById(channelId);
-    if (!channel.ownerIds.includes(userId)) {
-      return { error: "You may not have permisson." };
-    }
+    // let channel = await this.findById(channelId);
+    // if (!channel.ownerIds.includes(userId)) {
+    //   return { error: "You may not have permisson." };
+    // }
 
-    const deleteResponse = await this.deleteOne({
-      _id: ObjectId(channelId),
-      owerIds: userId,
+    const deletedChannel = await this.findById(channelId);
+    
+    await this.deleteOne({
+      _id: channelId,
+      // owerIds: userId,
     });
 
-    return deleteResponse;
+    return deletedChannel;
   } catch (e) {
     console.error(`somthing went wrong in deleteChannel: ${e.message}`);
     return { error: e.message };

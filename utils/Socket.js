@@ -49,10 +49,22 @@ export default function socket(io) {
       io.to(serverId).emit("deleted-server", serverId);
     });
 
-    socket.on("leave-server" , async({serverId}) => {
-      await Server.leaveServer(serverId, userId)
-      io.to(serverId).emit("left-server", {userId, serverId})
+    socket.on("leave-server", async ({ serverId }) => {
+      await Server.leaveServer(serverId, userId);
+      io.to(serverId).emit("left-server", { userId, serverId });
+      if (serverId) {
+        socket.leave(serverId);
+        const channels = await Channel.find({ serverId });
+        channels.map((channel) => socket.leave(channel._id));
+      }
+    });
+
+    // ================== CHANNEL ======================
+    socket.on('delete-channel', async ({ channelId }) => {
+      const channel = await Channel.deleteChannel(userId, channelId);
+      io.to(channel.serverId.toString()).emit("deleted-channel", channelId);
     })
+    // =================================================
 
     // =================================================
     // =================================================
