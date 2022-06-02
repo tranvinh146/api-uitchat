@@ -117,15 +117,13 @@ channelSchema.statics.updateChannel = async function (
 ) {
   try {
     let channel = await this.findById(channelId);
-    if (!channel.ownerIds.includes(userId)) {
-      return { error: "You may not have permisson." };
-    }
-
+    // if (!channel.ownerIds.includes(userId)) {
+    //   return { error: "You may not have permisson." };
+    // }
     const updateResponse = await this.updateOne(
-      { _id: ObjectId(channelId) },
+      { _id: channelId },
       { $set: { name: channelName } }
     );
-
     return updateResponse;
   } catch (e) {
     console.error(`somthing went wrong in updateChannel: ${e.message}`);

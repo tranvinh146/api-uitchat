@@ -69,6 +69,11 @@ export default function socket(io) {
       const channel = await Channel.addChannel(userId, serverId, name)
       io.to(serverId).emit("added-channel", channel);
     }) 
+
+    socket.on('changeName-channel', async({channelId, channelName, serverId}) => {
+      await Channel.updateChannel(userId, channelId, channelName)
+      io.to(serverId).emit('changedName-channel', {channelId, channelName})
+    })
     // =================================================
 
     // =================================================
