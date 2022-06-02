@@ -62,11 +62,12 @@ export default function socket(io) {
     // ================== CHANNEL ======================
     socket.on('delete-channel', async ({ channelId }) => {
       const channel = await Channel.deleteChannel(userId, channelId);
-      io.to(channel.serverId.toString()).emit("deleted-channel", channelId);
+      io.to(channel.serverId.toString()).emit("deleted-channel", {channelId, serverId: channel.serverId});
     })
 
     socket.on('add-channel', async ({ serverId, name}) => {
       const channel = await Channel.addChannel(userId, serverId, name)
+      console.log(channel)
       io.to(serverId).emit("added-channel", channel);
     }) 
 

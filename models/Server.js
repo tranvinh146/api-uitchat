@@ -49,14 +49,10 @@ serverSchema.statics.createServer = async function (name, avatar, userId) {
       avatar,
       ownerIds: userId,
     });
+
     const newChannel = await Channel.addChannel(
       userId,
       newServer._id,
-      "General",
-      "type",
-      true,
-      newServer.ownerIds,
-      newServer.memberIds
     );
 
     return { server: newServer, channel: newChannel };
@@ -128,7 +124,6 @@ serverSchema.statics.leaveServer = async function (serverId, userId) {
 serverSchema.statics.addMembers = async function (
   serverId,
   userId,
-  // ownerIds,
   memberIds
 ) {
   try {
@@ -139,7 +134,6 @@ serverSchema.statics.addMembers = async function (
       },
       {
         $addToSet: {
-          // ownerIds: { $each: ownerIds },
           memberIds: { $each: memberIds },
         },
       }
@@ -153,7 +147,6 @@ serverSchema.statics.addMembers = async function (
       },
       {
         $addToSet: {
-          // ownerIds: { $each: ownerIds },
           memberIds: { $each: memberIds },
         },
       }

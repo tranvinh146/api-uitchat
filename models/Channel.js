@@ -103,8 +103,8 @@ channelSchema.statics.updateChannel = async function (
 
 channelSchema.statics.getChannelsByServerId = async function (serverId) {
   try {
-    let channels = await this.find({ serverId });
-
+    const channels = await this.find({ serverId });
+    console.log(channels)
     return channels;
   } catch (e) {
     console.error(`something went wrong in getChannelByServerId: ${e.message}`);
