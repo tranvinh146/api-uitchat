@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
         "https://cdn.discordapp.com/attachments/952774183899791434/973252456899309648/default-avatar.png",
     },
     status: { type: String, default: "offline" },
-    // socketId: String,
+    socketId: String,
     serverIds: [mongoose.Types.ObjectId],
     // invitationIds: { type: [mongoose.Types.ObjectId], ref: "Invitation" },
     // friendIds: [mongoose.Types.ObjectId],

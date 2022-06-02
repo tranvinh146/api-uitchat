@@ -19,7 +19,7 @@ const channelSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      // enum: ["text", "voice"],
+      enum: ["text", "voice"],
     },
     ownerIds: { type: [mongoose.Types.ObjectId], ref: "User" },
     memberIds: { type: [mongoose.Types.ObjectId], ref: "User" },
