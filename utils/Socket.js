@@ -64,12 +64,40 @@ export default function socket(io) {
 		});
 
 		socket.on("leave-server", async ({ serverId }) => {
-			await Server.leaveServer(serverId, userId)
-			io.to(serverId).emit("left-server", { userId, serverId })
+			await Server.leaveServer(serverId, userId);
+			io.to(serverId).emit("left-server", { userId, serverId });
+			if (serverId) {
+				socket.leave(serverId);
+				const channels = await Channel.find({ serverId });
+				channels.map((channel) => socket.leave(channel._id));
+			}
+		});
+
+		socket.on("delete-member", async ({ serverId, memberIds }) => {
+			await Server.removeMembers(serverId, userId, memberIds);
+			io.to(serverId).emit("deleted-members", { serverId, memberIds, userId })
+
 		})
 
+
+		// ================== CHANNEL ======================
+		socket.on('delete-channel', async ({ channelId }) => {
+			const channel = await Channel.deleteChannel(userId, channelId);
+			io.to(channel.serverId.toString()).emit("deleted-channel", channelId);
+		})
+
+		socket.on('add-channel', async ({ serverId, name }) => {
+			const channel = await Channel.addChannel(userId, serverId, name)
+			io.to(serverId).emit("added-channel", channel);
+		})
+
+		socket.on('changeName-channel', async ({ channelId, channelName, serverId }) => {
+			await Channel.updateChannel(userId, channelId, channelName)
+			io.to(serverId).emit('changedName-channel', { channelId, channelName })
+		})
 		// =================================================
-		// =================================================
+
+
 
 		// ================== CONTACT ======================
 
