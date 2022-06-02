@@ -57,10 +57,9 @@ channelSchema.statics.addChannel = async function (
 ) {
   try {
     let currentServer = await Server.findById(serverId);
-    if (!currentServer.ownerIds.includes(userId)) {
-      return { error: "You may not have permisson." };
-    }
-
+    // if (!currentServer.ownerIds.includes(userId)) {
+    //   return { error: "You may not have permisson." };
+    // }
     let channel;
 
     if (isPublic) {
