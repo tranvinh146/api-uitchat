@@ -21,24 +21,10 @@ export default function socket(io) {
 
     // Join channel
     socket.on("join-channel", ({ channelId }) => {
-		if (channelId) {
-			socket.join(channelId);
-			// console.log(`user ${userId} joined ${channelId}`);
-			console.log(channelId)
-			const channel = await Channel.findById(channelId);
-			if (channel.type === "voice") {
-				const socketIds = io.sockets.adapter.rooms.get(channelId); // TODO: Set(socketId) -> set(peerId)
-				console.log(socketIds);
-				const peerIds = socketIds.map((socketId) => {
-					const socket = io.sockets.sockets.get(socketId);
-					const userId = socket.handshake.query.userId;
-					const peerId = "uitchat_" + userId;
-					console.log("peerId: " + peerId);
-				});
-				socket.emit("peer-list", socketIds)
-				io.to(channel.serverId).emit("someone-joins-voice-channel", channelId);
-			}
-		}
+      if (channelId) {
+        socket.join(channelId);
+        // console.log(`user ${userId} joined ${channelId}`);
+      }
     });
 
     // Leave channel
@@ -63,37 +49,10 @@ export default function socket(io) {
       io.to(serverId).emit("deleted-server", serverId);
     });
 
-    socket.on("leave-server", async ({ serverId }) => {
-      await Server.leaveServer(serverId, userId);
-      io.to(serverId).emit("left-server", { userId, serverId });
-      if (serverId) {
-        socket.leave(serverId);
-        const channels = await Channel.find({ serverId });
-        channels.map((channel) => socket.leave(channel._id));
-      }
-    });
-
-    socket.on("delete-member", async ({serverId, memberIds}) => {
-      await Server.removeMembers(serverId, userId, memberIds); 
-      io.to(serverId).emit("deleted-members", {serverId, memberIds, userId})
-
+    socket.on("leave-server" , async({serverId}) => {
+      await Server.leaveServer(serverId, userId)
+      io.to(serverId).emit("left-server", {userId, serverId})
     })
-    // ================== CHANNEL ======================
-    socket.on('delete-channel', async ({ channelId }) => {
-      const channel = await Channel.deleteChannel(userId, channelId);
-      io.to(channel.serverId.toString()).emit("deleted-channel", channelId);
-    })
-
-    socket.on('add-channel', async ({ serverId, name}) => {
-      const channel = await Channel.addChannel(userId, serverId, name)
-      io.to(serverId).emit("added-channel", channel);
-    }) 
-
-    socket.on('changeName-channel', async({channelId, channelName, serverId}) => {
-      await Channel.updateChannel(userId, channelId, channelName)
-      io.to(serverId).emit('changedName-channel', {channelId, channelName})
-    })
-    // =================================================
 
     // =================================================
     // =================================================
