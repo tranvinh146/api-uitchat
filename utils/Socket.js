@@ -11,6 +11,10 @@ export default function socket(io) {
     // console.log(`${userId} connected`);
     socket.join(userId);
 
+    socket.on("logout", () => {
+      socket.leave(userId);
+    });
+
     // Join channel
     socket.on("join-server", ({ serverId }) => {
       if (serverId) {
@@ -59,27 +63,32 @@ export default function socket(io) {
       }
     });
 
-    socket.on("delete-member", async ({serverId, memberIds}) => {
-      await Server.removeMembers(serverId, userId, memberIds); 
-      io.to(serverId).emit("deleted-members", {serverId, memberIds, userId})
-
-    })
+    socket.on("delete-member", async ({ serverId, memberIds }) => {
+      await Server.removeMembers(serverId, userId, memberIds);
+      io.to(serverId).emit("deleted-members", { serverId, memberIds, userId });
+    });
     // ================== CHANNEL ======================
-    socket.on('delete-channel', async ({ channelId }) => {
+    socket.on("delete-channel", async ({ channelId }) => {
       const channel = await Channel.deleteChannel(userId, channelId);
-      io.to(channel.serverId.toString()).emit("deleted-channel", {channelId, serverId: channel.serverId});
-    })
+      io.to(channel.serverId.toString()).emit("deleted-channel", {
+        channelId,
+        serverId: channel.serverId,
+      });
+    });
 
-    socket.on('add-channel', async ({ serverId, name}) => {
-      const channel = await Channel.addChannel(userId, serverId, name)
-      console.log(channel)
+    socket.on("add-channel", async ({ serverId, name }) => {
+      const channel = await Channel.addChannel(userId, serverId, name);
+      console.log(channel);
       io.to(serverId).emit("added-channel", channel);
-    }) 
+    });
 
-    socket.on('changeName-channel', async({channelId, channelName, serverId}) => {
-      await Channel.updateChannel(userId, channelId, channelName)
-      io.to(serverId).emit('changedName-channel', {channelId, channelName})
-    })
+    socket.on(
+      "changeName-channel",
+      async ({ channelId, channelName, serverId }) => {
+        await Channel.updateChannel(userId, channelId, channelName);
+        io.to(serverId).emit("changedName-channel", { channelId, channelName });
+      }
+    );
     // =================================================
 
     // =================================================
