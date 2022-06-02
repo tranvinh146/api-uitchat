@@ -59,6 +59,11 @@ export default function socket(io) {
       }
     });
 
+    socket.on("delete-member", async ({serverId, memberIds}) => {
+      await Server.removeMembers(serverId, userId, memberIds); 
+      io.to(serverId).emit("deleted-members", {serverId, memberIds, userId})
+
+    })
     // ================== CHANNEL ======================
     socket.on('delete-channel', async ({ channelId }) => {
       const channel = await Channel.deleteChannel(userId, channelId);
