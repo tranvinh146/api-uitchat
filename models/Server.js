@@ -53,6 +53,7 @@ serverSchema.statics.createServer = async function (name, avatar, userId) {
     const newChannel = await Channel.addChannel(
       userId,
       newServer._id,
+      "General"
     );
 
     return { server: newServer, channel: newChannel };
