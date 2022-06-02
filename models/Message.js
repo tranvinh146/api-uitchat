@@ -37,7 +37,6 @@ MessageSchema.statics.getMessagesByChannelId = async function (
   page = 0
 ) {
   try {
-    // const messagesList  = await this.find({channelId: channelId}).limit(messagesPerPage).sort({createdAt: -1});
     const messagesList = await this.aggregate([
       {
         $match: { channelId: channelId },

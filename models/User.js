@@ -5,20 +5,10 @@ import Contact from "./Contact.js";
 
 const userSchema = new mongoose.Schema(
   {
-    // uid: String,
     email: String,
     password: String,
-    name: String, //
-    avatar: {
-      type: String,
-      default:
-        "https://cdn.discordapp.com/attachments/952774183899791434/973252456899309648/default-avatar.png",
-    },
-    status: { type: String, default: "offline" },
-    // socketId: String,
-    serverIds: [mongoose.Types.ObjectId],
-    // invitationIds: { type: [mongoose.Types.ObjectId], ref: "Invitation" },
-    // friendIds: [mongoose.Types.ObjectId],
+    name: String, 
+    avatar: String,
   },
   { timestamps: true }
 );
@@ -104,73 +94,6 @@ userSchema.statics.createUser = async function (email, password, name, avatar) {
     throw error;
   }
 };
-
-userSchema.statics.joinServer = async function (userId, serverId) {
-  try {
-    const user = await User.findById(userId);
-    serverId = mongoose.Types.ObjectId(serverId);
-    userId = mongoose.Types.ObjectId(userId);
-
-    if (user.serverIds.includes(serverId)) {
-      throw Error("Already joined this server.");
-    } else {
-      user.serverIds.push(serverId);
-      user.save();
-
-      const server = await Server.findById(serverId);
-      server.memberIds.push(userId);
-      server.save();
-    }
-  } catch (error) {
-    console.error(`Unable to join server, ${error.message}`);
-    throw error;
-  }
-};
-
-userSchema.statics.getInvitations = async function (userId) {
-  try {
-    const user = await User.findById(userId).populate({
-      path: "invitationIds",
-      populate: {
-        path: "senderId receiverId serverId",
-        select: "name avatar",
-      },
-    });
-    const invitations = user.invitationIds;
-    return invitations;
-  } catch (error) {
-    console.error(`Unable to get invitations list, ${error.message}`);
-    throw error;
-  }
-};
-
-// userSchema.statics.getFriendsList = async function (userId) {
-// 	try {
-// 		const user = await User.findById(userId);
-// 		const friendIds = user.friendIds;
-// 		return await User.find({ _id: { $in: friendIds } }, "_id email name avatar");
-// 	} catch (error) {
-// 		console.error(`Unable to get friends list, ${error.message}`);
-// 		throw error;
-// 	}
-// };
-
-// userSchema.statics.addFriend = async function (userId, friendId) {
-// 	try {
-// 		const user = await User.findById(userId);
-// 		friendId = mongoose.Types.ObjectId(friendId);
-
-// 		if (user.friendIds.includes(friendId)) {
-// 			throw Error("This person has already been in your friends list.");
-// 		} else {
-// 			user.friendIds.push(friendId);
-// 			user.save();
-// 		}
-// 	} catch (error) {
-// 		console.error(`Unable to add friend, ${error.message}`);
-// 		throw error;
-// 	}
-// };
 
 const User = mongoose.model("User", userSchema);
 
