@@ -5,14 +5,10 @@ import User from "./User.js";
 const channelSchema = new mongoose.Schema(
   {
     serverId: {
-      type: mongoose.SchemaTypes.ObjectId,
-      required: true,
+      type: mongoose.Types.ObjectId,
       ref: "Server",
     },
-    name: {
-      type: String,
-      required: true,
-    },
+    name: String,
   },
   {
     timestamps: true,
@@ -90,10 +86,7 @@ channelSchema.statics.updateChannel = async function (
       throw new Error("User may not have permission");
     }
 
-    await this.updateOne(
-      { _id: channelId },
-      { $set: { name: channelName } }
-    );
+    await this.updateOne({ _id: channelId }, { $set: { name: channelName } });
     return updatedChannel;
   } catch (e) {
     console.error(`somthing went wrong in updateChannel: ${e.message}`);
@@ -104,7 +97,7 @@ channelSchema.statics.updateChannel = async function (
 channelSchema.statics.getChannelsByServerId = async function (serverId) {
   try {
     const channels = await this.find({ serverId });
-    console.log(channels)
+    console.log(channels);
     return channels;
   } catch (e) {
     console.error(`something went wrong in getChannelByServerId: ${e.message}`);
