@@ -11,6 +11,10 @@ export default function socket(io) {
     // console.log(`${userId} connected`);
     socket.join(userId);
 
+    socket.on("logout", () => {
+      socket.leave(userId);
+    });
+
     // Join channel
     socket.on("join-server", ({ serverId }) => {
       if (serverId) {
