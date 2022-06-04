@@ -20,17 +20,38 @@ export default function socket(io) {
     });
 
     // Join channel
-    socket.on("join-channel", ({ channelId }) => {
+    socket.on("join-channel", async ({ channelId }) => {
       if (channelId) {
         socket.join(channelId);
-        // console.log(`user ${userId} joined ${channelId}`);
+        const channel = await Channel.findById(channelId);
+        if (channel.type === "voice") {
+          const socketIds = io.sockets.adapter.rooms.get(channelId);
+          const userIds = Array.from(socketIds).map((socketId) => {
+            const socket = io.sockets.sockets.get(socketId);
+            return socket.handshake.query.userId;
+          });
+          const userList = await User.find({ _id: { $in: userIds } });
+          socket.emit("user-list", userList); // render user in channel
+
+          const user = await User.findById(socket.handshake.query.userId);
+          // broadcast to channel
+          io.to(channelId).emit("new-user-join-your-voice-channel", {
+            userId: user._id,
+            avatar: user.avatar,
+            name: user.name,
+            channelId: channelId,
+          });
+        }
       }
     });
 
     // Leave channel
-    socket.on("leave-channel", ({ channelId }) => {
+    socket.on("leave-channel", async ({ channelId }) => {
       if (channelId) {
         socket.leave(channelId);
+        const channel = await Channel.findById(channelId);
+        console.log(channel.serverId)
+        io.to(channel.serverId.toString()).emit("user-disconnected",{userId: socket.handshake.query.userId, channelId: channelId})
         // console.log(`user ${userId} leaved ${channelId}`);
       }
     });
@@ -59,27 +80,37 @@ export default function socket(io) {
       }
     });
 
-    socket.on("delete-member", async ({serverId, memberIds}) => {
-      await Server.removeMembers(serverId, userId, memberIds); 
-      io.to(serverId).emit("deleted-members", {serverId, memberIds, userId})
-
-    })
+    socket.on("delete-member", async ({ serverId, memberIds }) => {
+      await Server.removeMembers(serverId, userId, memberIds);
+      io.to(serverId).emit("deleted-members", { serverId, memberIds, userId });
+    });
     // ================== CHANNEL ======================
-    socket.on('delete-channel', async ({ channelId }) => {
+    socket.on("delete-channel", async ({ channelId }) => {
       const channel = await Channel.deleteChannel(userId, channelId);
-      io.to(channel.serverId.toString()).emit("deleted-channel", {channelId, serverId: channel.serverId});
-    })
+      io.to(channel.serverId.toString()).emit("deleted-channel", {
+        channelId,
+        serverId: channel.serverId,
+      });
+    });
 
-    socket.on('add-channel', async ({ serverId, name}) => {
-      const channel = await Channel.addChannel(userId, serverId, name)
-      console.log(channel)
+    socket.on("add-channel", async ({ serverId, name, type }) => {
+      const channel = await Channel.addChannel(
+        userId,
+        serverId,
+        name,
+        type,
+        true
+      );
       io.to(serverId).emit("added-channel", channel);
-    }) 
+    });
 
-    socket.on('changeName-channel', async({channelId, channelName, serverId}) => {
-      await Channel.updateChannel(userId, channelId, channelName)
-      io.to(serverId).emit('changedName-channel', {channelId, channelName})
-    })
+    socket.on(
+      "changeName-channel",
+      async ({ channelId, channelName, serverId }) => {
+        await Channel.updateChannel(userId, channelId, channelName);
+        io.to(serverId).emit("changedName-channel", { channelId, channelName });
+      }
+    );
     // =================================================
 
     // =================================================
@@ -161,142 +192,5 @@ export default function socket(io) {
     });
 
     // =================================================
-
-    // LOGIN/LOGOUT
-    // login
-    // console.log(`User ${socket.id} has connected.`);
-
-    // socket.on("login", async (userId) => {
-    //   try {
-    //     const user = await User.findById(userId);
-    //     user.socketId = socket.id;
-    //     user.status = "online";
-    //     await user.save();
-    //   } catch (error) {
-    //     // console.log(error.message);
-    //   }
-    // });
-
-    // socket.on("disconnect", async () => {
-    //   console.log(`User ${socket.id} has disconnected.`);
-    //   try {
-    //     const user = await User.findOne({ socketId: socket.id });
-    //     user.socketId = null;
-    //     user.status = "offline";
-    //     await user.save();
-    //   } catch (error) {
-    //     // console.log(error.message);
-    //   }
-    // });
-
-    // socket.on("login", async (userId) => {
-    //   try {
-    //     const user = await User.findById(userId);
-    //     user.socketId = socket.id;
-    //     user.status = "online";
-    //     await user.save();
-    //   } catch (error) {
-    //     // console.log(error.message);
-    //   }
-    // });
-
-    // socket.on("disconnect", async () => {
-    //   console.log(`User ${socket.id} has disconnected.`);
-    //   try {
-    //     const user = await User.findOne({ socketId: socket.id });
-    //     user.socketId = null;
-    //     user.status = "offline";
-    //     await user.save();
-    //   } catch (error) {
-    //     // console.log(error.message);
-    //   }
-    // });
-
-    // //user join an room with serverlId is the name
-    // socket.on("join-room", (serverId) => {
-    //   socket.join(serverId);
-    // });
-
-    // //user leave room when clicking other server
-    // socket.on("leave-room", (serverId) => {
-    //   socket.leave(serverId);
-    // });
-
-    // // INVITATION
-    // socket.on("invite", async (invitation) => {
-    //   try {
-    //     const receiver = await User.findById(invitation.receiverId);
-
-    //     // save invitation to db
-    //     const newInvitation = await Invitation.addInvitation(
-    //       receiver._id,
-    //       invitation
-    //     );
-
-    //     const populatedInvitation = await Invitation.findById(
-    //       newInvitation._id
-    //     ).populate({
-    //       path: "senderId receiverId serverId",
-    //       select: "name avatar",
-    //     });
-
-    //     io.to(receiver.socketId).emit(
-    //       "have new invitation",
-    //       populatedInvitation
-    //     );
-    //     socket.emit("successfully sent invitation");
-    //   } catch (error) {
-    //     socket.emit("failed to send invitation", error.message);
-    //   }
-    // });
-
-    // socket.on("accept invitation", async (invitationId) => {
-    //   try {
-    //     const invitation = await Invitation.findById(invitationId).populate({
-    //       path: "senderId receiverId serverId",
-    //       select: "socketId",
-    //     });
-    //     if (!invitation) {
-    //       throw Error("Invitation doesn't exist");
-    //     }
-
-    //     await Invitation.removeInvitation(
-    //       invitation.receiverId._id,
-    //       invitationId
-    //     );
-    //     await User.joinServer(
-    //       invitation.receiverId._id,
-    //       invitation.serverId._id
-    //     );
-
-    //     socket.emit("successfully accepted invitation");
-    //     io.to(invitation.senderId.socketId).emit("invitation responded");
-    //     // emit to server -> re-render member list
-    //   } catch (error) {
-    //     socket.emit("failed to accept invitation", error.message);
-    //   }
-    // });
-
-    // socket.on("decline invitation", async (invitationId) => {
-    //   try {
-    //     const invitation = await Invitation.findById(invitationId).populate({
-    //       path: "senderId receiverId",
-    //       select: "socketId",
-    //     });
-    //     if (!invitation) {
-    //       throw Error("Invitation doesn't exist");
-    //     }
-
-    //     await Invitation.removeInvitation(
-    //       invitation.receiverId._id,
-    //       invitationId
-    //     );
-
-    //     socket.emit("successfully declined invitation");
-    //     io.to(invitation.senderId.socketId).emit("invitation responded");
-    //   } catch (error) {
-    //     socket.emit("failed to decline invitation", error.message);
-    //   }
-    // });
   });
 }
