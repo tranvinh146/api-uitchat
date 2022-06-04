@@ -5,21 +5,53 @@ import Invite from "../models/Invite.js";
 import Channel from "../models/Channel.js";
 import Contact from "../models/Contact.js";
 
+async function getData(voiceChannels, io) {
+	// 2 return
+	return Promise.all(voiceChannels.map(async (channel) => {
+		const sockets = await io.in(channel._id.toString()).fetchSockets();
+		const userIds = Array.from(sockets).map((socket) => {
+			return socket.handshake.query.userId;
+		});
+		const userList = await User.find({ _id: { $in: userIds } });
+		const userInfo = userList.map(user => {
+			return {
+				avatar: user.avatar,
+				name: user.name
+			}
+		});
+		return {
+			channelId: channel._id,
+			users: userInfo
+		};
+	}));
+}
+
 export default function socket(io) {
 	io.on("connection", (socket) => {
 		const userId = socket.handshake.query.userId;
-		// console.log(`${userId} connected`);
 		socket.join(userId);
 
 		socket.on("logout", () => {
 			socket.leave(userId);
 		});
 
-		// Join channel
-		socket.on("join-server", ({ serverId }) => {
+		// Join server
+		socket.on("join-server", async ({ serverId }) => {
 			if (serverId) {
 				socket.join(serverId);
-				// console.log(`user ${userId} joined server ${serverId}`);
+				const channels = await Channel.getChannelsByServerId(serverId);
+				const voiceChannels = channels.filter(channel => channel.type === "voice");
+				const data = await getData(voiceChannels, io)
+				socket.emit("current-user-in-voice-channel", data);
+				// data: {
+				// 	channeId,
+				// 	users: [
+				// 		{
+				// 			avatar,
+				// 			name
+				// 		}
+				// 	]
+				// }
 			}
 		});
 
@@ -29,13 +61,7 @@ export default function socket(io) {
 				socket.join(channelId);
 				const channel = await Channel.findById(channelId);
 				if (channel.type === "voice") {
-					const socketIds = io.sockets.adapter.rooms.get(channelId);
-					const userIds = Array.from(socketIds).map((socketId) => {
-						const socket = io.sockets.sockets.get(socketId);
-						return socket.handshake.query.userId;
-					});
-					const userList = await User.find({ _id: { $in: userIds } });
-					socket.emit("user-list", userList); // render user in channel
+
 
 					const user = await User.findById(socket.handshake.query.userId);
 					// broadcast to channel
