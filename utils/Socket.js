@@ -13,16 +13,15 @@ async function getData(voiceChannels, io) {
 			return socket.handshake.query.userId;
 		});
 		const userList = await User.find({ _id: { $in: userIds } });
-		const userInfo = userList.map(user => {
+		const data = userList.map(user => {
 			return {
 				avatar: user.avatar,
-				name: user.name
+				name: user.name,
+				userId: user._id.toString(),
+				channelId: channel._id.toString()
 			}
 		});
-		return {
-			channelId: channel._id,
-			users: userInfo
-		};
+		return data;
 	}));
 }
 
@@ -41,17 +40,9 @@ export default function socket(io) {
 				socket.join(serverId);
 				const channels = await Channel.getChannelsByServerId(serverId);
 				const voiceChannels = channels.filter(channel => channel.type === "voice");
-				const data = await getData(voiceChannels, io)
-				socket.emit("current-users-in-voice-channel", data);
-				// data: {
-				// 	channeId,
-				// 	users: [
-				// 		{
-				// 			avatar,
-				// 			name
-				// 		}
-				// 	]
-				// }
+				const data = await getData(voiceChannels, io) 
+        console.log(data.flat())
+				socket.emit("current-users-in-voice-channel", data.flat());
 			}
 		});
 
@@ -63,7 +54,8 @@ export default function socket(io) {
 				if (channel.type === "voice") {
 					const user = await User.findById(socket.handshake.query.userId);
 					// broadcast to server
-					io.to(channel.serverId).emit("new-user-join-voice-channel", {
+          console.log(channel.serverId.toString())
+					io.to(channel.serverId.toString()).emit("new-user-join-voice-channel", {
 						userId: user._id,
 						avatar: user.avatar,
 						name: user.name,
@@ -78,7 +70,9 @@ export default function socket(io) {
 			if (channelId) {
 				socket.leave(channelId);
 				const channel = await Channel.findById(channelId);
-				io.to(channel.serverId.toString()).emit("user-disconnected", { userId: socket.handshake.query.userId, channelId: channelId })
+        if(channel.type ==="voice") {
+          io.to(channel.serverId.toString()).emit("user-disconnected", { userId: socket.handshake.query.userId, channelId: channelId })
+        }
 			}
 		});
 
