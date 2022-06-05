@@ -40,8 +40,7 @@ export default function socket(io) {
 				socket.join(serverId);
 				const channels = await Channel.getChannelsByServerId(serverId);
 				const voiceChannels = channels.filter(channel => channel.type === "voice");
-				const data = await getData(voiceChannels, io) 
-        console.log(data.flat())
+				const data = await getData(voiceChannels, io)
 				socket.emit("current-users-in-voice-channel", data.flat());
 			}
 		});
@@ -54,7 +53,6 @@ export default function socket(io) {
 				if (channel.type === "voice") {
 					const user = await User.findById(socket.handshake.query.userId);
 					// broadcast to server
-          console.log(channel.serverId.toString())
 					io.to(channel.serverId.toString()).emit("new-user-join-voice-channel", {
 						userId: user._id,
 						avatar: user.avatar,
@@ -70,9 +68,9 @@ export default function socket(io) {
 			if (channelId) {
 				socket.leave(channelId);
 				const channel = await Channel.findById(channelId);
-        if(channel.type ==="voice") {
-          io.to(channel.serverId.toString()).emit("user-disconnected", { userId: socket.handshake.query.userId, channelId: channelId })
-        }
+				if (channel.type === "voice") {
+					io.to(channel.serverId.toString()).emit("user-disconnected", { userId: socket.handshake.query.userId, channelId: channelId })
+				}
 			}
 		});
 
