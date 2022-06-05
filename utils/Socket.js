@@ -42,7 +42,7 @@ export default function socket(io) {
 				const channels = await Channel.getChannelsByServerId(serverId);
 				const voiceChannels = channels.filter(channel => channel.type === "voice");
 				const data = await getData(voiceChannels, io)
-				socket.emit("current-user-in-voice-channel", data);
+				socket.emit("current-users-in-voice-channel", data);
 				// data: {
 				// 	channeId,
 				// 	users: [
@@ -61,11 +61,9 @@ export default function socket(io) {
 				socket.join(channelId);
 				const channel = await Channel.findById(channelId);
 				if (channel.type === "voice") {
-
-
 					const user = await User.findById(socket.handshake.query.userId);
-					// broadcast to channel
-					io.to(channelId).emit("new-user-join-voice-channel", {
+					// broadcast to server
+					io.to(channel.serverId).emit("new-user-join-voice-channel", {
 						userId: user._id,
 						avatar: user.avatar,
 						name: user.name,
